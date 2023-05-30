@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
+import 'package:faiadashu/extensions/string_extension.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:fhir/r4.dart';
 import 'package:intl/intl.dart';
@@ -146,28 +147,7 @@ extension FDashCodingExtension on Coding {
   /// Localized access to display value.
   /// TODO: Currently only matches by language.
   String localizedDisplay(Locale locale) {
-    // TODO: Carve this out to be used in other places (titles).
-    final translationExtension = displayElement?.extension_?.firstWhereOrNull(
-      (transExt) =>
-          transExt.url ==
-              FhirUri('http://hl7.org/fhir/StructureDefinition/translation') &&
-          transExt.extension_?.firstWhereOrNull(
-                (ext) =>
-                    (ext.url == FhirUri('lang')) &&
-                    (ext.valueCode?.value == locale.languageCode),
-              ) !=
-              null,
-    );
-
-    if (translationExtension != null) {
-      final contentString = translationExtension.extension_
-          ?.extensionOrNull('content')
-          ?.valueString;
-
-      return ArgumentError.checkNotNull(contentString);
-    }
-
-    return display ?? code?.value ?? toString();
+    return display?.translate(displayElement?.extension_, locale) ?? code?.value ?? toString();
   }
 }
 
