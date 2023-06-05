@@ -1,6 +1,5 @@
-import 'dart:core';
-
 import 'package:collection/collection.dart';
+import 'package:faiadashu/extensions/string_extension.dart';
 import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart';
@@ -267,7 +266,8 @@ class QuestionnaireItemModel with Diagnosticable {
 
   /// The name of a section, the text of a question or text content for a display item.
   RenderingString? get text {
-    final plainText = questionnaireItem.text;
+    final plainText = questionnaireItem.text?.translate(
+        questionnaireItem.textElement?.extension_, questionnaireModel.locale);
 
     return (plainText != null)
         ? RenderingString.fromText(
