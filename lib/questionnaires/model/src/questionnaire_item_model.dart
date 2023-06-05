@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:collection/collection.dart';
 import 'package:faiadashu/extensions/string_extension.dart';
 import 'package:faiadashu/fhir_types/fhir_types.dart';
@@ -21,7 +19,6 @@ class QuestionnaireItemModel with Diagnosticable {
   final QuestionnaireItemModel? parent;
   final QuestionnaireModel questionnaireModel;
   final int level;
-  final Locale? locale;
 
   /// Returns whether the item has an initial value.
   ///
@@ -269,8 +266,8 @@ class QuestionnaireItemModel with Diagnosticable {
 
   /// The name of a section, the text of a question or text content for a display item.
   RenderingString? get text {
-    final plainText = questionnaireItem.text
-        ?.translate(questionnaireItem.textElement?.extension_, locale);
+    final plainText = questionnaireItem.text?.translate(
+        questionnaireItem.textElement?.extension_, questionnaireModel.locale);
 
     return (plainText != null)
         ? RenderingString.fromText(
@@ -345,6 +342,5 @@ class QuestionnaireItemModel with Diagnosticable {
     this.linkId,
     this.parent,
     this.level,
-    this.locale,
   );
 }

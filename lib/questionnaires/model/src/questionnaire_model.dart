@@ -368,7 +368,6 @@ class QuestionnaireModel {
         linkId,
         parent,
         level,
-        locale,
       ),
     );
   }
