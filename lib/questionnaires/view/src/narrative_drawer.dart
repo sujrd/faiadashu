@@ -71,9 +71,10 @@ class _NarrativeDrawerState extends State<NarrativeDrawer> {
                                         ?.toJson(),
                                   )
                                 : QuestionnaireResponseFiller.of(context)
-                                    .aggregator<NarrativeAggregator>()
-                                    .aggregate()
-                                    ?.div,
+                                        .aggregator<NarrativeAggregator>()
+                                        .aggregate()
+                                        ?.div ??
+                                    '',
                           ),
                         ).then((_) {
                           ScaffoldMessenger.of(context).showSnackBar(
