@@ -22,14 +22,16 @@ dependencies:
 #  fhir_auth:
 #    path: ../../fhir/fhir_auth
 
+  file: ^6.1.4
+
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
 
-  google_fonts: ^2.1.1
+  google_fonts: ^4.0.4
 
-  intl: ^0.17.0
+  intl: ^0.18.0
 
   logging: ^1.0.2
 
