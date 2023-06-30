@@ -203,7 +203,8 @@ class QuestionnaireItemModel with Diagnosticable {
 
   /// Is this item hidden?
   bool get isHidden {
-    return (questionnaireItem.extension_
+    return (parent?.isHidden == true) ||
+        (questionnaireItem.extension_
                 ?.extensionOrNull(
                   'http://hl7.org/fhir/StructureDefinition/questionnaire-hidden',
                 )
