@@ -301,11 +301,13 @@ class QuestionItemModel extends ResponseItemModel {
       case QuestionnaireItemType.boolean:
         answerModel = BooleanAnswerModel(this);
         break;
+      case QuestionnaireItemType.attachment:
+        answerModel = AttachmentAnswerModel(this);
+        break;
       case QuestionnaireItemType.display:
         throw UnsupportedError("Items of type 'display' do not have answers.");
       case QuestionnaireItemType.group:
         throw UnsupportedError("Items of type 'group' do not have answers.");
-      case QuestionnaireItemType.attachment:
       case QuestionnaireItemType.unknown:
       case QuestionnaireItemType.reference:
         // Throwing an exception here would lead to breakage of filler.
