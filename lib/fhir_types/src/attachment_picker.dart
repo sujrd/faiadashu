@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fhir/r4.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mime/mime.dart';
 
@@ -13,6 +15,7 @@ class FhirAttachmentPicker extends StatefulWidget {
   final Attachment? initialAttachment;
   final InputDecoration? decoration;
   final FocusNode? focusNode;
+  final List<String>? allowedMimeTypes;
   final bool enabled;
   final void Function(Attachment?)? onChanged;
 
@@ -21,6 +24,7 @@ class FhirAttachmentPicker extends StatefulWidget {
     this.decoration,
     this.onChanged,
     this.focusNode,
+    this.allowedMimeTypes,
     this.enabled = true,
     Key? key,
   }) : super(key: key);
@@ -57,7 +61,14 @@ class _FhirAttachmentPickerState extends State<FhirAttachmentPicker> {
   }
 
   Future<void> _pickFile() async {
-    final file = await openFile();
+    // NOTE1: "Platform" is not available in web, leading to crashes.
+    // NOTE2: mimeTypes parameter is not available in iOS nor Windows: https://pub.dev/packages/file_selector#filtering-by-file-types
+    // TODO: Find a way to convert MIME types to Uniform Type Identifiers supported by iOS.
+    final typeGroups = (kIsWeb || !(Platform.isIOS || Platform.isWindows))
+      ? [XTypeGroup(mimeTypes: widget.allowedMimeTypes)]
+      : const <XTypeGroup>[];
+
+    final file = await openFile(acceptedTypeGroups: typeGroups);
 
     if (file == null) return;
 

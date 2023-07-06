@@ -46,7 +46,11 @@ class _AttachmentInputControl extends AnswerInputControl<AttachmentAnswerModel> 
         focusNode: focusNode,
         enabled: answerModel.isControlEnabled,
         initialAttachment: answerModel.value,
+        allowedMimeTypes: answerModel.mimeTypes,
         onChanged: (attachment) => answerModel.value = attachment,
+        decoration: InputDecoration(
+          errorText: answerModel.displayErrorText,
+        ),
       ),
     );
   }
