@@ -223,6 +223,18 @@ abstract class FDashLocalizations {
   /// **'Either select an option, or enter free text in \"{openLabel}\".'**
   String validatorSingleSelectionOrSingleOpenString(Object openLabel);
 
+  /// No description provided for @validatorMaxSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a file under {maxSize}.'**
+  String validatorMaxSize(String maxSize);
+
+  /// No description provided for @validatorMimeTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a file of the following types: {mimeTypes}.'**
+  String validatorMimeTypes(String mimeTypes);
+
   /// No description provided for @dataAbsentReasonAskedDeclinedInputLabel.
   ///
   /// In en, this message translates to:

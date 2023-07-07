@@ -32,6 +32,7 @@ dependencies:
 #  fhir_path:
 #    path: /Users/tilo/Projects/fhir/fhir_path
   file_selector: ^0.9.5
+  filesize: ^2.0.1
   flutter:
     sdk: flutter
   flutter_localizations:

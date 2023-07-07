@@ -103,6 +103,16 @@ class FDashLocalizationsAr extends FDashLocalizations {
   }
 
   @override
+  String validatorMaxSize(String maxSize) {
+    return 'Select a file under $maxSize.';
+  }
+
+  @override
+  String validatorMimeTypes(String mimeTypes) {
+    return 'Select a file of the following types: $mimeTypes.';
+  }
+
+  @override
   String get dataAbsentReasonAskedDeclinedInputLabel => 'اخترت عدم الرد.';
 
   @override

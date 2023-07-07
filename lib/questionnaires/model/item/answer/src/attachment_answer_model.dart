@@ -1,6 +1,8 @@
 import 'package:faiadashu/fhir_types/fhir_types.dart';
+import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
 import 'package:fhir/r4.dart';
+import 'package:filesize/filesize.dart';
 
 class AttachmentAnswerModel extends AnswerModel<Attachment, Attachment> {
   final num maxSize;
@@ -31,17 +33,18 @@ class AttachmentAnswerModel extends AnswerModel<Attachment, Attachment> {
   String? validateValue(Attachment? inputValue) {
     if (inputValue == null) return null;
 
-    // TODO: Add translations.
     if (maxSize > 0) {
       final attachmentSize = inputValue.size?.value;
-      if (attachmentSize == null) return 'Attachment had size missing and maxSize extension was specified';
-      if (attachmentSize > maxSize) return 'Maximum file size limit exceeded';
+      if (attachmentSize == null || attachmentSize > maxSize) {
+        return lookupFDashLocalizations(locale).validatorMaxSize(filesize(maxSize));
+      }
     }
 
     if (mimeTypes.isNotEmpty) {
       final attachmentMimeType = inputValue.contentType?.value;
-      if (attachmentMimeType == null) return 'Attachment mime type is missing.';
-      if (!mimeTypes.contains(attachmentMimeType)) return 'Unsupported mime type';
+      if (attachmentMimeType == null || !mimeTypes.contains(attachmentMimeType)) {
+        return lookupFDashLocalizations(locale).validatorMimeTypes(mimeTypes.join(', '));
+      }
     }
 
     return null;
