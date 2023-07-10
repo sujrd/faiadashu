@@ -12,6 +12,11 @@ enum CodingControlPreference {
   expanded,
 }
 
+enum StepperGroupDisplayPreference {
+  separated,
+  grouped,
+}
+
 class QuestionnaireTheme extends InheritedWidget {
   final QuestionnaireThemeData data;
 
@@ -71,6 +76,13 @@ class QuestionnaireThemeData {
   static const defaultCodingControlPreference = CodingControlPreference.compact;
   final CodingControlPreference codingControlPreference;
 
+  static const defaultStepperGroupDisplayPreference = StepperGroupDisplayPreference.separated;
+
+  /// Usable when rendering as QuestionnaireStepperPage only.
+  /// Specifies whether group subitems should show in different steps (default),
+  /// or all at once in the same step.
+  final StepperGroupDisplayPreference stepperGroupDisplayPreference;
+
   final QuestionnaireAnswerFiller Function(AnswerModel, {Key? key})
       createQuestionnaireAnswerFiller;
 
@@ -82,6 +94,7 @@ class QuestionnaireThemeData {
     this.maxLinesForTextItem = defaultMaxLinesForTextItem,
     this.codingControlPreference = defaultCodingControlPreference,
     this.maxItemWidth = defaultMaxItemWidth,
+    this.stepperGroupDisplayPreference = defaultStepperGroupDisplayPreference,
     this.createQuestionnaireAnswerFiller = _createDefaultAnswerFiller,
   });
 

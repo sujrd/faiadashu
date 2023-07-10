@@ -12,6 +12,7 @@ class QuestionnaireStepper extends StatefulWidget {
   final LaunchContext launchContext;
   final QuestionnairePageScaffoldBuilder scaffoldBuilder;
   final QuestionnaireModelDefaults questionnaireModelDefaults;
+  final bool showGroupsAsSingleSteps;
 
   const QuestionnaireStepper({
     this.locale,
@@ -19,6 +20,7 @@ class QuestionnaireStepper extends StatefulWidget {
     required this.fhirResourceProvider,
     required this.launchContext,
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
+    this.showGroupsAsSingleSteps = false,
     Key? key,
   }) : super(key: key);
 
@@ -53,13 +55,20 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                     controller: controller,
                     itemBuilder: (BuildContext context, int pageIndex) {
                       final responseFiller = QuestionnaireResponseFiller.of(context);
+                      final questionnaireTheme = QuestionnaireTheme.of(context);
+
+                      final showGroupsAsSingleSteps = widget.showGroupsAsSingleSteps
+                        || questionnaireTheme.stepperGroupDisplayPreference == StepperGroupDisplayPreference.grouped;
 
                       int currentPage = -1;
                       int rootNodeIndex = -1;
 
                       final rootNode = responseFiller.fillerItemModels
                         .firstWhereIndexedOrNull((index, element) {
-                          if (element.displayVisibility != DisplayVisibility.hidden) {
+                          if (
+                            element.displayVisibility != DisplayVisibility.hidden
+                            && (!showGroupsAsSingleSteps || element.parentNode == null)
+                          ) {
                             currentPage++;
                             rootNodeIndex = index;
                           }
@@ -68,8 +77,16 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                         });
 
                       if (rootNode == null) return null;
+                      if (!showGroupsAsSingleSteps) return responseFiller.itemFillerAt(rootNodeIndex);
 
-                      return responseFiller.itemFillerAt(rootNodeIndex);
+                      final descendantsCount = responseFiller.fillerItemModels
+                        .where((element) => element.rootNode == rootNode)
+                        .length;
+
+                      return ListView.builder(
+                        itemCount: descendantsCount + 1,
+                        itemBuilder: (context, index) => responseFiller.itemFillerAt(rootNodeIndex + index),
+                      );
                     },
                   ),
                 ),

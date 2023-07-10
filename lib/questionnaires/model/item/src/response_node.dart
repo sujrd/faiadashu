@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 /// Unifies certain aspects of groups and answers.
 abstract class ResponseNode with Diagnosticable, ChangeNotifier {
   final ResponseNode? parentNode;
+  late final ResponseNode? rootNode;
 
   late final String _nodeUid;
 
@@ -13,6 +14,7 @@ abstract class ResponseNode with Diagnosticable, ChangeNotifier {
 
   ResponseNode(this.parentNode) {
     _nodeUid = calculateNodeUid();
+    rootNode = parentNode?.rootNode ?? parentNode;
   }
 
   String calculateNodeUid();
