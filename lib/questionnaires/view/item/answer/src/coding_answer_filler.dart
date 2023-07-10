@@ -491,6 +491,12 @@ class _CodingChoiceDecorator extends StatelessWidget {
 
           // TODO: Return something borderless when filled = true
           return Card(
+            // NOTE: It seems there's flickering issues in iOS browsers related to using Card
+            //       widgets with elevation > 0 (default is 1): https://github.com/sujrd/faiadashu/issues/16
+            //       For now, this sets elevation = 0 (which also removes Card shadows) and modulates
+            //       the elevation-based color change of the Card instead.
+            elevation: 0,
+            color: ElevationOverlay.overlayColor(context, 1),
             shape: Focus.of(context).hasFocus
                 ? hasError
                     ? decoTheme.focusedErrorBorder
