@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:faiadashu/resource_provider/resource_provider.dart';
@@ -38,9 +39,6 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
       launchContext: widget.launchContext,
       questionnaireModelDefaults: widget.questionnaireModelDefaults,
       builder: (BuildContext context) {
-        final questionnaireFiller = QuestionnaireResponseFiller.of(context);
-        final itemCount = questionnaireFiller.fillerItemModels.length;
-
         return widget.scaffoldBuilder.build(
           context,
           setStateCallback: (fn) => setState(fn),
@@ -53,10 +51,25 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                     /// [PageView.scrollDirection] defaults to [Axis.horizontal].
                     /// Use [Axis.vertical] to scroll vertically.
                     controller: controller,
-                    itemCount: itemCount,
-                    itemBuilder: (BuildContext context, int index) {
-                      return QuestionnaireResponseFiller.of(context)
-                          .itemFillerAt(index);
+                    itemBuilder: (BuildContext context, int pageIndex) {
+                      final responseFiller = QuestionnaireResponseFiller.of(context);
+
+                      int currentPage = -1;
+                      int rootNodeIndex = -1;
+
+                      final rootNode = responseFiller.fillerItemModels
+                        .firstWhereIndexedOrNull((index, element) {
+                          if (element.displayVisibility != DisplayVisibility.hidden) {
+                            currentPage++;
+                            rootNodeIndex = index;
+                          }
+
+                          return currentPage == pageIndex;
+                        });
+
+                      if (rootNode == null) return null;
+
+                      return responseFiller.itemFillerAt(rootNodeIndex);
                     },
                   ),
                 ),
