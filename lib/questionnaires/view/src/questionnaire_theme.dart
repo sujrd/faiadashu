@@ -49,6 +49,9 @@ class QuestionnaireThemeData {
   /// Returns whether a progress bar/circle is displayed while filling
   final bool showProgress;
 
+  /// Returns whether the score is displayed while filling (in stepper mode only)
+  final bool showScore;
+
   /// Returns height for text field with and without error text
   double get textFieldHeight => defaultTextFieldHeight;
   static const defaultTextFieldHeight = 72.0;
@@ -89,6 +92,7 @@ class QuestionnaireThemeData {
   const QuestionnaireThemeData({
     this.canSkipQuestions = false,
     this.showProgress = true,
+    this.showScore = true,
     this.autoCompleteThreshold = defaultAutoCompleteThreshold,
     this.horizontalCodingBreakpoint = defaultHorizontalCodingBreakpoint,
     this.maxLinesForTextItem = defaultMaxLinesForTextItem,

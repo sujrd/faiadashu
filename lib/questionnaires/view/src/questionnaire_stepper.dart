@@ -104,28 +104,29 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                   Expanded(
                     child: Column(
                       children: [
-                        ValueListenableBuilder<Decimal>(
-                          builder: (
-                            BuildContext context,
-                            Decimal value,
-                            Widget? child,
-                          ) {
-                            final scoreString = value.value!.round().toString();
+                        if (QuestionnaireTheme.of(context).showScore)
+                          ValueListenableBuilder<Decimal>(
+                            builder: (
+                              BuildContext context,
+                              Decimal value,
+                              Widget? child,
+                            ) {
+                              final scoreString = value.value!.round().toString();
 
-                            return AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 200),
-                              child: Text(
-                                FDashLocalizations.of(context)
-                                    .aggregationScore(scoreString),
-                                key: ValueKey<String>(scoreString),
-                                style: Theme.of(context).textTheme.headline4,
-                              ),
-                            );
-                          },
-                          valueListenable:
-                              QuestionnaireResponseFiller.of(context)
-                                  .aggregator<TotalScoreAggregator>(),
-                        ),
+                              return AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 200),
+                                child: Text(
+                                  FDashLocalizations.of(context)
+                                      .aggregationScore(scoreString),
+                                  key: ValueKey<String>(scoreString),
+                                  style: Theme.of(context).textTheme.headline4,
+                                ),
+                              );
+                            },
+                            valueListenable:
+                                QuestionnaireResponseFiller.of(context)
+                                    .aggregator<TotalScoreAggregator>(),
+                          ),
                         if (QuestionnaireTheme.of(context).showProgress)
                           const QuestionnaireFillerProgressBar(),
                       ],
