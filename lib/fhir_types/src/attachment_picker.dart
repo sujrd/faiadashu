@@ -62,21 +62,23 @@ class _FhirAttachmentPickerState extends State<FhirAttachmentPicker> {
   }
 
   Future<void> _pickFile() async {
-    // NOTE1: "Platform" is not available in web, leading to crashes.
-    // NOTE2: mimeTypes parameter is not available in iOS nor Windows: https://pub.dev/packages/file_selector#filtering-by-file-types
-    var typeGroups = <XTypeGroup>[];
-    if (Platform.isIOS) {
-      typeGroups = [
-        XTypeGroup(
-          uniformTypeIdentifiers: convertMIMETypesToUTIs(
-            widget.allowedMimeTypes ?? [],
+    var typeGroups = [XTypeGroup(mimeTypes: widget.allowedMimeTypes)];
+
+    if (!kIsWeb) {
+      // NOTE1: "Platform" is not available in web, leading to crashes, so we detect it via kIsWeb instead.
+      // NOTE2: mimeTypes parameter is not available in iOS nor Windows: https://pub.dev/packages/file_selector#filtering-by-file-types
+      if (Platform.isIOS) {
+        typeGroups = [
+          XTypeGroup(
+            uniformTypeIdentifiers: convertMIMETypesToUTIs(
+              widget.allowedMimeTypes ?? [],
+            ),
           ),
-        ),
-      ];
-    } else if (Platform.isWindows) {
-      // TODO: Find a way to convert MIME types to extensions.
-    } else {
-      typeGroups = [XTypeGroup(mimeTypes: widget.allowedMimeTypes)];
+        ];
+      } else if (Platform.isWindows) {
+        // TODO: Find a way to convert MIME types to extensions.
+        typeGroups = [];
+      }
     }
 
     final file = await openFile(acceptedTypeGroups: typeGroups);
