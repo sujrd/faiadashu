@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:faiadashu/utils/mime_type.dart';
 import 'package:fhir/r4.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
@@ -63,10 +64,20 @@ class _FhirAttachmentPickerState extends State<FhirAttachmentPicker> {
   Future<void> _pickFile() async {
     // NOTE1: "Platform" is not available in web, leading to crashes.
     // NOTE2: mimeTypes parameter is not available in iOS nor Windows: https://pub.dev/packages/file_selector#filtering-by-file-types
-    // TODO: Find a way to convert MIME types to Uniform Type Identifiers supported by iOS.
-    final typeGroups = (kIsWeb || !(Platform.isIOS || Platform.isWindows))
-      ? [XTypeGroup(mimeTypes: widget.allowedMimeTypes)]
-      : const <XTypeGroup>[];
+    var typeGroups = <XTypeGroup>[];
+    if (Platform.isIOS) {
+      typeGroups = [
+        XTypeGroup(
+          uniformTypeIdentifiers: convertMIMETypesToUTIs(
+            widget.allowedMimeTypes ?? [],
+          ),
+        ),
+      ];
+    } else if (Platform.isWindows) {
+      // TODO: Find a way to convert MIME types to extensions.
+    } else {
+      typeGroups = [XTypeGroup(mimeTypes: widget.allowedMimeTypes)];
+    }
 
     final file = await openFile(acceptedTypeGroups: typeGroups);
 
