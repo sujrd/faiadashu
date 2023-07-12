@@ -154,6 +154,8 @@ class QuestionnaireThemeData {
         return CodingAnswerFiller(answerModel, key: key);
       } else if (answerModel is BooleanAnswerModel) {
         return BooleanAnswerFiller(answerModel, key: key);
+      } else if (answerModel is AttachmentAnswerModel) {
+        return AttachmentAnswerFiller(answerModel, key: key);
       } else if (answerModel is UnsupportedAnswerModel) {
         throw QuestionnaireFormatException(
           'Unsupported item type: ${answerModel.qi.type}',

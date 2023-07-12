@@ -270,6 +270,30 @@ extension FDashListFhirExtensionExtension on List<FhirExtension> {
       );
     }
   }
+
+  /// Returns all extensions with the given URI, or null if key is null.
+  /// TODO: Refactor some logic extensionOrNull
+  Iterable<FhirExtension>? whereExtensionIs(Object? key) {
+    if (key == null) {
+      return null;
+    }
+
+    if (key is String) {
+      return where((ext) {
+        return ext.url == FhirUri(key);
+      });
+    } else if (key is FhirUri) {
+      return where((ext) {
+        return ext.url == key;
+      });
+    } else {
+      throw ArgumentError.value(
+        key,
+        'key',
+        'Only String and FhirUri are supported as key.',
+      );
+    }
+  }
 }
 
 extension FDashListExtension<T> on List<T> {

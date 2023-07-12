@@ -1,4 +1,5 @@
 export 'src/answer_model.dart';
+export 'src/attachment_answer_model.dart';
 export 'src/boolean_answer_model.dart';
 export 'src/coding_answer_model.dart';
 export 'src/coding_answer_option_model.dart';
