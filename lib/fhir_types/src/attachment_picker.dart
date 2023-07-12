@@ -86,7 +86,6 @@ class _FhirAttachmentPickerState extends State<FhirAttachmentPicker> {
     if (file == null) return;
 
     final size = await file.length();
-    final creation = await file.lastModified();
     final bytes = await file.readAsBytes();
     final mimeType = lookupMimeType('', headerBytes: bytes);
 
@@ -95,7 +94,6 @@ class _FhirAttachmentPickerState extends State<FhirAttachmentPicker> {
       contentType: Code(mimeType),
       size: UnsignedInt(size),
       data: Base64Binary(base64.encode(bytes)),
-      creation: FhirDateTime(creation),
     );
 
     setState(() {
