@@ -50,14 +50,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light().copyWith(
-        useMaterial3: true,
+      theme: ThemeData.light(useMaterial3: true).copyWith(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.pink),
-        inputDecorationTheme: ThemeData.light().inputDecorationTheme.copyWith(
+        inputDecorationTheme: ThemeData.light(useMaterial3: true).inputDecorationTheme.copyWith(
               filled: true,
             ),
       ),
-      darkTheme: ThemeData.dark(),
+      darkTheme: ThemeData.dark(useMaterial3: true),
       title: 'Faiadashu™ FHIRDash Gallery',
       localizationsDelegates: const [
         FDashLocalizations.delegate,
