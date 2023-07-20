@@ -227,8 +227,8 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
           _questionnaireResponseModel = questionnaireResponseModel;
 
           if (widget.onQuestionnaireResponseChanged != null) {
-            // TODO: Ideally an initial state should be broadcast, but this is leading to exceptions for UI updates/setState.
-            //            _handleChangedQuestionnaireResponse();
+            // Broadcast initial response state once the widget tree is built to avoid exceptions for UI updates/setState (only seen in Faiabench for now).
+            Future<void>(_handleChangedQuestionnaireResponse);
 
             // FIXME: What is this listening for???
             _questionnaireResponseModel?.valueChangeNotifier
