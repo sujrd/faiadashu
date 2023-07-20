@@ -61,7 +61,8 @@ class _QuestionnaireScrollerPanelState
         ? FhirResource.fromResource(questionnaireResponse)
         : emptyFhirResource;
 
-    ref.read(widget.fillerOutputProvider.notifier).updateFhirResource(resource);
+    // Executed within a Future to make sure this runs once the widget tree is built, to avoid exceptions for UI updates/setState.
+    Future<void>(() => ref.read(widget.fillerOutputProvider.notifier).updateFhirResource(resource));
   }
 
   @override

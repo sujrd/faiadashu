@@ -227,8 +227,8 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
           _questionnaireResponseModel = questionnaireResponseModel;
 
           if (widget.onQuestionnaireResponseChanged != null) {
-            // TODO: Ideally an initial state should be broadcast, but this is leading to exceptions for UI updates/setState.
-            //            _handleChangedQuestionnaireResponse();
+            // Broadcast initial response state.
+            _handleChangedQuestionnaireResponse();
 
             // FIXME: What is this listening for???
             _questionnaireResponseModel?.valueChangeNotifier
