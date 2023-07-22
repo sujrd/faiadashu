@@ -14,6 +14,9 @@ class QuestionnaireStepper extends StatefulWidget {
   final QuestionnaireModelDefaults questionnaireModelDefaults;
   final bool showGroupsAsSingleSteps;
 
+  final void Function(QuestionnaireResponseModel?)?
+      onQuestionnaireResponseChanged;
+
   const QuestionnaireStepper({
     this.locale,
     required this.scaffoldBuilder,
@@ -21,6 +24,7 @@ class QuestionnaireStepper extends StatefulWidget {
     required this.launchContext,
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
     this.showGroupsAsSingleSteps = false,
+    this.onQuestionnaireResponseChanged,
     Key? key,
   }) : super(key: key);
 
@@ -29,7 +33,13 @@ class QuestionnaireStepper extends StatefulWidget {
 }
 
 class QuestionnaireStepperState extends State<QuestionnaireStepper> {
+  QuestionnaireResponseModel? _questionnaireResponseModel;
   int step = 0;
+  bool _isLoaded = false;
+
+  void _handleChangedQuestionnaireResponse() {
+    widget.onQuestionnaireResponseChanged?.call(_questionnaireResponseModel);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,6 +154,24 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
             ],
           ),
         );
+      },
+      // TODO: Refactor some of this logic with QuestionnaireScroller
+      onDataAvailable: (questionnaireResponseModel) {
+        // Upon initial load: Locate the first unanswered or invalid question
+        if (!_isLoaded) {
+          _isLoaded = true;
+
+          _questionnaireResponseModel = questionnaireResponseModel;
+
+          if (widget.onQuestionnaireResponseChanged != null) {
+            // Broadcast initial response state.
+            _handleChangedQuestionnaireResponse();
+
+            // FIXME: What is this listening for???
+            _questionnaireResponseModel?.valueChangeNotifier
+                .addListener(_handleChangedQuestionnaireResponse);
+          }
+        }
       },
     );
   }
