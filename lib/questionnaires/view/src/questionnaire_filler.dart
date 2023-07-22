@@ -194,7 +194,7 @@ class QuestionnaireFillerData extends InheritedWidget {
   final Locale locale;
   final QuestionnaireResponseModel questionnaireResponseModel;
   // TODO: Should this copy exist, or just refer to the qrm as the source of truth?
-  final Iterable<FillerItemModel> fillerItemModels;
+  final List<FillerItemModel> fillerItemModels;
 
   final void Function(BuildContext context, Uri url)? onLinkTap;
   final void Function(QuestionnaireResponseModel)? onDataAvailable;
@@ -275,6 +275,41 @@ class QuestionnaireFillerData extends InheritedWidget {
     }
 
     return _itemFillers[index]!;
+  }
+
+  /// Returns the index of the [visibleIndex]-th item that is currently visible, taking into
+  /// account items shown/hidden due to SDC hidden extensions, enableWhen clauses, etc.
+  ///
+  /// If [rootsOnly] is true, it will return the index of the [visibleIndex]-th root item
+  /// that is currently visible.
+  int indexOfVisibleItemAt(int visibleIndex, {bool rootsOnly = false}) {
+    final visibleItems = fillerItemModels
+      .where((item) => item.displayVisibility != DisplayVisibility.hidden)
+      .where((item) => !rootsOnly || item.parentNode == null)
+      .toList(growable: false);
+
+    return visibleItems.length > visibleIndex ? fillerItemModels.indexOf(visibleItems[visibleIndex]) : -1;
+  }
+
+  /// Returns the [QuestionnaireItemFiller] of the [visibleIndex]-th item that is currently
+  /// visible.
+  QuestionnaireItemFiller? visibleItemFillerAt(int visibleIndex) {
+    final index = indexOfVisibleItemAt(visibleIndex);
+
+    return index < 0 ? null : itemFillerAt(index);
+  }
+
+  /// Returns the integer range of items corresponding to the [visibleRootIndex]-th root item
+  /// that is currently visible and its nested subitems.
+  List<int> itemRangeOfVisibleRootItemAt(int visibleRootIndex) {
+    final rootIndex = indexOfVisibleItemAt(visibleRootIndex, rootsOnly: true);
+    if (rootIndex < 0) return [-1, -1];
+
+    final descendantsCount = fillerItemModels
+      .where((item) => item.rootNode == fillerItemModels[rootIndex])
+      .length;
+
+    return [rootIndex, rootIndex + descendantsCount + 1];
   }
 
   @override

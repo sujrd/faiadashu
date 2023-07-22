@@ -770,7 +770,7 @@ class QuestionnaireResponseModel {
   }
 
   /// Items can change, and this should not be cached.
-  Iterable<FillerItemModel> orderedFillerItemModels() {
+  List<FillerItemModel> orderedFillerItemModels() {
     return _fillerItems;
   }
 

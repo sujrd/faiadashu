@@ -44,6 +44,9 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
   @override
   Widget build(BuildContext context) {
     final controller = PageController();
+    final questionnaireTheme = QuestionnaireTheme.of(context);
+    final showGroupsAsSingleSteps = widget.showGroupsAsSingleSteps
+      || questionnaireTheme.stepperGroupDisplayPreference == StepperGroupDisplayPreference.grouped;
 
     return QuestionnaireResponseFiller(
       locale: widget.locale ?? Localizations.localeOf(context),
@@ -63,39 +66,16 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                     /// [PageView.scrollDirection] defaults to [Axis.horizontal].
                     /// Use [Axis.vertical] to scroll vertically.
                     controller: controller,
-                    itemBuilder: (BuildContext context, int pageIndex) {
+                    itemBuilder: (BuildContext context, int index) {
                       final responseFiller = QuestionnaireResponseFiller.of(context);
-                      final questionnaireTheme = QuestionnaireTheme.of(context);
+                      if (!showGroupsAsSingleSteps) return responseFiller.visibleItemFillerAt(index);
 
-                      final showGroupsAsSingleSteps = widget.showGroupsAsSingleSteps
-                        || questionnaireTheme.stepperGroupDisplayPreference == StepperGroupDisplayPreference.grouped;
-
-                      int currentPage = -1;
-                      int rootNodeIndex = -1;
-
-                      final rootNode = responseFiller.fillerItemModels
-                        .firstWhereIndexedOrNull((index, element) {
-                          if (
-                            element.displayVisibility != DisplayVisibility.hidden
-                            && (!showGroupsAsSingleSteps || element.parentNode == null)
-                          ) {
-                            currentPage++;
-                            rootNodeIndex = index;
-                          }
-
-                          return currentPage == pageIndex;
-                        });
-
-                      if (rootNode == null) return null;
-                      if (!showGroupsAsSingleSteps) return responseFiller.itemFillerAt(rootNodeIndex);
-
-                      final descendantsCount = responseFiller.fillerItemModels
-                        .where((element) => element.rootNode == rootNode)
-                        .length;
+                      final range = responseFiller.itemRangeOfVisibleRootItemAt(index);
+                      if (range[0] < 0) return null;
 
                       return ListView.builder(
-                        itemCount: descendantsCount + 1,
-                        itemBuilder: (context, index) => responseFiller.itemFillerAt(rootNodeIndex + index),
+                        itemCount: range[1] - range[0],
+                        itemBuilder: (context, index) => responseFiller.itemFillerAt(range[0] + index),
                       );
                     },
                   ),
