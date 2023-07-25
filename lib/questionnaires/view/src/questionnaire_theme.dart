@@ -89,6 +89,14 @@ class QuestionnaireThemeData {
   final QuestionnaireAnswerFiller Function(AnswerModel, {Key? key})
       createQuestionnaireAnswerFiller;
 
+  final Widget Function(
+    BuildContext context,
+    Widget answerFillerWidget, {
+    Widget? titleWidget,
+    Widget? promptTextWidget,
+    Widget? questionSkipperWidget,
+  }) questionResponseItemLayoutBuilder;
+
   const QuestionnaireThemeData({
     this.canSkipQuestions = false,
     this.showProgress = true,
@@ -100,6 +108,7 @@ class QuestionnaireThemeData {
     this.maxItemWidth = defaultMaxItemWidth,
     this.stepperGroupDisplayPreference = defaultStepperGroupDisplayPreference,
     this.createQuestionnaireAnswerFiller = _createDefaultAnswerFiller,
+    this.questionResponseItemLayoutBuilder = _defaultQuestionResponseItemLayoutBuilder,
   });
 
   /// Returns a [QuestionnaireItemFiller] for a given [QuestionnaireResponseFiller].
@@ -238,6 +247,32 @@ class QuestionnaireThemeData {
           icon: const Icon(Icons.add),
         ),
         const SizedBox(height: 8.0),
+      ],
+    );
+  }
+
+  static Widget _defaultQuestionResponseItemLayoutBuilder(
+    BuildContext context,
+    Widget answerFillerWidget, {
+    Widget? titleWidget,
+    Widget? promptTextWidget,
+    Widget? questionSkipperWidget,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (titleWidget != null)
+          Container(
+            padding: const EdgeInsets.only(top: 8),
+            child: titleWidget,
+          ),
+        if (promptTextWidget != null)
+          promptTextWidget,
+        answerFillerWidget,
+        if (questionSkipperWidget != null)
+          questionSkipperWidget,
+        const SizedBox(height: 8),
       ],
     );
   }
