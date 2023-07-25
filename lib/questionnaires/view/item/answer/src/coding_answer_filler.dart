@@ -45,22 +45,11 @@ class _CodingInputControl extends AnswerInputControl<CodingAnswerModel> {
   Widget build(BuildContext context) {
     final errorText = answerModel.displayErrorText;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildCodingControl(context),
-        if (answerModel.isOptionsOrString) _OpenStringInputControl(answerModel),
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16.0),
-          child: Text(
-            errorText ?? '',
-            style: Theme.of(context)
-                .textTheme
-                .caption
-                ?.copyWith(color: Theme.of(context).errorColor),
-          ),
-        ),
-      ],
+    return QuestionnaireTheme.of(context).codingControlLayoutBuilder(
+      context,
+      _buildCodingControl(context),
+      openStringInputControlWidget: answerModel.isOptionsOrString ? _OpenStringInputControl(answerModel) : null,
+      errorText: errorText,
     );
   }
 

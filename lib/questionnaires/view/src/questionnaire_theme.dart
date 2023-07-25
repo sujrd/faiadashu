@@ -97,6 +97,13 @@ class QuestionnaireThemeData {
     Widget? questionSkipperWidget,
   }) questionResponseItemLayoutBuilder;
 
+  final Widget Function(
+    BuildContext context,
+    Widget codingControlWidget, {
+    Widget? openStringInputControlWidget,
+    String? errorText,
+  }) codingControlLayoutBuilder;
+
   const QuestionnaireThemeData({
     this.canSkipQuestions = false,
     this.showProgress = true,
@@ -109,6 +116,7 @@ class QuestionnaireThemeData {
     this.stepperGroupDisplayPreference = defaultStepperGroupDisplayPreference,
     this.createQuestionnaireAnswerFiller = _createDefaultAnswerFiller,
     this.questionResponseItemLayoutBuilder = _defaultQuestionResponseItemLayoutBuilder,
+    this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
   });
 
   /// Returns a [QuestionnaireItemFiller] for a given [QuestionnaireResponseFiller].
@@ -273,6 +281,31 @@ class QuestionnaireThemeData {
         if (questionSkipperWidget != null)
           questionSkipperWidget,
         const SizedBox(height: 8),
+      ],
+    );
+  }
+
+  static Widget _defaultCodingControlLayoutBuilder(
+    BuildContext context,
+    Widget codingControlWidget, {
+    Widget? openStringInputControlWidget,
+    String? errorText,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        codingControlWidget,
+        if (openStringInputControlWidget != null) openStringInputControlWidget,
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16.0),
+          child: Text(
+            errorText ?? '',
+            style: Theme.of(context)
+                .textTheme
+                .caption
+                ?.copyWith(color: Theme.of(context).errorColor),
+          ),
+        ),
       ],
     );
   }
