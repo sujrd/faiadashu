@@ -53,7 +53,7 @@ class QuestionnaireThemeData {
   final bool showScore;
 
   /// Returns height for text field with and without error text
-  double get textFieldHeight => defaultTextFieldHeight;
+  final double textFieldHeight;
   static const defaultTextFieldHeight = 72.0;
 
   static const defaultAutoCompleteThreshold = 10;
@@ -121,6 +121,7 @@ class QuestionnaireThemeData {
     this.canSkipQuestions = false,
     this.showProgress = true,
     this.showScore = true,
+    this.textFieldHeight = defaultTextFieldHeight,
     this.autoCompleteThreshold = defaultAutoCompleteThreshold,
     this.horizontalCodingBreakpoint = defaultHorizontalCodingBreakpoint,
     this.maxLinesForTextItem = defaultMaxLinesForTextItem,
