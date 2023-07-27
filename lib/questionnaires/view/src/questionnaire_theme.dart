@@ -99,6 +99,13 @@ class QuestionnaireThemeData {
 
   final Widget Function(
     BuildContext context,
+    ResponseItemModel responseItemModel, {
+    Widget? titleWidget,
+    String? errorText,
+  }) groupItemLayoutBuilder;
+
+  final Widget Function(
+    BuildContext context,
     Widget codingControlWidget, {
     Widget? openStringInputControlWidget,
     String? errorText,
@@ -122,6 +129,7 @@ class QuestionnaireThemeData {
     this.stepperGroupDisplayPreference = defaultStepperGroupDisplayPreference,
     this.createQuestionnaireAnswerFiller = _createDefaultAnswerFiller,
     this.questionResponseItemLayoutBuilder = _defaultQuestionResponseItemLayoutBuilder,
+    this.groupItemLayoutBuilder = _defaultGroupItemLayoutBuilder,
     this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
     this.stepperPageItemBuilder = _defaultStepperPageItemBuilder,
   });
@@ -288,6 +296,30 @@ class QuestionnaireThemeData {
         if (questionSkipperWidget != null)
           questionSkipperWidget,
         const SizedBox(height: 8),
+      ],
+    );
+  }
+
+  static Widget _defaultGroupItemLayoutBuilder(
+    BuildContext context,
+    ResponseItemModel responseItemModel, {
+    Widget? titleWidget,
+    String? errorText,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (titleWidget != null) titleWidget,
+        if (errorText != null)
+          Container(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Text(
+              errorText,
+              style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                    color: Theme.of(context).errorColor,
+                  ),
+            ),
+          ),
       ],
     );
   }
