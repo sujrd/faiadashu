@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:faiadashu/resource_provider/resource_provider.dart';
@@ -44,9 +43,6 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
   @override
   Widget build(BuildContext context) {
     final controller = PageController();
-    final questionnaireTheme = QuestionnaireTheme.of(context);
-    final showGroupsAsSingleSteps = widget.showGroupsAsSingleSteps
-      || questionnaireTheme.stepperGroupDisplayPreference == StepperGroupDisplayPreference.grouped;
 
     return QuestionnaireResponseFiller(
       locale: widget.locale ?? Localizations.localeOf(context),
@@ -67,15 +63,10 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                     /// Use [Axis.vertical] to scroll vertically.
                     controller: controller,
                     itemBuilder: (BuildContext context, int index) {
-                      final responseFiller = QuestionnaireResponseFiller.of(context);
-                      if (!showGroupsAsSingleSteps) return responseFiller.visibleItemFillerAt(index);
-
-                      final range = responseFiller.itemRangeOfVisibleRootItemAt(index);
-                      if (range[0] < 0) return null;
-
-                      return ListView.builder(
-                        itemCount: range[1] - range[0],
-                        itemBuilder: (context, index) => responseFiller.itemFillerAt(range[0] + index),
+                      return QuestionnaireTheme.of(context).stepperPageItemBuilder(
+                        context,
+                        QuestionnaireResponseFiller.of(context),
+                        index,
                       );
                     },
                   ),

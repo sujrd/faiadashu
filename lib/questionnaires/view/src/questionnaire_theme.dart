@@ -104,6 +104,12 @@ class QuestionnaireThemeData {
     String? errorText,
   }) codingControlLayoutBuilder;
 
+  final Widget? Function(
+    BuildContext context,
+    QuestionnaireFillerData responseFiller,
+    int pageIndex,
+  ) stepperPageItemBuilder;
+
   const QuestionnaireThemeData({
     this.canSkipQuestions = false,
     this.showProgress = true,
@@ -117,6 +123,7 @@ class QuestionnaireThemeData {
     this.createQuestionnaireAnswerFiller = _createDefaultAnswerFiller,
     this.questionResponseItemLayoutBuilder = _defaultQuestionResponseItemLayoutBuilder,
     this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
+    this.stepperPageItemBuilder = _defaultStepperPageItemBuilder,
   });
 
   /// Returns a [QuestionnaireItemFiller] for a given [QuestionnaireResponseFiller].
@@ -308,5 +315,13 @@ class QuestionnaireThemeData {
         ),
       ],
     );
+  }
+
+  static Widget? _defaultStepperPageItemBuilder(
+    BuildContext context,
+    QuestionnaireFillerData responseFiller,
+    int index,
+  ) {
+    return responseFiller.visibleItemFillerAt(index);
   }
 }
