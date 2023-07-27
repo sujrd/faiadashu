@@ -85,6 +85,15 @@ class QuestionnaireThemeData {
   final QuestionnaireAnswerFiller Function(AnswerModel, {Key? key})
       createQuestionnaireAnswerFiller;
 
+  /// Builds layouts for question items.
+  ///
+  /// [titleWidget] contains the text of the question, [answerFillerWidget] is the input control
+  /// associated with the corresponding question (textbox, datepicker, etc.).
+  ///
+  /// [promptTextWidget] contains the prompt text content if the question has an itemControl extension
+  /// with `prompt` type.
+  ///
+  /// [questionSkipperWidget] is returned if `QuestionnaireThemeData.canSkipQuestions` is set to true.
   final Widget Function(
     BuildContext context,
     QuestionItemModel questionItemModel,
@@ -94,6 +103,11 @@ class QuestionnaireThemeData {
     Widget? questionSkipperWidget,
   }) questionResponseItemLayoutBuilder;
 
+  /// Builds layouts for group items.
+  ///
+  /// [titleWidget] contains the text of the group.
+  ///
+  /// [errorText] contains any validation errors associated with the group in question.
   final Widget Function(
     BuildContext context,
     GroupItemModel groupItemModel, {
@@ -101,12 +115,22 @@ class QuestionnaireThemeData {
     String? errorText,
   }) groupItemLayoutBuilder;
 
+  /// Builds layouts for display items.
+  ///
+  /// [titleWidget] contains the text of the display item.
   final Widget Function(
     BuildContext context,
     DisplayItemModel displayItemModel, {
     Widget? titleWidget,
   }) displayItemLayoutBuilder;
 
+  /// Builds layouts for the input controls of choice-type items (coding).
+  ///
+  /// [codingControlWidget] is the input control associated with the question.
+  ///
+  /// [openStringInputControlWidget] is returned if the item is of type open-choice.
+  ///
+  /// [errorText] contains any validation errors associated with the question.
   final Widget Function(
     BuildContext context,
     Widget codingControlWidget, {
@@ -114,6 +138,12 @@ class QuestionnaireThemeData {
     String? errorText,
   }) codingControlLayoutBuilder;
 
+  /// Builds layouts for QuestionnaireStepper pages.
+  /// If there are no more pages to show, this method must return `null`.
+  ///
+  /// [responseFiller] contains the state data for the current [QuestionnaireResponseFiller].
+  ///
+  /// [pageIndex] is the index of the page that's being currently built.
   final Widget? Function(
     BuildContext context,
     QuestionnaireFillerData responseFiller,
