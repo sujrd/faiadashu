@@ -123,6 +123,7 @@ class QuestionResponseItemFillerState
             focusNode: focusNode,
             child: QuestionnaireTheme.of(context).questionResponseItemLayoutBuilder(
               context,
+              widget.responseItemModel as QuestionItemModel,
               _answerFillerWidget(),
               titleWidget: titleWidget,
               promptTextWidget: _promptTextWidget(context),

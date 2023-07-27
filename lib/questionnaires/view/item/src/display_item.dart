@@ -33,6 +33,7 @@ class _DisplayItemState extends QuestionnaireItemFillerState<DisplayItem> {
                 DisplayVisibility.hidden
             ? QuestionnaireTheme.of(context).displayItemLayoutBuilder(
                 context,
+                widget.fillerItemModel as DisplayItemModel,
                 titleWidget: titleWidget,
               )
             : const SizedBox.shrink();

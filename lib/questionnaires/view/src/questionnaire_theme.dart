@@ -87,6 +87,7 @@ class QuestionnaireThemeData {
 
   final Widget Function(
     BuildContext context,
+    QuestionItemModel questionItemModel,
     Widget answerFillerWidget, {
     Widget? titleWidget,
     Widget? promptTextWidget,
@@ -95,13 +96,14 @@ class QuestionnaireThemeData {
 
   final Widget Function(
     BuildContext context,
-    ResponseItemModel responseItemModel, {
+    GroupItemModel groupItemModel, {
     Widget? titleWidget,
     String? errorText,
   }) groupItemLayoutBuilder;
 
   final Widget Function(
-    BuildContext context, {
+    BuildContext context,
+    DisplayItemModel displayItemModel, {
     Widget? titleWidget,
   }) displayItemLayoutBuilder;
 
@@ -278,6 +280,7 @@ class QuestionnaireThemeData {
 
   static Widget _defaultQuestionResponseItemLayoutBuilder(
     BuildContext context,
+    QuestionItemModel questionItemModel,
     Widget answerFillerWidget, {
     Widget? titleWidget,
     Widget? promptTextWidget,
@@ -307,7 +310,7 @@ class QuestionnaireThemeData {
 
   static Widget _defaultGroupItemLayoutBuilder(
     BuildContext context,
-    ResponseItemModel responseItemModel, {
+    GroupItemModel groupItemModel, {
     Widget? titleWidget,
     String? errorText,
   }) {
@@ -334,7 +337,8 @@ class QuestionnaireThemeData {
   }
 
   static Widget _defaultDisplayItemLayoutBuilder(
-    BuildContext context,{
+    BuildContext context,
+    DisplayItemModel displayItemModel, {
     Widget? titleWidget,
   }) {
     return Column(

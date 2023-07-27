@@ -36,7 +36,7 @@ class _GroupItemState extends ResponseItemFillerState<GroupItem> {
                 DisplayVisibility.hidden
             ? QuestionnaireTheme.of(context).groupItemLayoutBuilder(
                 context,
-                widget.responseItemModel,
+                widget.responseItemModel as GroupItemModel,
                 titleWidget: titleWidget,
                 errorText: errorText,
               )
