@@ -56,20 +56,17 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
           child: Column(
             children: [
               Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: PageView.builder(
-                    /// [PageView.scrollDirection] defaults to [Axis.horizontal].
-                    /// Use [Axis.vertical] to scroll vertically.
-                    controller: controller,
-                    itemBuilder: (BuildContext context, int index) {
-                      return QuestionnaireTheme.of(context).stepperPageItemBuilder(
-                        context,
-                        QuestionnaireResponseFiller.of(context),
-                        index,
-                      );
-                    },
-                  ),
+                child: PageView.builder(
+                  /// [PageView.scrollDirection] defaults to [Axis.horizontal].
+                  /// Use [Axis.vertical] to scroll vertically.
+                  controller: controller,
+                  itemBuilder: (BuildContext context, int index) {
+                    return QuestionnaireTheme.of(context).stepperPageItemBuilder(
+                      context,
+                      QuestionnaireResponseFiller.of(context),
+                      index,
+                    );
+                  },
                 ),
               ),
               Row(

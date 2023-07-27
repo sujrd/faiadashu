@@ -54,28 +54,25 @@ class _DateTimeInputControl extends AnswerInputControl<DateTimeAnswerModel> {
       }[itemType],
     );
 
-    return Container(
-      padding: const EdgeInsets.only(top: 8, bottom: 8),
-      child: FhirDateTimePicker(
-        focusNode: focusNode,
-        enabled: answerModel.isControlEnabled,
-        locale: locale,
-        initialDateTime: initialDate,
-        // TODO: This can be specified through minValue / maxValue
-        firstDate: DateTime(1860),
-        lastDate: DateTime(2050),
-        pickerType: pickerType,
-        decoration: InputDecoration(
-          errorText: answerModel.displayErrorText,
-          errorStyle: (itemModel
-                  .isCalculated) // Force display of error text on calculated item
-              ? TextStyle(
-                  color: Theme.of(context).errorColor,
-                )
-              : null,
-        ),
-        onChanged: (fhirDatetime) => answerModel.value = fhirDatetime,
+    return FhirDateTimePicker(
+      focusNode: focusNode,
+      enabled: answerModel.isControlEnabled,
+      locale: locale,
+      initialDateTime: initialDate,
+      // TODO: This can be specified through minValue / maxValue
+      firstDate: DateTime(1860),
+      lastDate: DateTime(2050),
+      pickerType: pickerType,
+      decoration: InputDecoration(
+        errorText: answerModel.displayErrorText,
+        errorStyle: (itemModel
+                .isCalculated) // Force display of error text on calculated item
+            ? TextStyle(
+                color: Theme.of(context).errorColor,
+              )
+            : null,
       ),
+      onChanged: (fhirDatetime) => answerModel.value = fhirDatetime,
     );
   }
 }

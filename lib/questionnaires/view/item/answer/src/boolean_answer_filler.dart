@@ -42,9 +42,6 @@ class _BooleanInputControl extends AnswerInputControl<BooleanAnswerModel> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(
-          height: 8,
-        ),
         Checkbox(
           focusNode: focusNode,
           value: (answerModel.isTriState)

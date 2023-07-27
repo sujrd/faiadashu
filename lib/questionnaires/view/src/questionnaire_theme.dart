@@ -52,10 +52,6 @@ class QuestionnaireThemeData {
   /// Returns whether the score is displayed while filling (in stepper mode only)
   final bool showScore;
 
-  /// Returns height for text field with and without error text
-  final double textFieldHeight;
-  static const defaultTextFieldHeight = 72.0;
-
   static const defaultAutoCompleteThreshold = 10;
 
   /// Coding answers with more than this amount of choices will be shown as auto-complete control
@@ -126,7 +122,6 @@ class QuestionnaireThemeData {
     this.canSkipQuestions = false,
     this.showProgress = true,
     this.showScore = true,
-    this.textFieldHeight = defaultTextFieldHeight,
     this.autoCompleteThreshold = defaultAutoCompleteThreshold,
     this.horizontalCodingBreakpoint = defaultHorizontalCodingBreakpoint,
     this.maxLinesForTextItem = defaultMaxLinesForTextItem,
@@ -299,10 +294,13 @@ class QuestionnaireThemeData {
           ),
         if (promptTextWidget != null)
           promptTextWidget,
-        answerFillerWidget,
+        Container(
+          padding: const EdgeInsets.only(top: 8),
+          child: answerFillerWidget,
+        ),
         if (questionSkipperWidget != null)
           questionSkipperWidget,
-        const SizedBox(height: 8),
+        const SizedBox(height: 16),
       ],
     );
   }
@@ -316,7 +314,11 @@ class QuestionnaireThemeData {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (titleWidget != null) titleWidget,
+        if (titleWidget != null)
+          Container(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: titleWidget,
+          ),
         if (errorText != null)
           Container(
             padding: const EdgeInsets.only(top: 4.0),
@@ -337,10 +339,12 @@ class QuestionnaireThemeData {
   }) {
     return Column(
       children: [
-        if (titleWidget != null) titleWidget,
-        const SizedBox(
-          height: 16.0,
-        ),
+        if (titleWidget != null)
+          Container(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: titleWidget,
+          ),
+        const SizedBox(height: 16.0),
       ],
     );
   }
@@ -356,15 +360,12 @@ class QuestionnaireThemeData {
       children: [
         codingControlWidget,
         if (openStringInputControlWidget != null) openStringInputControlWidget,
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16.0),
-          child: Text(
-            errorText ?? '',
-            style: Theme.of(context)
-                .textTheme
-                .caption
-                ?.copyWith(color: Theme.of(context).errorColor),
-          ),
+        if (errorText != null) Text(
+          errorText,
+          style: Theme.of(context)
+              .textTheme
+              .caption
+              ?.copyWith(color: Theme.of(context).errorColor),
         ),
       ],
     );
@@ -375,6 +376,12 @@ class QuestionnaireThemeData {
     QuestionnaireFillerData responseFiller,
     int index,
   ) {
-    return responseFiller.visibleItemFillerAt(index);
+    final itemFiller = responseFiller.visibleItemFillerAt(index);
+    if (itemFiller == null ) return null;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: itemFiller,
+    );
   }
 }

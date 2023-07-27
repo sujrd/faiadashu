@@ -70,7 +70,6 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
 
     return Container(
       alignment: AlignmentDirectional.centerStart,
-      padding: const EdgeInsets.only(top: 8.0),
       child: Row(
         children: [
           Expanded(

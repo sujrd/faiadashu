@@ -117,11 +117,8 @@ class _SliderInputControl extends AnswerInputControl<NumericalAnswerModel> {
               ),
             ),
             if (answerModel.hasUnitChoices)
-              SizedBox(
-                height: 16,
-                child: _UnitDropDown(
-                  answerModel,
-                ),
+              _UnitDropDown(
+                answerModel,
               ),
           ],
         ),
@@ -145,7 +142,6 @@ class _SliderInputControl extends AnswerInputControl<NumericalAnswerModel> {
               const SizedBox(width: 8.0),
             ],
           ),
-        if (hasSliderLabels) const SizedBox(height: 8.0),
       ],
     );
   }
@@ -188,69 +184,58 @@ class _NumberFieldInputControl
       );
     }
 
-    final theme = QuestionnaireTheme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.only(top: 8, bottom: 8),
-      child: SizedBox(
-        height: theme.textFieldHeight,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: TextFormField(
-                focusNode: focusNode,
-                enabled: answerModel.isControlEnabled,
-                controller: editingController,
-                textAlignVertical: TextAlignVertical.center,
-                textAlign: TextAlign.end,
-                decoration: InputDecoration(
-                  errorText: answerModel.displayErrorText,
-                  errorStyle: (itemModel
-                          .isCalculated) // Force display of error text on calculated item
-                      ? TextStyle(
-                          color: Theme.of(context).errorColor,
-                        )
-                      : null,
-                  hintText: answerModel.entryFormat,
-                  prefixIcon: itemModel.isCalculated
-                      ? Icon(
-                          Icons.calculate,
-                          color: (answerModel.displayErrorText != null)
-                              ? Theme.of(context).errorColor
-                              : null,
-                        )
-                      : null,
-                  suffixIcon: (answerModel.hasUnitChoices)
-                      ? SizedBox(
-                          height: 16,
-                          child: _UnitDropDown(
-                            answerModel,
-                          ),
-                        )
-                      : null,
-                ),
-                inputFormatters: [numberInputFormatter],
-                keyboardType: TextInputType.numberWithOptions(
-                  signed: answerModel.minValue < 0,
-                  decimal: answerModel.maxDecimal > 0,
-                ),
-                validator: (itemModel.isCalculated)
-                    ? null
-                    : (inputValue) {
-                        return answerModel.validateInput(inputValue);
-                      },
-                autovalidateMode: (itemModel.isCalculated)
-                    ? AutovalidateMode.disabled
-                    : AutovalidateMode.always,
-                onChanged: (content) {
-                  answerModel.value = answerModel.copyWithTextInput(content);
-                },
-              ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: TextFormField(
+            focusNode: focusNode,
+            enabled: answerModel.isControlEnabled,
+            controller: editingController,
+            textAlignVertical: TextAlignVertical.center,
+            textAlign: TextAlign.end,
+            decoration: InputDecoration(
+              errorText: answerModel.displayErrorText,
+              errorStyle: (itemModel
+                      .isCalculated) // Force display of error text on calculated item
+                  ? TextStyle(
+                      color: Theme.of(context).errorColor,
+                    )
+                  : null,
+              hintText: answerModel.entryFormat,
+              prefixIcon: itemModel.isCalculated
+                  ? Icon(
+                      Icons.calculate,
+                      color: (answerModel.displayErrorText != null)
+                          ? Theme.of(context).errorColor
+                          : null,
+                    )
+                  : null,
+              suffixIcon: (answerModel.hasUnitChoices)
+                  ? _UnitDropDown(
+                      answerModel,
+                    )
+                  : null,
             ),
-          ],
+            inputFormatters: [numberInputFormatter],
+            keyboardType: TextInputType.numberWithOptions(
+              signed: answerModel.minValue < 0,
+              decimal: answerModel.maxDecimal > 0,
+            ),
+            validator: (itemModel.isCalculated)
+                ? null
+                : (inputValue) {
+                    return answerModel.validateInput(inputValue);
+                  },
+            autovalidateMode: (itemModel.isCalculated)
+                ? AutovalidateMode.disabled
+                : AutovalidateMode.always,
+            onChanged: (content) {
+              answerModel.value = answerModel.copyWithTextInput(content);
+            },
+          ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -267,7 +252,7 @@ class _UnitDropDown extends AnswerInputControl<NumericalAnswerModel> {
     return answerModel.hasSingleUnitChoice
         ? Container(
             alignment: Alignment.topLeft,
-            padding: const EdgeInsets.only(left: 8, top: 10),
+            padding: const EdgeInsets.only(left: 8),
             width: unitWidth,
             child: Text(
               answerModel.unitChoices.first.localizedDisplay(locale),
