@@ -105,6 +105,11 @@ class QuestionnaireThemeData {
   }) groupItemLayoutBuilder;
 
   final Widget Function(
+    BuildContext context, {
+    Widget? titleWidget,
+  }) displayItemLayoutBuilder;
+
+  final Widget Function(
     BuildContext context,
     Widget codingControlWidget, {
     Widget? openStringInputControlWidget,
@@ -131,6 +136,7 @@ class QuestionnaireThemeData {
     this.createQuestionnaireAnswerFiller = _createDefaultAnswerFiller,
     this.questionResponseItemLayoutBuilder = _defaultQuestionResponseItemLayoutBuilder,
     this.groupItemLayoutBuilder = _defaultGroupItemLayoutBuilder,
+    this.displayItemLayoutBuilder = _defaultDisplayItemLayoutBuilder,
     this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
     this.stepperPageItemBuilder = _defaultStepperPageItemBuilder,
   });
@@ -321,6 +327,20 @@ class QuestionnaireThemeData {
                   ),
             ),
           ),
+      ],
+    );
+  }
+
+  static Widget _defaultDisplayItemLayoutBuilder(
+    BuildContext context,{
+    Widget? titleWidget,
+  }) {
+    return Column(
+      children: [
+        if (titleWidget != null) titleWidget,
+        const SizedBox(
+          height: 16.0,
+        ),
       ],
     );
   }
