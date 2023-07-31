@@ -11,7 +11,6 @@ class QuestionnaireStepper extends StatefulWidget {
   final LaunchContext launchContext;
   final QuestionnairePageScaffoldBuilder scaffoldBuilder;
   final QuestionnaireModelDefaults questionnaireModelDefaults;
-  final bool showGroupsAsSingleSteps;
 
   final void Function(QuestionnaireResponseModel?)?
       onQuestionnaireResponseChanged;
@@ -22,7 +21,6 @@ class QuestionnaireStepper extends StatefulWidget {
     required this.fhirResourceProvider,
     required this.launchContext,
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
-    this.showGroupsAsSingleSteps = false,
     this.onQuestionnaireResponseChanged,
     Key? key,
   }) : super(key: key);
