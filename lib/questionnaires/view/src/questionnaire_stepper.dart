@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:faiadashu/resource_provider/resource_provider.dart';
@@ -11,6 +12,10 @@ class QuestionnaireStepper extends StatefulWidget {
   final LaunchContext launchContext;
   final QuestionnairePageScaffoldBuilder scaffoldBuilder;
   final QuestionnaireModelDefaults questionnaireModelDefaults;
+  final bool showGroupsAsSingleSteps;
+
+  final void Function(QuestionnaireResponseModel?)?
+      onQuestionnaireResponseChanged;
 
   const QuestionnaireStepper({
     this.locale,
@@ -18,6 +23,8 @@ class QuestionnaireStepper extends StatefulWidget {
     required this.fhirResourceProvider,
     required this.launchContext,
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
+    this.showGroupsAsSingleSteps = false,
+    this.onQuestionnaireResponseChanged,
     Key? key,
   }) : super(key: key);
 
@@ -26,11 +33,20 @@ class QuestionnaireStepper extends StatefulWidget {
 }
 
 class QuestionnaireStepperState extends State<QuestionnaireStepper> {
+  QuestionnaireResponseModel? _questionnaireResponseModel;
   int step = 0;
+  bool _isLoaded = false;
+
+  void _handleChangedQuestionnaireResponse() {
+    widget.onQuestionnaireResponseChanged?.call(_questionnaireResponseModel);
+  }
 
   @override
   Widget build(BuildContext context) {
     final controller = PageController();
+    final questionnaireTheme = QuestionnaireTheme.of(context);
+    final showGroupsAsSingleSteps = widget.showGroupsAsSingleSteps
+      || questionnaireTheme.stepperGroupDisplayPreference == StepperGroupDisplayPreference.grouped;
 
     return QuestionnaireResponseFiller(
       locale: widget.locale ?? Localizations.localeOf(context),
@@ -38,9 +54,6 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
       launchContext: widget.launchContext,
       questionnaireModelDefaults: widget.questionnaireModelDefaults,
       builder: (BuildContext context) {
-        final questionnaireFiller = QuestionnaireResponseFiller.of(context);
-        final itemCount = questionnaireFiller.fillerItemModels.length;
-
         return widget.scaffoldBuilder.build(
           context,
           setStateCallback: (fn) => setState(fn),
@@ -53,10 +66,17 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                     /// [PageView.scrollDirection] defaults to [Axis.horizontal].
                     /// Use [Axis.vertical] to scroll vertically.
                     controller: controller,
-                    itemCount: itemCount,
                     itemBuilder: (BuildContext context, int index) {
-                      return QuestionnaireResponseFiller.of(context)
-                          .itemFillerAt(index);
+                      final responseFiller = QuestionnaireResponseFiller.of(context);
+                      if (!showGroupsAsSingleSteps) return responseFiller.visibleItemFillerAt(index);
+
+                      final range = responseFiller.itemRangeOfVisibleRootItemAt(index);
+                      if (range[0] < 0) return null;
+
+                      return ListView.builder(
+                        itemCount: range[1] - range[0],
+                        itemBuilder: (context, index) => responseFiller.itemFillerAt(range[0] + index),
+                      );
                     },
                   ),
                 ),
@@ -74,28 +94,29 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                   Expanded(
                     child: Column(
                       children: [
-                        ValueListenableBuilder<Decimal>(
-                          builder: (
-                            BuildContext context,
-                            Decimal value,
-                            Widget? child,
-                          ) {
-                            final scoreString = value.value!.round().toString();
+                        if (QuestionnaireTheme.of(context).showScore)
+                          ValueListenableBuilder<Decimal>(
+                            builder: (
+                              BuildContext context,
+                              Decimal value,
+                              Widget? child,
+                            ) {
+                              final scoreString = value.value!.round().toString();
 
-                            return AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 200),
-                              child: Text(
-                                FDashLocalizations.of(context)
-                                    .aggregationScore(scoreString),
-                                key: ValueKey<String>(scoreString),
-                                style: Theme.of(context).textTheme.headline4,
-                              ),
-                            );
-                          },
-                          valueListenable:
-                              QuestionnaireResponseFiller.of(context)
-                                  .aggregator<TotalScoreAggregator>(),
-                        ),
+                              return AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 200),
+                                child: Text(
+                                  FDashLocalizations.of(context)
+                                      .aggregationScore(scoreString),
+                                  key: ValueKey<String>(scoreString),
+                                  style: Theme.of(context).textTheme.headline4,
+                                ),
+                              );
+                            },
+                            valueListenable:
+                                QuestionnaireResponseFiller.of(context)
+                                    .aggregator<TotalScoreAggregator>(),
+                          ),
                         if (QuestionnaireTheme.of(context).showProgress)
                           const QuestionnaireFillerProgressBar(),
                       ],
@@ -113,6 +134,24 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
             ],
           ),
         );
+      },
+      // TODO: Refactor some of this logic with QuestionnaireScroller
+      onDataAvailable: (questionnaireResponseModel) {
+        // Upon initial load: Locate the first unanswered or invalid question
+        if (!_isLoaded) {
+          _isLoaded = true;
+
+          _questionnaireResponseModel = questionnaireResponseModel;
+
+          if (widget.onQuestionnaireResponseChanged != null) {
+            // Broadcast initial response state.
+            _handleChangedQuestionnaireResponse();
+
+            // FIXME: What is this listening for???
+            _questionnaireResponseModel?.valueChangeNotifier
+                .addListener(_handleChangedQuestionnaireResponse);
+          }
+        }
       },
     );
   }
