@@ -126,6 +126,17 @@ class QuestionnaireThemeData {
     String? errorText,
   }) codingControlLayoutBuilder;
 
+  /// Builds layouts for QuestionnaireScroller items.
+  ///
+  /// [responseFiller] contains the state data for the current [QuestionnaireResponseFiller].
+  ///
+  /// [itemIndex] is the index of the form item that's being currently built.
+  final Widget? Function(
+    BuildContext context,
+    QuestionnaireFillerData responseFiller,
+    int itemIndex,
+  ) scrollerItemBuilder;
+
   /// Builds layouts for QuestionnaireStepper pages.
   /// If there are no more pages to show, this method must return `null`.
   ///
@@ -152,6 +163,7 @@ class QuestionnaireThemeData {
     this.groupItemLayoutBuilder = _defaultGroupItemLayoutBuilder,
     this.displayItemLayoutBuilder = _defaultDisplayItemLayoutBuilder,
     this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
+    this.scrollerItemBuilder = _defaultScrollerItemBuilder,
     this.stepperPageItemBuilder = _defaultStepperPageItemBuilder,
   });
 
@@ -390,6 +402,14 @@ class QuestionnaireThemeData {
         ),
       ],
     );
+  }
+
+  static Widget? _defaultScrollerItemBuilder(
+    BuildContext context,
+    QuestionnaireFillerData responseFiller,
+    int index,
+  ) {
+    return responseFiller.itemFillerAt(index);
   }
 
   static Widget? _defaultStepperPageItemBuilder(

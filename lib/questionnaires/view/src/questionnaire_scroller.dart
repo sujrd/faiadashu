@@ -201,8 +201,11 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
                                   constraints.maxWidth - twice * edgeInsets,
                                 ),
                           ),
-                          child: QuestionnaireResponseFiller.of(context)
-                              .itemFillerAt(i),
+                          child: QuestionnaireTheme.of(context).scrollerItemBuilder(
+                            context,
+                            QuestionnaireResponseFiller.of(context),
+                            i,
+                          ),
                         ),
                         const Spacer(),
                       ],
