@@ -85,46 +85,38 @@ class _StringAnswerInputControl extends AnswerInputControl<StringAnswerModel> {
       StringAnswerKeyboard.multiline: TextInputType.multiline,
     }[answerModel.keyboard]!;
 
-    final theme = QuestionnaireTheme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.only(top: 8, bottom: 8),
-      child: SizedBox(
-        height: theme.textFieldHeight,
-        child: TextFormField(
-          focusNode: focusNode,
-          enabled: answerModel.isControlEnabled,
-          keyboardType: keyboardType,
-          controller: editingController,
-          maxLines: (qi.type == QuestionnaireItemType.text)
-              ? QuestionnaireTheme.of(context).maxLinesForTextItem
-              : 1,
-          decoration: InputDecoration(
-            errorText: answerModel.displayErrorText,
-            errorStyle: (itemModel
-                    .isCalculated) // Force display of error text on calculated item
-                ? TextStyle(
-                    color: Theme.of(context).errorColor,
-                  )
-                : null,
-            hintText: answerModel.entryFormat,
-            prefixIcon: itemModel.isCalculated
-                ? Icon(
-                    Icons.calculate,
-                    color: (answerModel.displayErrorText != null)
-                        ? Theme.of(context).errorColor
-                        : null,
-                  )
-                : null,
-          ),
-          validator: (inputValue) => answerModel.validateInput(inputValue),
-          autovalidateMode: AutovalidateMode.always,
-          onChanged: (content) {
-            answerModel.value = content;
-          },
-          maxLength: answerModel.maxLength,
-        ),
+    return TextFormField(
+      focusNode: focusNode,
+      enabled: answerModel.isControlEnabled,
+      keyboardType: keyboardType,
+      controller: editingController,
+      maxLines: (qi.type == QuestionnaireItemType.text)
+          ? QuestionnaireTheme.of(context).maxLinesForTextItem
+          : 1,
+      decoration: InputDecoration(
+        errorText: answerModel.displayErrorText,
+        errorStyle: (itemModel
+                .isCalculated) // Force display of error text on calculated item
+            ? TextStyle(
+                color: Theme.of(context).errorColor,
+              )
+            : null,
+        hintText: answerModel.entryFormat,
+        prefixIcon: itemModel.isCalculated
+            ? Icon(
+                Icons.calculate,
+                color: (answerModel.displayErrorText != null)
+                    ? Theme.of(context).errorColor
+                    : null,
+              )
+            : null,
       ),
+      validator: (inputValue) => answerModel.validateInput(inputValue),
+      autovalidateMode: AutovalidateMode.always,
+      onChanged: (content) {
+        answerModel.value = content;
+      },
+      maxLength: answerModel.maxLength,
     );
   }
 }

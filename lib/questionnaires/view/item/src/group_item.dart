@@ -34,21 +34,11 @@ class _GroupItemState extends ResponseItemFillerState<GroupItem> {
 
         return widget.responseItemModel.displayVisibility !=
                 DisplayVisibility.hidden
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (titleWidget != null) titleWidget,
-                  if (errorText != null)
-                    Container(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: Text(
-                        errorText,
-                        style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                              color: Theme.of(context).errorColor,
-                            ),
-                      ),
-                    ),
-                ],
+            ? QuestionnaireTheme.of(context).groupItemLayoutBuilder(
+                context,
+                widget.responseItemModel as GroupItemModel,
+                titleWidget: titleWidget,
+                errorText: errorText,
               )
             : const SizedBox.shrink();
       },

@@ -40,17 +40,14 @@ class _AttachmentInputControl extends AnswerInputControl<AttachmentAnswerModel> 
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(top: 8, bottom: 8),
-      child: FhirAttachmentPicker(
-        focusNode: focusNode,
-        enabled: answerModel.isControlEnabled,
-        initialAttachment: answerModel.value,
-        allowedMimeTypes: answerModel.mimeTypes,
-        onChanged: (attachment) => answerModel.value = attachment,
-        decoration: InputDecoration(
-          errorText: answerModel.displayErrorText,
-        ),
+    return FhirAttachmentPicker(
+      focusNode: focusNode,
+      enabled: answerModel.isControlEnabled,
+      initialAttachment: answerModel.value,
+      allowedMimeTypes: answerModel.mimeTypes,
+      onChanged: (attachment) => answerModel.value = attachment,
+      decoration: InputDecoration(
+        errorText: answerModel.displayErrorText,
       ),
     );
   }

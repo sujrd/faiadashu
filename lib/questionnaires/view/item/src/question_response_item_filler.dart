@@ -60,15 +60,55 @@ class QuestionResponseItemFillerState
     }
   }
 
+  Widget _answerFillerWidget() {
+    return _HorizontalAnswerFillers(
+      questionResponseItemModel,
+      questionnaireTheme,
+    );
+  }
+
+  Widget? _promptTextWidget(BuildContext context) {
+    final promptText = _promptText;
+    if (promptText == null) return null;
+
+    return Xhtml.fromRenderingString(
+      context,
+      promptText,
+    );
+  }
+
+  Widget? _questionSkipperWidget() {
+    if (questionnaireTheme.canSkipQuestions &&
+      !widget.questionnaireItemModel.isReadOnly &&
+      !widget.questionnaireItemModel.isRequired
+    ) {
+      return Row(
+        children: [
+          Text(
+            FDashLocalizations.of(context)
+                .dataAbsentReasonAskedDeclinedInputLabel,
+          ),
+          Switch(
+            focusNode: _skipSwitchFocusNode,
+            value: questionResponseItemModel.isAskedButDeclined,
+            onChanged: (bool value) {
+              _setDataAbsentReason(
+                value ? dataAbsentReasonAskedButDeclinedCode : null,
+              );
+            },
+          ),
+        ],
+      );
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     _qrimLogger.trace(
       'build ${widget.responseItemModel} hidden: ${widget.responseItemModel.questionnaireItemModel.isHidden}, enabled: ${widget.responseItemModel.isEnabled}',
     );
-
-    final canSkipQuestions = questionnaireTheme.canSkipQuestions;
-
-    final promptText = _promptText;
 
     return AnimatedBuilder(
       animation: widget.responseItemModel,
@@ -81,46 +121,13 @@ class QuestionResponseItemFillerState
               debugDumpFocusTree();
             }, */
             focusNode: focusNode,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (titleWidget != null)
-                  Container(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: titleWidget,
-                  ),
-                if (promptText != null)
-                  Xhtml.fromRenderingString(
-                    context,
-                    promptText,
-                  ),
-                _HorizontalAnswerFillers(
-                  questionResponseItemModel,
-                  questionnaireTheme,
-                ),
-                if (canSkipQuestions &&
-                    !widget.questionnaireItemModel.isReadOnly &&
-                    !widget.questionnaireItemModel.isRequired)
-                  Row(
-                    children: [
-                      Text(
-                        FDashLocalizations.of(context)
-                            .dataAbsentReasonAskedDeclinedInputLabel,
-                      ),
-                      Switch(
-                        focusNode: _skipSwitchFocusNode,
-                        value: questionResponseItemModel.isAskedButDeclined,
-                        onChanged: (bool value) {
-                          _setDataAbsentReason(
-                            value ? dataAbsentReasonAskedButDeclinedCode : null,
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                const SizedBox(height: 8),
-              ],
+            child: QuestionnaireTheme.of(context).questionResponseItemLayoutBuilder(
+              context,
+              widget.responseItemModel as QuestionItemModel,
+              _answerFillerWidget(),
+              titleWidget: titleWidget,
+              promptTextWidget: _promptTextWidget(context),
+              questionSkipperWidget: _questionSkipperWidget(),
             ),
           ),
           secondChild: const SizedBox(

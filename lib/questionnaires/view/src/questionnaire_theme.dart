@@ -12,11 +12,6 @@ enum CodingControlPreference {
   expanded,
 }
 
-enum StepperGroupDisplayPreference {
-  separated,
-  grouped,
-}
-
 class QuestionnaireTheme extends InheritedWidget {
   final QuestionnaireThemeData data;
 
@@ -52,10 +47,6 @@ class QuestionnaireThemeData {
   /// Returns whether the score is displayed while filling (in stepper mode only)
   final bool showScore;
 
-  /// Returns height for text field with and without error text
-  double get textFieldHeight => defaultTextFieldHeight;
-  static const defaultTextFieldHeight = 72.0;
-
   static const defaultAutoCompleteThreshold = 10;
 
   /// Coding answers with more than this amount of choices will be shown as auto-complete control
@@ -79,15 +70,84 @@ class QuestionnaireThemeData {
   static const defaultCodingControlPreference = CodingControlPreference.compact;
   final CodingControlPreference codingControlPreference;
 
-  static const defaultStepperGroupDisplayPreference = StepperGroupDisplayPreference.separated;
-
-  /// Usable when rendering as QuestionnaireStepperPage only.
-  /// Specifies whether group subitems should show in different steps (default),
-  /// or all at once in the same step.
-  final StepperGroupDisplayPreference stepperGroupDisplayPreference;
-
   final QuestionnaireAnswerFiller Function(AnswerModel, {Key? key})
       createQuestionnaireAnswerFiller;
+
+  /// Builds layouts for question items.
+  ///
+  /// [titleWidget] contains the text of the question, [answerFillerWidget] is the input control
+  /// associated with the corresponding question (textbox, datepicker, etc.).
+  ///
+  /// [promptTextWidget] contains the prompt text content if the question has an itemControl extension
+  /// with `prompt` type.
+  ///
+  /// [questionSkipperWidget] is returned if `QuestionnaireThemeData.canSkipQuestions` is set to true.
+  final Widget Function(
+    BuildContext context,
+    QuestionItemModel questionItemModel,
+    Widget answerFillerWidget, {
+    Widget? titleWidget,
+    Widget? promptTextWidget,
+    Widget? questionSkipperWidget,
+  }) questionResponseItemLayoutBuilder;
+
+  /// Builds layouts for group items.
+  ///
+  /// [titleWidget] contains the text of the group.
+  ///
+  /// [errorText] contains any validation errors associated with the group in question.
+  final Widget Function(
+    BuildContext context,
+    GroupItemModel groupItemModel, {
+    Widget? titleWidget,
+    String? errorText,
+  }) groupItemLayoutBuilder;
+
+  /// Builds layouts for display items.
+  ///
+  /// [titleWidget] contains the text of the display item.
+  final Widget Function(
+    BuildContext context,
+    DisplayItemModel displayItemModel, {
+    Widget? titleWidget,
+  }) displayItemLayoutBuilder;
+
+  /// Builds layouts for the input controls of choice-type items (coding).
+  ///
+  /// [codingControlWidget] is the input control associated with the question.
+  ///
+  /// [openStringInputControlWidget] is returned if the item is of type open-choice.
+  ///
+  /// [errorText] contains any validation errors associated with the question.
+  final Widget Function(
+    BuildContext context,
+    Widget codingControlWidget, {
+    Widget? openStringInputControlWidget,
+    String? errorText,
+  }) codingControlLayoutBuilder;
+
+  /// Builds layouts for QuestionnaireScroller items.
+  ///
+  /// [responseFiller] contains the state data for the current [QuestionnaireResponseFiller].
+  ///
+  /// [itemIndex] is the index of the form item that's being currently built.
+  final Widget? Function(
+    BuildContext context,
+    QuestionnaireFillerData responseFiller,
+    int itemIndex,
+  ) scrollerItemBuilder;
+
+  /// Builds layouts for QuestionnaireStepper pages.
+  /// If there are no more pages to show, this method must return `null`.
+  ///
+  /// [responseFiller] contains the state data for the current [QuestionnaireResponseFiller].
+  ///
+  /// [pageIndex] is the index of the page that's being currently built.
+  final Widget? Function(
+    BuildContext context,
+    QuestionnaireFillerData responseFiller,
+    int pageIndex,
+  ) stepperPageItemBuilder;
 
   const QuestionnaireThemeData({
     this.canSkipQuestions = false,
@@ -98,8 +158,13 @@ class QuestionnaireThemeData {
     this.maxLinesForTextItem = defaultMaxLinesForTextItem,
     this.codingControlPreference = defaultCodingControlPreference,
     this.maxItemWidth = defaultMaxItemWidth,
-    this.stepperGroupDisplayPreference = defaultStepperGroupDisplayPreference,
     this.createQuestionnaireAnswerFiller = _createDefaultAnswerFiller,
+    this.questionResponseItemLayoutBuilder = _defaultQuestionResponseItemLayoutBuilder,
+    this.groupItemLayoutBuilder = _defaultGroupItemLayoutBuilder,
+    this.displayItemLayoutBuilder = _defaultDisplayItemLayoutBuilder,
+    this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
+    this.scrollerItemBuilder = _defaultScrollerItemBuilder,
+    this.stepperPageItemBuilder = _defaultStepperPageItemBuilder,
   });
 
   /// Returns a [QuestionnaireItemFiller] for a given [QuestionnaireResponseFiller].
@@ -239,6 +304,125 @@ class QuestionnaireThemeData {
         ),
         const SizedBox(height: 8.0),
       ],
+    );
+  }
+
+  static Widget _defaultQuestionResponseItemLayoutBuilder(
+    BuildContext context,
+    QuestionItemModel questionItemModel,
+    Widget answerFillerWidget, {
+    Widget? titleWidget,
+    Widget? promptTextWidget,
+    Widget? questionSkipperWidget,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (titleWidget != null)
+          Container(
+            padding: const EdgeInsets.only(top: 8),
+            child: titleWidget,
+          ),
+        if (promptTextWidget != null)
+          promptTextWidget,
+        Container(
+          padding: const EdgeInsets.only(top: 8),
+          child: answerFillerWidget,
+        ),
+        if (questionSkipperWidget != null)
+          questionSkipperWidget,
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  static Widget _defaultGroupItemLayoutBuilder(
+    BuildContext context,
+    GroupItemModel groupItemModel, {
+    Widget? titleWidget,
+    String? errorText,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (titleWidget != null)
+          Container(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: titleWidget,
+          ),
+        if (errorText != null)
+          Container(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Text(
+              errorText,
+              style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                    color: Theme.of(context).errorColor,
+                  ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  static Widget _defaultDisplayItemLayoutBuilder(
+    BuildContext context,
+    DisplayItemModel displayItemModel, {
+    Widget? titleWidget,
+  }) {
+    return Column(
+      children: [
+        if (titleWidget != null)
+          Container(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: titleWidget,
+          ),
+        const SizedBox(height: 16.0),
+      ],
+    );
+  }
+
+  static Widget _defaultCodingControlLayoutBuilder(
+    BuildContext context,
+    Widget codingControlWidget, {
+    Widget? openStringInputControlWidget,
+    String? errorText,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        codingControlWidget,
+        if (openStringInputControlWidget != null) openStringInputControlWidget,
+        if (errorText != null) Text(
+          errorText,
+          style: Theme.of(context)
+              .textTheme
+              .caption
+              ?.copyWith(color: Theme.of(context).errorColor),
+        ),
+      ],
+    );
+  }
+
+  static Widget? _defaultScrollerItemBuilder(
+    BuildContext context,
+    QuestionnaireFillerData responseFiller,
+    int index,
+  ) {
+    return responseFiller.itemFillerAt(index);
+  }
+
+  static Widget? _defaultStepperPageItemBuilder(
+    BuildContext context,
+    QuestionnaireFillerData responseFiller,
+    int index,
+  ) {
+    final itemFiller = responseFiller.visibleItemFillerAt(index);
+    if (itemFiller == null ) return null;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: itemFiller,
     );
   }
 }
