@@ -43,8 +43,7 @@ class _DateTimeInputControl extends AnswerInputControl<DateTimeAnswerModel> {
   Widget build(BuildContext context) {
     final itemType = qi.type;
 
-    final initialDate =
-        (itemType != QuestionnaireItemType.time) ? answerModel.value : null;
+    final initialDate = answerModel.value;
 
     final pickerType = ArgumentError.checkNotNull(
       const {
