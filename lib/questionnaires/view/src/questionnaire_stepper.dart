@@ -11,9 +11,11 @@ class QuestionnaireStepper extends StatefulWidget {
   final LaunchContext launchContext;
   final QuestionnairePageScaffoldBuilder scaffoldBuilder;
   final QuestionnaireModelDefaults questionnaireModelDefaults;
+  final PageController? pageController;
 
   final void Function(QuestionnaireResponseModel?)?
       onQuestionnaireResponseChanged;
+  final void Function(int)? onPageChanged;
 
   const QuestionnaireStepper({
     this.locale,
@@ -22,6 +24,8 @@ class QuestionnaireStepper extends StatefulWidget {
     required this.launchContext,
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
     this.onQuestionnaireResponseChanged,
+    this.onPageChanged,
+    this.pageController,
     Key? key,
   }) : super(key: key);
 
@@ -40,7 +44,7 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = PageController();
+    final controller = widget.pageController ?? PageController();
 
     return QuestionnaireResponseFiller(
       locale: widget.locale ?? Localizations.localeOf(context),
@@ -58,6 +62,7 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                   /// [PageView.scrollDirection] defaults to [Axis.horizontal].
                   /// Use [Axis.vertical] to scroll vertically.
                   controller: controller,
+                  onPageChanged: widget.onPageChanged,
                   itemBuilder: (BuildContext context, int index) {
                     return QuestionnaireTheme.of(context).stepperPageItemBuilder(
                       context,
@@ -65,18 +70,22 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                       index,
                     );
                   },
+                  physics: widget.pageController != null
+                      ? const NeverScrollableScrollPhysics()
+                      : null,
                 ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () => controller.previousPage(
-                      curve: Curves.easeIn,
-                      duration: const Duration(milliseconds: 250),
+                  if (widget.pageController == null)
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: () => controller.previousPage(
+                        curve: Curves.easeIn,
+                        duration: const Duration(milliseconds: 250),
+                      ),
                     ),
-                  ),
                   Expanded(
                     child: Column(
                       children: [
@@ -108,13 +117,14 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                       ],
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.arrow_forward),
-                    onPressed: () => controller.nextPage(
-                      curve: Curves.easeIn,
-                      duration: const Duration(milliseconds: 250),
+                  if (widget.pageController == null)
+                    IconButton(
+                      icon: const Icon(Icons.arrow_forward),
+                      onPressed: () => controller.nextPage(
+                        curve: Curves.easeIn,
+                        duration: const Duration(milliseconds: 250),
+                      ),
                     ),
-                  ),
                 ],
               ),
             ],

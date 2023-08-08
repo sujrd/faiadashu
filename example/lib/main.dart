@@ -5,6 +5,7 @@ import 'package:faiadashu/faiadashu.dart';
 import 'package:faiadashu/logging/logging.dart' as fdashlog;
 import 'package:faiadashu_example/about_page.dart';
 import 'package:faiadashu_example/cherry_blossom_theme.dart';
+import 'package:faiadashu_example/custom_questionnaire_stepper_page.dart';
 import 'package:faiadashu_example/disclaimer_page.dart';
 import 'package:faiadashu_example/observation_page.dart';
 import 'package:faiadashu_example/primitive_page.dart';
@@ -331,6 +332,33 @@ class _HomePageState extends State<HomePage> {
                           fhirResourceProvider: AssetResourceProvider.singleton(
                             questionnaireResourceUri,
                             'assets/instruments/phq9_instrument.json',
+                          ),
+                          launchContext: launchContext,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text('Custom Questionnaire Stepper Page'),
+                subtitle: const Text(
+                  'Cardiac risk scoring survey with customized buttons.',
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => QuestionnaireTheme(
+                        data: const QuestionnaireThemeData(
+                          // It is better for a wizard to overtly present all choices on each screen.
+                          codingControlPreference:
+                              CodingControlPreference.expanded,
+                        ),
+                        child: CustomQuestionnaireStepperPage(
+                          fhirResourceProvider: AssetResourceProvider.singleton(
+                            questionnaireResourceUri,
+                            'assets/instruments/framingham-hcdc.json',
                           ),
                           launchContext: launchContext,
                         ),
