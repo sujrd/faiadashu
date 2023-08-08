@@ -53,7 +53,7 @@ class _CustomQuestionnaireStepperPageState
 
   bool _hasReachedLastPage() {
     final totalPage =
-        _questionnaireResponseModel?.orderedFillerItemModels().length ?? 0;
+        _questionnaireResponseModel?.orderedQuestionItemModels().length ?? 0;
     return _currentIndex == totalPage - 1;
   }
 
