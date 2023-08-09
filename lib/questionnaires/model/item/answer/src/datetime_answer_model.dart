@@ -80,7 +80,14 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
 
   @override
   void populate(QuestionnaireResponseAnswer answer) {
-    value = answer.valueDateTime ??
-        ((answer.valueDate != null) ? FhirDateTime(answer.valueDate) : null);
+    // NOTE: Model should probably be populated based on QuestionnaireItemType
+    value = answer.valueDateTime ?? (
+      (answer.valueDate != null)
+      ? FhirDateTime(answer.valueDate)
+      : (answer.valueTime != null)
+      // TODO: Find a better way to convert Time values to FhirDateTime
+      ? FhirDateTime('1970-01-01T${answer.valueTime}')
+      : null
+    );
   }
 }

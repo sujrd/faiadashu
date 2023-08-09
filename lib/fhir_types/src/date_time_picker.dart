@@ -58,6 +58,15 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
     super.dispose();
   }
 
+  String _formatDateTime(FhirDateTime? value, Locale locale) {
+    final dateTime = value?.valueDateTime;
+    if (value == null || dateTime == null) return '';
+
+    return (widget.pickerType == Time)
+      ? DateFormat.jm(locale.toString()).format(dateTime)
+      : value.format(locale);
+  }
+
   Future<void> _showPicker(Locale locale) async {
     DateTime dateTime = DateTime(1970);
 
@@ -110,9 +119,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
           : DateTimePrecision.FULL,
     );
     setState(() {
-      _dateTimeFieldController.text = (widget.pickerType == Time)
-          ? DateFormat.jm(locale.toString()).format(dateTime)
-          : fhirDateTime.format(locale);
+      _dateTimeFieldController.text = _formatDateTime(fhirDateTime, locale);
     });
     _dateTimeValue = fhirDateTime;
     widget.onChanged?.call(fhirDateTime);
@@ -124,7 +131,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
 
     // There is no Locale in initState.
     if (!_fieldInitialized) {
-      _dateTimeFieldController.text = _dateTimeValue?.format(locale) ?? '';
+      _dateTimeFieldController.text = _formatDateTime(_dateTimeValue, locale);
       _fieldInitialized = true;
     }
 
