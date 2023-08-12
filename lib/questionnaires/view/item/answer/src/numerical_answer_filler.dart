@@ -232,7 +232,10 @@ class _NumberFieldInputControl
                 : AutovalidateMode.always,
             onChanged: (content) {
               answerModel.value = answerModel.copyWithTextInput(content);
-              if (answerModel.hasSingleUnitChoice) {
+              if (answerModel.hasUnitChoices && !answerModel.hasUnit) {
+                // Fix unit not being set properly when value changes if:
+                // - hasSingleUnitChoice = true (no dropdown shown), or
+                // - user has not interacted with the unit dropdown.
                 answerModel.value = answerModel.copyWithUnit(answerModel.unitChoices.first.code?.value);
               }
             },
@@ -267,7 +270,7 @@ class _UnitDropDown extends AnswerInputControl<NumericalAnswerModel> {
             width: unitWidth,
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                value: answerModel.keyOfUnit,
+                value: answerModel.keyOfUnit ?? answerModel.unitChoices.first.code?.value,
                 hint: const NullDashText(),
                 onChanged: (answerModel.isControlEnabled)
                     ? (String? newValue) {
@@ -275,7 +278,6 @@ class _UnitDropDown extends AnswerInputControl<NumericalAnswerModel> {
                       }
                     : null,
                 items: [
-                  const DropdownMenuItem<String>(child: NullDashText()),
                   ...answerModel.unitChoices
                       .map<DropdownMenuItem<String>>((Coding value) {
                     return DropdownMenuItem<String>(
