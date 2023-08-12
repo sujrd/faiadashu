@@ -232,6 +232,9 @@ class _NumberFieldInputControl
                 : AutovalidateMode.always,
             onChanged: (content) {
               answerModel.value = answerModel.copyWithTextInput(content);
+              if (answerModel.hasSingleUnitChoice) {
+                answerModel.value = answerModel.copyWithUnit(answerModel.unitChoices.first.code?.value);
+              }
             },
           ),
         ),
