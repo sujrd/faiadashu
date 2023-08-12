@@ -251,7 +251,7 @@ class _UnitDropDown extends AnswerInputControl<NumericalAnswerModel> {
 
     return answerModel.hasSingleUnitChoice
         ? Container(
-            alignment: Alignment.topLeft,
+            alignment: Alignment.centerLeft,
             padding: const EdgeInsets.only(left: 8),
             width: unitWidth,
             child: Text(
