@@ -231,13 +231,19 @@ class _NumberFieldInputControl
                 ? AutovalidateMode.disabled
                 : AutovalidateMode.always,
             onChanged: (content) {
-              answerModel.value = answerModel.copyWithTextInput(content);
+              Quantity? value = answerModel.copyWithTextInput(content);
               if (answerModel.hasUnitChoices && !answerModel.hasUnit) {
                 // Fix unit not being set properly when value changes if:
                 // - hasSingleUnitChoice = true (no dropdown shown), or
                 // - user has not interacted with the unit dropdown.
-                answerModel.value = answerModel.copyWithUnit(answerModel.unitChoices.first.code?.value);
+                value = answerModel
+                  .copyWithUnit(answerModel.unitChoices.first.code?.value)
+                  ?.copyWith(
+                    value: value?.value,
+                    extension_: value?.extension_,
+                  );
               }
+              answerModel.value = value;
             },
           ),
         ),
