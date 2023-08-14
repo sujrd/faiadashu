@@ -1,4 +1,5 @@
 import 'package:faiadashu/fhir_types/fhir_types.dart';
+import 'package:faiadashu/questionnaires/view/src/questionnaire_theme.dart';
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -73,6 +74,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
     if (widget.pickerType != Time) {
       final date = await showDatePicker(
         initialDate: _dateTimeValue?.value ?? DateTime.now(),
+        initialEntryMode: QuestionnaireTheme.of(context).datePickerEntryMode,
         firstDate: widget.firstDate,
         lastDate: widget.lastDate,
         locale: locale,
@@ -89,6 +91,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
       final time = await showTimePicker(
         initialTime:
             TimeOfDay.fromDateTime(_dateTimeValue?.value ?? DateTime.now()),
+        initialEntryMode: QuestionnaireTheme.of(context).timePickerEntryMode,
         context: context,
         builder: (context, child) {
           return Localizations.override(

@@ -67,6 +67,16 @@ class QuestionnaireThemeData {
   /// They will not use more width, even if the display is wider.
   final double maxItemWidth;
 
+  /// Mode of date entry method for the date picker dialog for date and dateTime items.
+  ///
+  /// Possible Values: https://api.flutter.dev/flutter/material/DatePickerEntryMode.html
+  final DatePickerEntryMode datePickerEntryMode;
+
+  /// Interactive input mode of the time picker dialog for dateTime and time items.
+  ///
+  /// Possible Values: https://api.flutter.dev/flutter/material/TimePickerEntryMode.html
+  final TimePickerEntryMode timePickerEntryMode;
+
   static const defaultCodingControlPreference = CodingControlPreference.compact;
   final CodingControlPreference codingControlPreference;
 
@@ -158,6 +168,8 @@ class QuestionnaireThemeData {
     this.maxLinesForTextItem = defaultMaxLinesForTextItem,
     this.codingControlPreference = defaultCodingControlPreference,
     this.maxItemWidth = defaultMaxItemWidth,
+    this.datePickerEntryMode = DatePickerEntryMode.calendar,
+    this.timePickerEntryMode = TimePickerEntryMode.dial,
     this.createQuestionnaireAnswerFiller = _createDefaultAnswerFiller,
     this.questionResponseItemLayoutBuilder = _defaultQuestionResponseItemLayoutBuilder,
     this.groupItemLayoutBuilder = _defaultGroupItemLayoutBuilder,
