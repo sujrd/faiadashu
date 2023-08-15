@@ -62,6 +62,8 @@ class _DateTimeInputControl extends AnswerInputControl<DateTimeAnswerModel> {
       firstDate: DateTime(1860),
       lastDate: DateTime(2050),
       pickerType: pickerType,
+      datePickerEntryMode: QuestionnaireTheme.of(context).datePickerEntryMode,
+      timePickerEntryMode: QuestionnaireTheme.of(context).timePickerEntryMode,
       decoration: InputDecoration(
         errorText: answerModel.displayErrorText,
         errorStyle: (itemModel
