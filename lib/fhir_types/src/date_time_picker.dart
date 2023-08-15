@@ -48,6 +48,15 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
   bool _fieldInitialized = false;
   final _clearFocusNode = FocusNode(skipTraversal: true);
 
+  // All 24h TimeOFDayFormats as specified in:
+  // https://api.flutter.dev/flutter/material/TimeOfDayFormat.html
+  static const timeOfDay24hFormats = {
+    TimeOfDayFormat.HH_colon_mm,
+    TimeOfDayFormat.HH_dot_mm,
+    TimeOfDayFormat.frenchCanadian,
+    TimeOfDayFormat.H_colon_mm,
+  };
+
   @override
   void initState() {
     super.initState();
@@ -100,7 +109,22 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
           return Localizations.override(
             context: context,
             locale: locale,
-            child: child,
+            child: Builder(
+              // Get new BuildContext with overridden locale
+              builder: (context) {
+                // Get time of day format of current locale
+                final timeOfDayFormat = MaterialLocalizations.of(context).timeOfDayFormat();
+                return MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    // Workaround for time picker validation bug in `input` mode with locales specifying a 24h TimeOfDayFormat.
+                    // - https://github.com/sujrd/faiadashu/pull/32#issuecomment-1678639964
+                    // - https://github.com/flutter/flutter/issues/85527
+                    alwaysUse24HourFormat: timeOfDay24hFormats.contains(timeOfDayFormat),
+                  ),
+                  child: child!,
+                );
+              },
+            ),
           );
         },
       );
