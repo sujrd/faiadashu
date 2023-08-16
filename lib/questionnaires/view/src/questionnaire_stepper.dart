@@ -16,6 +16,7 @@ class QuestionnaireStepper extends StatefulWidget {
   final void Function(QuestionnaireResponseModel?)?
       onQuestionnaireResponseChanged;
   final void Function(int)? onPageChanged;
+  final void Function(bool)? onLastPageUpdated;
 
   const QuestionnaireStepper({
     this.locale,
@@ -25,6 +26,7 @@ class QuestionnaireStepper extends StatefulWidget {
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
     this.onQuestionnaireResponseChanged,
     this.onPageChanged,
+    this.onLastPageUpdated,
     this.pageController,
     Key? key,
   }) : super(key: key);
@@ -34,12 +36,35 @@ class QuestionnaireStepper extends StatefulWidget {
 }
 
 class QuestionnaireStepperState extends State<QuestionnaireStepper> {
+  BuildContext? _itemBuilderContext;
   QuestionnaireResponseModel? _questionnaireResponseModel;
-  int step = 0;
   bool _isLoaded = false;
+  bool _lastPageState = false;
 
   void _handleChangedQuestionnaireResponse() {
     widget.onQuestionnaireResponseChanged?.call(_questionnaireResponseModel);
+  }
+
+  bool _hasReachedLastPage(int index) {
+    if (_itemBuilderContext != null) {
+      return QuestionnaireResponseFiller.of(_itemBuilderContext!)
+              .visibleItemFillerAt(index + 1) ==
+          null;
+    }
+    return false;
+  }
+
+  void _checkAndUpdatePageState(int index) {
+    final currentState = _hasReachedLastPage(index);
+    if (currentState != _lastPageState) {
+      widget.onLastPageUpdated?.call(currentState);
+      _lastPageState = currentState;
+    }
+  }
+
+  void _handleChangedPage(int index) {
+    _checkAndUpdatePageState(index);
+    widget.onPageChanged?.call(index);
   }
 
   @override
@@ -62,7 +87,7 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                   /// [PageView.scrollDirection] defaults to [Axis.horizontal].
                   /// Use [Axis.vertical] to scroll vertically.
                   controller: controller,
-                  onPageChanged: widget.onPageChanged,
+                  onPageChanged: _handleChangedPage,
                   itemBuilder: (BuildContext context, int index) {
                     return QuestionnaireTheme.of(context).stepperPageItemBuilder(
                       context,
