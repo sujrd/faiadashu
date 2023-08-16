@@ -40,9 +40,13 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
   QuestionnaireResponseModel? _questionnaireResponseModel;
   bool _isLoaded = false;
   bool _lastPageState = false;
+  int? _currentIndex;
 
   void _handleChangedQuestionnaireResponse() {
     widget.onQuestionnaireResponseChanged?.call(_questionnaireResponseModel);
+    if (_currentIndex != null) {
+      _checkAndUpdatePageState(_currentIndex!);
+    }
   }
 
   bool _hasReachedLastPage(int index) {
@@ -65,6 +69,7 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
   void _handleChangedPage(int index) {
     _checkAndUpdatePageState(index);
     widget.onPageChanged?.call(index);
+    _currentIndex = index;
   }
 
   @override
