@@ -24,6 +24,7 @@ class _CustomQuestionnaireStepperPageState
     extends State<CustomQuestionnaireStepperPage> {
   final _pageController = PageController();
   int _currentIndex = 0;
+  bool _hasReachedLastPage = false;
   QuestionnaireResponseModel? _questionnaireResponseModel;
 
   void _nextPage() {
@@ -51,12 +52,6 @@ class _CustomQuestionnaireStepperPageState
     });
   }
 
-  bool _hasReachedLastPage() {
-    final totalPage =
-        _questionnaireResponseModel?.orderedQuestionItemModels().length ?? 0;
-    return _currentIndex == totalPage - 1;
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -75,6 +70,9 @@ class _CustomQuestionnaireStepperPageState
                   _questionnaireResponseModel = questionnaireResponseModel;
                 },
                 onPageChanged: _onPageChanged,
+                onLastPageUpdated: (bool hasReachedLastPage) {
+                  _hasReachedLastPage = hasReachedLastPage;
+                },
               ),
             ),
             Row(
@@ -84,7 +82,7 @@ class _CustomQuestionnaireStepperPageState
                   icon: const Icon(Icons.arrow_back),
                   onPressed: _prevPage,
                 ),
-                if (_hasReachedLastPage())
+                if (_hasReachedLastPage)
                   const Text(
                     "Reached Last Page",
                     style: TextStyle(
