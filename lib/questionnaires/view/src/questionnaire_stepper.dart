@@ -50,12 +50,15 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
   }
 
   bool _hasReachedLastPage(int index) {
-    if (_itemBuilderContext != null) {
-      return QuestionnaireResponseFiller.of(_itemBuilderContext!)
-              .visibleItemFillerAt(index + 1) ==
-          null;
+    if (_itemBuilderContext == null) {
+      return false;
     }
-    return false;
+    return QuestionnaireTheme.of(_itemBuilderContext!).stepperPageItemBuilder(
+          _itemBuilderContext!,
+          QuestionnaireResponseFiller.of(_itemBuilderContext!),
+          index + 1,
+        ) ==
+        null;
   }
 
   void _checkAndUpdatePageState(int index) {
@@ -95,6 +98,7 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                   onPageChanged: _handleChangedPage,
                   itemBuilder: (BuildContext context, int index) {
                     return QuestionnaireTheme.of(context).stepperPageItemBuilder(
+                    _itemBuilderContext = context;
                       context,
                       QuestionnaireResponseFiller.of(context),
                       index,
