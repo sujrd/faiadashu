@@ -97,8 +97,8 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                   controller: controller,
                   onPageChanged: _handleChangedPage,
                   itemBuilder: (BuildContext context, int index) {
-                    return QuestionnaireTheme.of(context).stepperPageItemBuilder(
                     _itemBuilderContext = context;
+                    return QuestionnaireTheme.of(context).stepperPageItemBuilder(
                       context,
                       QuestionnaireResponseFiller.of(context),
                       index,
