@@ -42,6 +42,7 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
   bool _lastPageState = false;
   int? _currentIndex;
 
+  /// Notifies listeners when there are changes in the questionnaire response.
   void _handleChangedQuestionnaireResponse() {
     widget.onQuestionnaireResponseChanged?.call(_questionnaireResponseModel);
     if (_currentIndex != null) {
@@ -49,10 +50,13 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
     }
   }
 
+  /// Determines if the given index corresponds to the last page.
   bool _hasReachedLastPage(int index) {
     if (_itemBuilderContext == null) {
       return false;
     }
+    /// By checking the next item from the item builder, it verifies whether we're on the last page.
+    /// If there's no item for the next index, then we've reached the last page.
     return QuestionnaireTheme.of(_itemBuilderContext!).stepperPageItemBuilder(
           _itemBuilderContext!,
           QuestionnaireResponseFiller.of(_itemBuilderContext!),
@@ -61,8 +65,10 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
         null;
   }
 
+  /// Checks the current page status and updates the last page state accordingly.
   void _checkAndUpdatePageState(int index) {
     final currentState = _hasReachedLastPage(index);
+    /// If the current state differs from the last known page state, listeners are notified.
     if (currentState != _lastPageState) {
       widget.onLastPageUpdated?.call(currentState);
       _lastPageState = currentState;
@@ -97,7 +103,11 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                   controller: controller,
                   onPageChanged: _handleChangedPage,
                   itemBuilder: (BuildContext context, int index) {
+                    // Store the current context of the item builder.
+                    // This is done so that we can access this context outside the builder.
                     _itemBuilderContext = context;
+                    // Update the state or properties associated with the currently visible item.
+                    _updateVisibleItem(index);
                     return QuestionnaireTheme.of(context).stepperPageItemBuilder(
                       context,
                       QuestionnaireResponseFiller.of(context),
