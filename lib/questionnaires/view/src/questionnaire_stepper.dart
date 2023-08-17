@@ -17,6 +17,7 @@ class QuestionnaireStepper extends StatefulWidget {
       onQuestionnaireResponseChanged;
   final void Function(int)? onPageChanged;
   final void Function(bool)? onLastPageUpdated;
+  final void Function(QuestionnaireItemFiller?)? onVisibleItemUpdated;
 
   const QuestionnaireStepper({
     this.locale,
@@ -27,6 +28,7 @@ class QuestionnaireStepper extends StatefulWidget {
     this.onQuestionnaireResponseChanged,
     this.onPageChanged,
     this.onLastPageUpdated,
+    this.onVisibleItemUpdated,
     this.pageController,
     Key? key,
   }) : super(key: key);
@@ -75,7 +77,26 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
     }
   }
 
+  /// Updates the currently visible item based on the provided index.
+  ///
+  /// This ensures that the parent context knows which item is visible and can perform any
+  /// necessary actions or updates related to that item.
+  void _updateVisibleItem(int index) {
+    if (_itemBuilderContext == null) {
+      return;
+    }
+    final responseFiller = QuestionnaireResponseFiller.of(_itemBuilderContext!);
+
+    widget.onVisibleItemUpdated?.call(responseFiller.visibleItemFillerAt(index));
+  }
+
+  /// Manages tasks related to page index changes.
+  ///
+  /// This function is called when the user navigates to a different page.
+  /// It updates the visible item, checks the state of the last page, notifies listeners
+  /// of the change, and updates the current index.
   void _handleChangedPage(int index) {
+    _updateVisibleItem(index);
     _checkAndUpdatePageState(index);
     widget.onPageChanged?.call(index);
     _currentIndex = index;
