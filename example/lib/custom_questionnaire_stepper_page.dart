@@ -23,22 +23,34 @@ class CustomQuestionnaireStepperPage extends StatefulWidget {
 class _CustomQuestionnaireStepperPageState
     extends State<CustomQuestionnaireStepperPage> {
   final _pageController = PageController();
-  int _currentIndex = 0;
   bool _hasReachedLastPage = false;
   QuestionnaireResponseModel? _questionnaireResponseModel;
+  QuestionnaireItemFiller? _questionnaireItemFiller;
 
   void _nextPage() {
-    final item = _questionnaireResponseModel
-        ?.orderedResponseItemModels()
-        .elementAt(_currentIndex);
-    if (item?.validate(notifyListeners: true) == null) {
-      _pageController.nextPage(
-        curve: Curves.easeIn,
-        duration: const Duration(milliseconds: 250),
-      );
+    final models = _questionnaireResponseModel?.orderedResponseItemModels();
+
+    // Filter the models to find the ones matching the desired nodeUid
+    final matchingItems = models?.where((el) => el.nodeUid == _questionnaireItemFiller?.responseUid).toList();
+
+    // If no matching items are found, navigate to the next page
+    if (matchingItems == null || matchingItems.isEmpty) {
+      _navigateToNextPage();
+      return;
+    }
+
+    // Validate the first matching item, and if it's valid, navigate to the next page
+    if (matchingItems.first.validate(notifyListeners: true) == null) {
+      _navigateToNextPage();
     }
   }
 
+  void _navigateToNextPage() {
+    _pageController.nextPage(
+      curve: Curves.easeIn,
+      duration: const Duration(milliseconds: 250),
+    );
+  }
   void _prevPage() {
     _pageController.previousPage(
       curve: Curves.easeIn,
@@ -47,9 +59,7 @@ class _CustomQuestionnaireStepperPageState
   }
 
   void _onPageChanged(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+    print('Page index is changed: $index');
   }
 
   @override
@@ -71,8 +81,13 @@ class _CustomQuestionnaireStepperPageState
                 },
                 onPageChanged: _onPageChanged,
                 onLastPageUpdated: (bool hasReachedLastPage) {
-                  _hasReachedLastPage = hasReachedLastPage;
+                  setState(() {
+                    _hasReachedLastPage = hasReachedLastPage;
+                  });
                 },
+                onVisibleItemUpdated: (item) {
+                  _questionnaireItemFiller = item;
+                }
               ),
             ),
             Row(
