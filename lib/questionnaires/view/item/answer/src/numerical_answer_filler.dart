@@ -231,7 +231,19 @@ class _NumberFieldInputControl
                 ? AutovalidateMode.disabled
                 : AutovalidateMode.always,
             onChanged: (content) {
-              answerModel.value = answerModel.copyWithTextInput(content);
+              Quantity? value = answerModel.copyWithTextInput(content);
+              if (answerModel.hasUnitChoices && !answerModel.hasUnit) {
+                // Fix unit not being set properly when value changes if:
+                // - hasSingleUnitChoice = true (no dropdown shown), or
+                // - user has not interacted with the unit dropdown.
+                value = answerModel
+                  .copyWithUnit(answerModel.unitChoices.first.code?.value)
+                  ?.copyWith(
+                    value: value?.value,
+                    extension_: value?.extension_,
+                  );
+              }
+              answerModel.value = value;
             },
           ),
         ),
@@ -251,7 +263,7 @@ class _UnitDropDown extends AnswerInputControl<NumericalAnswerModel> {
 
     return answerModel.hasSingleUnitChoice
         ? Container(
-            alignment: Alignment.topLeft,
+            alignment: Alignment.centerLeft,
             padding: const EdgeInsets.only(left: 8),
             width: unitWidth,
             child: Text(
@@ -264,7 +276,7 @@ class _UnitDropDown extends AnswerInputControl<NumericalAnswerModel> {
             width: unitWidth,
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                value: answerModel.keyOfUnit,
+                value: answerModel.keyOfUnit ?? answerModel.unitChoices.first.code?.value,
                 hint: const NullDashText(),
                 onChanged: (answerModel.isControlEnabled)
                     ? (String? newValue) {
@@ -272,7 +284,6 @@ class _UnitDropDown extends AnswerInputControl<NumericalAnswerModel> {
                       }
                     : null,
                 items: [
-                  const DropdownMenuItem<String>(child: NullDashText()),
                   ...answerModel.unitChoices
                       .map<DropdownMenuItem<String>>((Coding value) {
                     return DropdownMenuItem<String>(
