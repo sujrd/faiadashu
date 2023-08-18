@@ -1,4 +1,5 @@
 import 'package:faiadashu/faiadashu.dart';
+import 'package:faiadashu/questionnaires/view/src/questionnaire_stepper_page_view.dart';
 import 'package:flutter/material.dart';
 
 class CustomQuestionnaireStepperPage extends StatefulWidget {
@@ -22,7 +23,7 @@ class CustomQuestionnaireStepperPage extends StatefulWidget {
 
 class _CustomQuestionnaireStepperPageState
     extends State<CustomQuestionnaireStepperPage> {
-  final _pageController = PageController();
+  final _controller = QuestionnaireStepperPageViewController();
   bool _hasReachedLastPage = false;
   QuestionnaireResponseModel? _questionnaireResponseModel;
   QuestionnaireItemFiller? _questionnaireItemFiller;
@@ -46,16 +47,10 @@ class _CustomQuestionnaireStepperPageState
   }
 
   void _navigateToNextPage() {
-    _pageController.nextPage(
-      curve: Curves.easeIn,
-      duration: const Duration(milliseconds: 250),
-    );
+    _controller.nextPage();
   }
   void _prevPage() {
-    _pageController.previousPage(
-      curve: Curves.easeIn,
-      duration: const Duration(milliseconds: 250),
-    );
+    _controller.previousPage();
   }
 
   void _onPageChanged(int index) {
@@ -75,7 +70,7 @@ class _CustomQuestionnaireStepperPageState
                     const DefaultQuestionnairePageScaffoldBuilder(),
                 fhirResourceProvider: widget.fhirResourceProvider,
                 launchContext: widget.launchContext,
-                pageController: _pageController,
+                controller: _controller,
                 onQuestionnaireResponseChanged: (questionnaireResponseModel) {
                   _questionnaireResponseModel = questionnaireResponseModel;
                 },
