@@ -147,16 +147,23 @@ class QuestionnaireThemeData {
     int itemIndex,
   ) scrollerItemBuilder;
 
-  /// Builds layouts for QuestionnaireStepper pages.
-  /// If there are no more pages to show, this method must return `null`.
+  /// Get [QuestionnaireItemFiller] for a specific page.
   ///
   /// [responseFiller] contains the state data for the current [QuestionnaireResponseFiller].
   ///
   /// [pageIndex] is the index of the page that's being currently built.
-  final Widget? Function(
-    BuildContext context,
+  final QuestionnaireItemFiller? Function(
     QuestionnaireFillerData responseFiller,
     int pageIndex,
+  ) stepperQuestionnaireItemFiller;
+
+  /// Builds layouts for QuestionnaireStepper pages.
+  /// If there are no more pages to show, this method must return `null`.
+  ///
+  /// [itemFiller] contains [QuestionnaireItemFiller] to be rendered.
+  final Widget Function(
+    BuildContext context,
+    QuestionnaireItemFiller itemFiller,
   ) stepperPageItemBuilder;
 
   const QuestionnaireThemeData({
@@ -176,6 +183,7 @@ class QuestionnaireThemeData {
     this.displayItemLayoutBuilder = _defaultDisplayItemLayoutBuilder,
     this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
     this.scrollerItemBuilder = _defaultScrollerItemBuilder,
+    this.stepperQuestionnaireItemFiller = _defaultStepperQuestionnaireItemFiller,
     this.stepperPageItemBuilder = _defaultStepperPageItemBuilder,
   });
 
@@ -424,14 +432,20 @@ class QuestionnaireThemeData {
     return responseFiller.itemFillerAt(index);
   }
 
-  static Widget? _defaultStepperPageItemBuilder(
-    BuildContext context,
+  static QuestionnaireItemFiller? _defaultStepperQuestionnaireItemFiller(
     QuestionnaireFillerData responseFiller,
     int index,
   ) {
     final itemFiller = responseFiller.visibleItemFillerAt(index);
-    if (itemFiller == null ) return null;
+    if (itemFiller == null) return null;
 
+    return itemFiller;
+  }
+
+  static Widget _defaultStepperPageItemBuilder(
+    BuildContext context,
+    QuestionnaireItemFiller itemFiller,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: itemFiller,

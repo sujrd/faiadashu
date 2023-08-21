@@ -1,5 +1,6 @@
 import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
+import 'package:faiadashu/questionnaires/view/src/questionnaire_stepper_page_view.dart';
 import 'package:faiadashu/resource_provider/resource_provider.dart';
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +12,13 @@ class QuestionnaireStepper extends StatefulWidget {
   final LaunchContext launchContext;
   final QuestionnairePageScaffoldBuilder scaffoldBuilder;
   final QuestionnaireModelDefaults questionnaireModelDefaults;
-  final PageController? pageController;
+  final QuestionnaireStepperPageViewController? controller;
 
   final void Function(QuestionnaireResponseModel?)?
       onQuestionnaireResponseChanged;
   final void Function(int)? onPageChanged;
+  final void Function(bool)? onLastPageUpdated;
+  final void Function(QuestionnaireItemFiller?)? onVisibleItemUpdated;
 
   const QuestionnaireStepper({
     this.locale,
@@ -25,7 +28,9 @@ class QuestionnaireStepper extends StatefulWidget {
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
     this.onQuestionnaireResponseChanged,
     this.onPageChanged,
-    this.pageController,
+    this.onLastPageUpdated,
+    this.onVisibleItemUpdated,
+    this.controller,
     Key? key,
   }) : super(key: key);
 
@@ -35,17 +40,35 @@ class QuestionnaireStepper extends StatefulWidget {
 
 class QuestionnaireStepperState extends State<QuestionnaireStepper> {
   QuestionnaireResponseModel? _questionnaireResponseModel;
-  int step = 0;
+  QuestionnaireStepperPageViewController? _controller;
   bool _isLoaded = false;
+  bool _lastPageState = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _controller = widget.controller ?? QuestionnaireStepperPageViewController();
+  }
+
+  /// Notifies listeners when there are changes in the questionnaire response.
   void _handleChangedQuestionnaireResponse() {
     widget.onQuestionnaireResponseChanged?.call(_questionnaireResponseModel);
+    // The last page can change based on user responses.
+    _checkAndUpdatePageState();
+  }
+
+  /// Checks the current page status and updates the last page state accordingly.
+  void _checkAndUpdatePageState({bool? state}) {
+    final currentState = state ?? _controller?.hasReachedLastPage() ?? false;
+    /// If the current state differs from the last known page state, listeners are notified.
+    if (currentState != _lastPageState) {
+      widget.onLastPageUpdated?.call(currentState);
+      _lastPageState = currentState;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller = widget.pageController ?? PageController();
-
     return QuestionnaireResponseFiller(
       locale: widget.locale ?? Localizations.localeOf(context),
       fhirResourceProvider: widget.fhirResourceProvider,
@@ -58,33 +81,22 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
           child: Column(
             children: [
               Expanded(
-                child: PageView.builder(
-                  /// [PageView.scrollDirection] defaults to [Axis.horizontal].
-                  /// Use [Axis.vertical] to scroll vertically.
-                  controller: controller,
+                child: QuestionnaireStepperPageView(
+                  controller: _controller,
                   onPageChanged: widget.onPageChanged,
-                  itemBuilder: (BuildContext context, int index) {
-                    return QuestionnaireTheme.of(context).stepperPageItemBuilder(
-                      context,
-                      QuestionnaireResponseFiller.of(context),
-                      index,
-                    );
+                  onVisibleItemUpdated: widget.onVisibleItemUpdated,
+                  onLastPageUpdated: (state) {
+                    _checkAndUpdatePageState(state: state);
                   },
-                  physics: widget.pageController != null
-                      ? const NeverScrollableScrollPhysics()
-                      : null,
                 ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  if (widget.pageController == null)
+                  if (widget.controller == null)
                     IconButton(
                       icon: const Icon(Icons.arrow_back),
-                      onPressed: () => controller.previousPage(
-                        curve: Curves.easeIn,
-                        duration: const Duration(milliseconds: 250),
-                      ),
+                      onPressed: () => widget.controller?.previousPage(),
                     ),
                   Expanded(
                     child: Column(
@@ -117,13 +129,10 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                       ],
                     ),
                   ),
-                  if (widget.pageController == null)
+                  if (widget.controller == null)
                     IconButton(
                       icon: const Icon(Icons.arrow_forward),
-                      onPressed: () => controller.nextPage(
-                        curve: Curves.easeIn,
-                        duration: const Duration(milliseconds: 250),
-                      ),
+                      onPressed: () => widget.controller?.nextPage(),
                     ),
                 ],
               ),

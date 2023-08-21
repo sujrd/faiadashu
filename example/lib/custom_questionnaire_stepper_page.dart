@@ -1,4 +1,5 @@
 import 'package:faiadashu/faiadashu.dart';
+import 'package:faiadashu/questionnaires/view/src/questionnaire_stepper_page_view.dart';
 import 'package:flutter/material.dart';
 
 class CustomQuestionnaireStepperPage extends StatefulWidget {
@@ -22,39 +23,38 @@ class CustomQuestionnaireStepperPage extends StatefulWidget {
 
 class _CustomQuestionnaireStepperPageState
     extends State<CustomQuestionnaireStepperPage> {
-  final _pageController = PageController();
-  int _currentIndex = 0;
+  final _controller = QuestionnaireStepperPageViewController();
+  bool _hasReachedLastPage = false;
   QuestionnaireResponseModel? _questionnaireResponseModel;
+  QuestionnaireItemFiller? _questionnaireItemFiller;
 
   void _nextPage() {
-    final item = _questionnaireResponseModel
-        ?.orderedResponseItemModels()
-        .elementAt(_currentIndex);
-    if (item?.validate(notifyListeners: true) == null) {
-      _pageController.nextPage(
-        curve: Curves.easeIn,
-        duration: const Duration(milliseconds: 250),
-      );
+    final models = _questionnaireResponseModel?.orderedResponseItemModels();
+
+    // Filter the models to find the ones matching the desired nodeUid
+    final matchingItems = models?.where((el) => el.nodeUid == _questionnaireItemFiller?.responseUid).toList();
+
+    // If no matching items are found, navigate to the next page
+    if (matchingItems == null || matchingItems.isEmpty) {
+      _navigateToNextPage();
+      return;
+    }
+
+    // Validate the first matching item, and if it's valid, navigate to the next page
+    if (matchingItems.first.validate(notifyListeners: true) == null) {
+      _navigateToNextPage();
     }
   }
 
+  void _navigateToNextPage() {
+    _controller.nextPage();
+  }
   void _prevPage() {
-    _pageController.previousPage(
-      curve: Curves.easeIn,
-      duration: const Duration(milliseconds: 250),
-    );
+    _controller.previousPage();
   }
 
   void _onPageChanged(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
-  bool _hasReachedLastPage() {
-    final totalPage =
-        _questionnaireResponseModel?.orderedQuestionItemModels().length ?? 0;
-    return _currentIndex == totalPage - 1;
+    print('Page index is changed: $index');
   }
 
   @override
@@ -70,11 +70,19 @@ class _CustomQuestionnaireStepperPageState
                     const DefaultQuestionnairePageScaffoldBuilder(),
                 fhirResourceProvider: widget.fhirResourceProvider,
                 launchContext: widget.launchContext,
-                pageController: _pageController,
+                controller: _controller,
                 onQuestionnaireResponseChanged: (questionnaireResponseModel) {
                   _questionnaireResponseModel = questionnaireResponseModel;
                 },
                 onPageChanged: _onPageChanged,
+                onLastPageUpdated: (bool hasReachedLastPage) {
+                  setState(() {
+                    _hasReachedLastPage = hasReachedLastPage;
+                  });
+                },
+                onVisibleItemUpdated: (item) {
+                  _questionnaireItemFiller = item;
+                }
               ),
             ),
             Row(
@@ -84,7 +92,7 @@ class _CustomQuestionnaireStepperPageState
                   icon: const Icon(Icons.arrow_back),
                   onPressed: _prevPage,
                 ),
-                if (_hasReachedLastPage())
+                if (_hasReachedLastPage)
                   const Text(
                     "Reached Last Page",
                     style: TextStyle(
