@@ -56,7 +56,10 @@ class _QuestionnaireStepperPageViewState extends State<QuestionnaireStepperPageV
   void _updateVisibleItem(int index) {
     final responseFiller = QuestionnaireResponseFiller.of(context);
 
-    widget.onVisibleItemUpdated?.call(responseFiller.visibleItemFillerAt(index));
+    final data = QuestionnaireTheme.of(context)
+            .stepperQuestionnaireItemFiller(responseFiller, index);
+            
+    widget.onVisibleItemUpdated?.call(data);
   }
 
   /// Manages tasks related to page index changes.
