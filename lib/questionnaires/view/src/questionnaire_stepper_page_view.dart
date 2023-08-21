@@ -57,16 +57,15 @@ class _QuestionnaireStepperPageViewState extends State<QuestionnaireStepperPageV
     final responseFiller = QuestionnaireResponseFiller.of(context);
 
     final data = QuestionnaireTheme.of(context)
-            .stepperQuestionnaireItemFiller(responseFiller, index);
-            
+        .stepperQuestionnaireItemFiller(responseFiller, index);
+
     widget.onVisibleItemUpdated?.call(data);
   }
 
   /// Manages tasks related to page index changes.
   ///
   /// This function is called when the user navigates to a different page.
-  /// It updates the visible item, checks the state of the last page, notifies listeners
-  /// of the change, and updates the current index.
+  /// It updates the visible item, and notifies listeners of the change.
   void _handleChangedPage(int index) {
     _updateVisibleItem(index);
     widget.onPageChanged?.call(index);

@@ -143,15 +143,15 @@ class QuestionnaireThemeData {
   ///
   /// [pageIndex] is the index of the page that's being currently built.
   final QuestionnaireItemFiller? Function(
-      QuestionnaireFillerData responseFiller,
-      int pageIndex,
+    QuestionnaireFillerData responseFiller,
+    int pageIndex,
   ) stepperQuestionnaireItemFiller;
 
   /// Builds layouts for QuestionnaireStepper pages.
   /// If there are no more pages to show, this method must return `null`.
   ///
   /// [itemFiller] contains [QuestionnaireItemFiller] to be rendered.
-  final Widget? Function(
+  final Widget Function(
     BuildContext context,
     QuestionnaireItemFiller itemFiller,
   ) stepperPageItemBuilder;
@@ -421,18 +421,18 @@ class QuestionnaireThemeData {
   }
 
   static QuestionnaireItemFiller? _defaultStepperQuestionnaireItemFiller(
-      QuestionnaireFillerData responseFiller,
-      int index,
+    QuestionnaireFillerData responseFiller,
+    int index,
   ) {
     final itemFiller = responseFiller.visibleItemFillerAt(index);
-    if (itemFiller == null ) return null;
+    if (itemFiller == null) return null;
 
     return itemFiller;
   }
 
-  static Widget? _defaultStepperPageItemBuilder(
-      BuildContext context,
-      QuestionnaireItemFiller itemFiller,
+  static Widget _defaultStepperPageItemBuilder(
+    BuildContext context,
+    QuestionnaireItemFiller itemFiller,
   ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
