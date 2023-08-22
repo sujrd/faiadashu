@@ -18,6 +18,8 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
   late final NumberFormat _numberFormat;
   late final double? _sliderStepValue;
   late final int? _sliderDivisions;
+  bool get questionnaireUnitDisplayVisible => questionnaireResponseModel
+      .questionnaireModel.questionnaireModelDefaults.questionnaireUnitDisplayVisible;
 
   RenderingString? _upperSliderLabel;
   RenderingString? _lowerSliderLabel;
@@ -167,6 +169,11 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
         if (coding == null) return;
         _units[keyForUnitChoice(coding)] = coding;
       });
+
+    if(questionnaireUnitDisplayVisible) {
+      final questionnaireUnit = qi.extension_?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/questionnaire-unit')?.valueCoding;
+      if (questionnaireUnit != null) _units[keyForUnitChoice(questionnaireUnit)] = questionnaireUnit;
+    }
   }
 
   @override
