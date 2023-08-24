@@ -27,11 +27,6 @@ class QuestionnaireModelDefaults {
   /// Boolean items will be tri-state if [true], or bi-state if [false].
   final bool booleanTriState;
 
-  /// For integer and decimal questionnaire item types containing a `questionnaire-unit` extension, 
-  /// it displays the corresponding unit in the input field, in a similar manner to quantity items with
-  /// `unitOption` extensions.
-  final bool questionnaireUnitDisplayVisible;
-
   /// Returns a prefix, starting with 1, that provides the number
   /// of the [QuestionItemModel] within the ordered sequence of [QuestionItemModels].
   ///
@@ -67,6 +62,5 @@ class QuestionnaireModelDefaults {
     this.disabledDisplay = QuestionnaireDisabledDisplay.hidden,
     this.implicitNullOption = true,
     this.booleanTriState = false,
-    this.questionnaireUnitDisplayVisible = false,
   });
 }
