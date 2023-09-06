@@ -1,6 +1,5 @@
 import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
-import 'package:faiadashu/questionnaires/view/src/questionnaire_stepper_page_view.dart';
 import 'package:faiadashu/resource_provider/resource_provider.dart';
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +16,11 @@ class QuestionnaireStepper extends StatefulWidget {
   final void Function(QuestionnaireResponseModel?)?
       onQuestionnaireResponseChanged;
   final void Function(int)? onPageChanged;
-  final void Function(bool)? onLastPageUpdated;
-  final void Function(QuestionnaireItemFiller?)? onVisibleItemUpdated;
+  final Future<BeforePageChangedData> Function(
+    FillerItemModel,
+    FillerItemModel?,
+  )? onBeforePageChanged;
+  final void Function(FillerItemModel?)? onVisibleItemUpdated;
 
   const QuestionnaireStepper({
     this.locale,
@@ -28,7 +30,7 @@ class QuestionnaireStepper extends StatefulWidget {
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
     this.onQuestionnaireResponseChanged,
     this.onPageChanged,
-    this.onLastPageUpdated,
+    this.onBeforePageChanged,
     this.onVisibleItemUpdated,
     this.controller,
     Key? key,
@@ -42,7 +44,6 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
   QuestionnaireResponseModel? _questionnaireResponseModel;
   QuestionnaireStepperPageViewController? _controller;
   bool _isLoaded = false;
-  bool _lastPageState = false;
 
   @override
   void initState() {
@@ -53,18 +54,6 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
   /// Notifies listeners when there are changes in the questionnaire response.
   void _handleChangedQuestionnaireResponse() {
     widget.onQuestionnaireResponseChanged?.call(_questionnaireResponseModel);
-    // The last page can change based on user responses.
-    _checkAndUpdatePageState();
-  }
-
-  /// Checks the current page status and updates the last page state accordingly.
-  void _checkAndUpdatePageState({bool? state}) {
-    final currentState = state ?? _controller?.hasReachedLastPage() ?? false;
-    /// If the current state differs from the last known page state, listeners are notified.
-    if (currentState != _lastPageState) {
-      widget.onLastPageUpdated?.call(currentState);
-      _lastPageState = currentState;
-    }
   }
 
   @override
@@ -84,10 +73,8 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                 child: QuestionnaireStepperPageView(
                   controller: _controller,
                   onPageChanged: widget.onPageChanged,
+                  onBeforePageChanged: widget.onBeforePageChanged,
                   onVisibleItemUpdated: widget.onVisibleItemUpdated,
-                  onLastPageUpdated: (state) {
-                    _checkAndUpdatePageState(state: state);
-                  },
                 ),
               ),
               Row(

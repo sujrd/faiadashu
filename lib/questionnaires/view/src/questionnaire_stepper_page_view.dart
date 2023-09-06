@@ -1,3 +1,4 @@
+import 'package:faiadashu/questionnaires/model/item/src/filler_item_model.dart';
 import 'package:faiadashu/questionnaires/view/item/src/questionnaire_item_filler.dart';
 import 'package:faiadashu/questionnaires/view/src/questionnaire_filler.dart';
 import 'package:faiadashu/questionnaires/view/src/questionnaire_theme.dart';
@@ -11,13 +12,16 @@ import 'package:flutter/material.dart';
 class QuestionnaireStepperPageView extends StatefulWidget {
   final QuestionnaireStepperPageViewController? controller;
   final ValueChanged<int>? onPageChanged;
-  final Function(bool)? onLastPageUpdated;
-  final void Function(QuestionnaireItemFiller?)? onVisibleItemUpdated;
+  final Future<BeforePageChangedData> Function(
+    FillerItemModel,
+    FillerItemModel?,
+  )? onBeforePageChanged;
+  final void Function(FillerItemModel?)? onVisibleItemUpdated;
 
   QuestionnaireStepperPageView({
     this.controller,
     this.onPageChanged,
-    this.onLastPageUpdated,
+    this.onBeforePageChanged,
     this.onVisibleItemUpdated,
   });
 
@@ -28,6 +32,8 @@ class QuestionnaireStepperPageView extends StatefulWidget {
 
 class _QuestionnaireStepperPageViewState extends State<QuestionnaireStepperPageView> {
   PageController _pageController = PageController();
+  bool _hasRequestsRunning = false;
+  QuestionnaireItemFiller? _currentQuestionnaireItemFiller;
 
   @override
   void initState() {
@@ -35,18 +41,30 @@ class _QuestionnaireStepperPageViewState extends State<QuestionnaireStepperPageV
     widget.controller?._attach(this);
   }
 
-  /// Determines if the given index corresponds to the last page.
-  bool _hasReachedLastPage() {
+  /// Determines if we can proceed to the next page.
+  Future<BeforePageChangedData> _onBeforePageChanged() async {
+    _hasRequestsRunning = true;
     final currentPage = _pageController.page!.round();
     final themeData = QuestionnaireTheme.of(context);
     final fillerData = QuestionnaireResponseFiller.of(context);
 
-    /// By checking the next item from the item builder, it verifies whether we're on the last page.
-    /// If there's no item for the next index, then we've reached the last page.
-    return themeData.stepperQuestionnaireItemFiller(
+    final nextPageFillerItem = themeData.stepperQuestionnaireItemFiller(
       fillerData,
       currentPage + 1,
-    ) == null;
+    );
+
+    final defaultData = BeforePageChangedData(canProceed: true);
+
+    if (_currentQuestionnaireItemFiller != null) {
+      final data = await widget.onBeforePageChanged?.call(
+        _currentQuestionnaireItemFiller!.fillerItemModel,
+        nextPageFillerItem?.fillerItemModel,
+      );
+      _hasRequestsRunning = false;
+      return data ?? defaultData;
+    }
+    _hasRequestsRunning = false;
+    return defaultData;
   }
 
   /// Updates the currently visible item based on the provided index.
@@ -59,7 +77,8 @@ class _QuestionnaireStepperPageViewState extends State<QuestionnaireStepperPageV
     final data = QuestionnaireTheme.of(context)
         .stepperQuestionnaireItemFiller(responseFiller, index);
 
-    widget.onVisibleItemUpdated?.call(data);
+    _currentQuestionnaireItemFiller = data;
+    widget.onVisibleItemUpdated?.call(data?.fillerItemModel);
   }
 
   /// Manages tasks related to page index changes.
@@ -127,25 +146,41 @@ class QuestionnaireStepperPageViewController {
   }
 
   /// Advances to the next page in the `QuestionnaireStepperPageView`.
-  void nextPage() {
-    _state?._pageController.nextPage(
-      curve: Curves.easeIn,
-      duration: const Duration(milliseconds: 250),
-    );
+  Future nextPage({Duration? duration, Curve? curve}) async {
+    /// This will prevent racing issue
+    if (_state?._hasRequestsRunning ?? false) {
+      return;
+    }
+    final data = await _state?._onBeforePageChanged();
+    if (data?.canProceed ?? true) {
+      _state?._pageController.nextPage(
+        curve: curve ?? Curves.easeIn,
+        duration: duration ?? const Duration(milliseconds: 250),
+      );
+    }
   }
 
   /// Back to the previous page in the `QuestionnaireStepperPageView`.
-  void previousPage() {
+  void previousPage({Duration? duration, Curve? curve}) {
+    /// This will prevent racing issue
+    if (_state?._hasRequestsRunning ?? false) {
+      return;
+    }
     _state?._pageController.previousPage(
-      curve: Curves.easeIn,
-      duration: const Duration(milliseconds: 250),
+      curve: curve ?? Curves.easeIn,
+      duration: duration ?? const Duration(milliseconds: 250),
     );
   }
+}
 
-  /// Checks if the current page in the `QuestionnaireStepperPageView` is the last one.
-  ///
-  /// Returns `true` if the last page has been reached, otherwise returns `false`.
-  bool hasReachedLastPage() {
-    return _state?._hasReachedLastPage() ?? false;
-  }
+/// This class is used in conjunction with the [OnBeforePageChanged] callback,
+/// and currently allows you to specify whether the page transition can proceed
+/// based on custom logic. This class can be extended to include more properties
+/// that could affect page navigation.
+class BeforePageChangedData {
+  final bool canProceed;
+
+  BeforePageChangedData({
+    required this.canProceed,
+  });
 }
