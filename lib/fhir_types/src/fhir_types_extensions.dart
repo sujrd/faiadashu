@@ -41,7 +41,7 @@ extension FDashDateExtension on Date {
 }
 
 extension FDashDateTimeExtension on FhirDateTime {
-  String format(Locale locale, {String defaultText = ''}) {
+  String format(Locale locale, {String defaultText = '', bool withTimeZone = false}) {
     final localeCode = locale.toString();
     final DateFormat dateFormat;
     final japanese = locale.languageCode == 'ja';
@@ -70,7 +70,14 @@ extension FDashDateTimeExtension on FhirDateTime {
         break;
     }
 
-    return dateFormat.format(value!);
+    // Dart only supports UTC or local times, even if the value is parsed from a
+    // datetime string with time zone info.
+    final localDateTime = value!.toLocal();
+    final formattedValue = dateFormat.format(localDateTime);
+
+    return withTimeZone
+      ? '$formattedValue (${localDateTime.timeZoneName})'
+      : formattedValue;
   }
 }
 
