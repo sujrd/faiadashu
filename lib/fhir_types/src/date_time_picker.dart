@@ -77,7 +77,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
 
     return (widget.pickerType == Time)
       ? DateFormat.jm(locale.toString()).format(dateTime)
-      : value.format(locale);
+      : value.format(locale, withTimeZone: widget.pickerType == FhirDateTime);
   }
 
   Future<void> _showPicker(Locale locale) async {
