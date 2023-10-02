@@ -31,7 +31,10 @@ class _QuestionnaireCompleteButtonState
         final currentResponseStatus = qrm.responseStatus;
 
         if (currentResponseStatus != QuestionnaireResponseStatus.completed) {
-          final incompleteItems = qrm.validate(notifyListeners: true);
+          final incompleteItems = qrm.validate(
+            localizations: FDashLocalizations.of(context),
+            notifyListeners: true,
+          );
           qrm.invalidityNotifier.value = incompleteItems;
 
           if (incompleteItems != null) {

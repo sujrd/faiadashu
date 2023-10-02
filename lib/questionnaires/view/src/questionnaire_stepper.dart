@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 
 /// Fill a questionnaire through a wizard-style series of individual questions.
 class QuestionnaireStepper extends StatefulWidget {
-  final Locale? locale;
   final FhirResourceProvider fhirResourceProvider;
   final LaunchContext launchContext;
   final QuestionnairePageScaffoldBuilder scaffoldBuilder;
@@ -23,7 +22,6 @@ class QuestionnaireStepper extends StatefulWidget {
   final void Function(FillerItemModel?)? onVisibleItemUpdated;
 
   const QuestionnaireStepper({
-    this.locale,
     required this.scaffoldBuilder,
     required this.fhirResourceProvider,
     required this.launchContext,
@@ -59,7 +57,6 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
   @override
   Widget build(BuildContext context) {
     return QuestionnaireResponseFiller(
-      locale: widget.locale ?? Localizations.localeOf(context),
       fhirResourceProvider: widget.fhirResourceProvider,
       launchContext: widget.launchContext,
       questionnaireModelDefaults: widget.questionnaireModelDefaults,
@@ -95,7 +92,8 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                               Decimal value,
                               Widget? child,
                             ) {
-                              final scoreString = value.value!.round().toString();
+                              final scoreString =
+                                  value.value!.round().toString();
 
                               return AnimatedSwitcher(
                                 duration: const Duration(milliseconds: 200),

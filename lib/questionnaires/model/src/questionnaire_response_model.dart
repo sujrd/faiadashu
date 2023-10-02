@@ -1,11 +1,11 @@
-import 'dart:ui';
-
 import 'package:collection/collection.dart';
+import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/logging/logging.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:faiadashu/resource_provider/resource_provider.dart';
 import 'package:fhir/r4.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 /// High-level model of a response to a questionnaire.
 class QuestionnaireResponseModel {
@@ -160,6 +160,7 @@ class QuestionnaireResponseModel {
     List<Aggregator>? aggregators,
     required FhirResourceProvider fhirResourceProvider,
     required LaunchContext launchContext,
+    required FDashLocalizations localizations,
     QuestionnaireModelDefaults questionnaireModelDefaults =
         const QuestionnaireModelDefaults(),
   }) async {
@@ -178,9 +179,9 @@ class QuestionnaireResponseModel {
       questionnaireModel: questionnaireModel,
       aggregators: aggregators ??
           [
-            TotalScoreAggregator(),
-            NarrativeAggregator(),
-            QuestionnaireResponseAggregator(),
+            TotalScoreAggregator(localizations: localizations),
+            NarrativeAggregator(localizations: localizations),
+            QuestionnaireResponseAggregator(localizations: localizations),
           ],
       launchContext: launchContext,
     );
@@ -824,8 +825,10 @@ class QuestionnaireResponseModel {
   ///
   /// Will return the parent [QuestionItemModel] if uid corresponds to an answer.
   FillerItemModel? fillerItemModelByUid(String uid) {
-    final fillerItem =
-        orderedFillerItemModels().firstWhereOrNull((fim) => fim.nodeUid == uid);
+    final fillerItem = orderedFillerItemModels().firstWhereOrNull((fim) {
+      print("UID:" + fim.nodeUid);
+      return fim.nodeUid == uid;
+    });
     if (fillerItem != null) {
       return fillerItem;
     }
@@ -848,20 +851,20 @@ class QuestionnaireResponseModel {
   /// Returns null, if everything is complete.
   /// Returns a map (UID -> error text) with incomplete entries, if items are incomplete.
   Map<String, String>? validate({
+    required FDashLocalizations localizations,
     bool updateErrorText = true,
     bool notifyListeners = false,
   }) {
     final invalidMap = <String, String>{};
 
     for (final itemModel in orderedResponseItemModels()) {
-      final errorTexts = itemModel.validate(
-        updateErrorText: updateErrorText,
-        notifyListeners: notifyListeners,
-      );
-      if (errorTexts != null) {
+      try {
+        itemModel.validate(
+          updateErrorText: updateErrorText,
+          notifyListeners: notifyListeners,
+        );
+      } on ValidationError catch (exception) {
         _logger.debug('$itemModel is invalid.');
-
-        invalidMap.addAll(errorTexts);
       }
     }
 

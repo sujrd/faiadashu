@@ -1,5 +1,5 @@
-import 'package:faiadashu/fhir_types/fhir_types.dart';
-import 'package:faiadashu/questionnaires/model/model.dart';
+import 'package:faiadashu/faiadashu.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
 
@@ -74,16 +74,16 @@ abstract class AnswerModel<I, V> extends ResponseNode {
 
   /// Validates a new input value. Does not change the [value].
   ///
-  /// Returns null when [inputValue] is valid, or a localized message when it is not.
-  ///
   /// This is used to validate external input from a view.
-  String? validateInput(I? inputValue);
+  ///
+  /// Throws [ValidationError] when when [inputValue] is invalid.
+  void validateInput(I? inputValue);
 
   /// Validates a value against the constraints of the answer model.
   /// Does not change the [value] of the answer model.
   ///
-  /// Returns null when it is valid, or a localized message when it is not.
-  String? validateValue(V? inputValue);
+  /// Throws [ValidationError] when when [inputValue] is invalid.
+  void validateValue(V? inputValue);
 
   /// Validates whether the current [value] will pass the completeness check.
   ///
@@ -93,29 +93,25 @@ abstract class AnswerModel<I, V> extends ResponseNode {
   /// Since an individual answer does not know whether it is required, this
   /// is not taken into account.
   ///
-  /// Returns null when the answer is valid, or an error text,
-  /// when it is not.
-  ///
-  String? validate({
+  /// Returns an empty list when the answer is valid, otherwise
+  /// Returns a list of [ValidationError].
+  List<ValidationError> validate({
     bool updateErrorText = true,
     bool notifyListeners = false,
   }) {
-    final newErrorText = validateValue(
-      value,
-    );
+    try {
+      validateValue(value);
 
-    if (errorText == newErrorText) {
-      return newErrorText;
+      if (notifyListeners) {
+        this.notifyListeners();
+      }
+      return [];
+    } on ValidationError catch (exception) {
+      if (updateErrorText) {
+        _error = exception;
+      }
+      return [exception];
     }
-
-    if (updateErrorText) {
-      errorText = newErrorText;
-    }
-    if (notifyListeners) {
-      this.notifyListeners();
-    }
-
-    return newErrorText;
   }
 
   /// Returns whether any answer (valid or invalid) has been provided.
@@ -124,12 +120,14 @@ abstract class AnswerModel<I, V> extends ResponseNode {
   /// Returns whether this question is unanswered.
   bool get isEmpty;
 
-  String? errorText;
+  ValidationError? _error;
 
   /// Returns an error text for display in the answer's control.
   ///
   /// This might return an error text from the parent [QuestionItemModel].
-  String? get displayErrorText => errorText ?? responseItemModel.errorText;
+  String? displayErrorText(FDashLocalizations localizations) =>
+      _error?.getMessage(localizations) ??
+      responseItemModel.getErrorText(localizations);
 
   /// Returns a [QuestionnaireResponseAnswer] based on the current value.
   ///

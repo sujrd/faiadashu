@@ -23,12 +23,12 @@ class BooleanAnswerModel extends AnswerModel<Boolean, Boolean> {
         );
 
   @override
-  String? validateInput(Boolean? inValue) {
+  void validateInput(Boolean? inValue) {
     return null;
   }
 
   @override
-  String? validateValue(Boolean? inputValue) {
+  void validateValue(Boolean? inputValue) {
     return null;
   }
 

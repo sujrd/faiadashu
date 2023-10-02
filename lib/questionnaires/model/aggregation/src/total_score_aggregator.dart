@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
 import 'package:fhir/r4.dart';
@@ -16,8 +17,13 @@ class TotalScoreAggregator extends Aggregator<Decimal> {
   static final _logger = Logger(TotalScoreAggregator);
 
   late final QuestionItemModel? totalScoreItem;
-  TotalScoreAggregator({bool autoAggregate = true})
-      : super(Decimal(0), autoAggregate: autoAggregate);
+  TotalScoreAggregator(
+      {required FDashLocalizations localizations, bool autoAggregate = true})
+      : super(
+          Decimal(0),
+          localizations: localizations,
+          autoAggregate: autoAggregate,
+        );
 
   @override
   void init(QuestionnaireResponseModel questionnaireResponseModel) {

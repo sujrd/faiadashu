@@ -79,9 +79,8 @@ class QuestionResponseItemFillerState
 
   Widget? _questionSkipperWidget() {
     if (questionnaireTheme.canSkipQuestions &&
-      !widget.questionnaireItemModel.isReadOnly &&
-      !widget.questionnaireItemModel.isRequired
-    ) {
+        !widget.questionnaireItemModel.isReadOnly &&
+        !widget.questionnaireItemModel.isRequired) {
       return Row(
         children: [
           Text(
@@ -121,7 +120,8 @@ class QuestionResponseItemFillerState
               debugDumpFocusTree();
             }, */
             focusNode: focusNode,
-            child: QuestionnaireTheme.of(context).questionResponseItemLayoutBuilder(
+            child: QuestionnaireTheme.of(context)
+                .questionResponseItemLayoutBuilder(
               context,
               widget.responseItemModel as QuestionItemModel,
               _answerFillerWidget(),

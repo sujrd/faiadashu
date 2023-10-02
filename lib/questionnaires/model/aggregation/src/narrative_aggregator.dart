@@ -18,8 +18,12 @@ class NarrativeAggregator extends Aggregator<Narrative> {
     status: NarrativeStatus.empty,
   );
 
-  NarrativeAggregator()
-      : super(NarrativeAggregator.emptyNarrative, autoAggregate: false);
+  NarrativeAggregator({required FDashLocalizations localizations})
+      : super(
+          NarrativeAggregator.emptyNarrative,
+          localizations: localizations,
+          autoAggregate: false,
+        );
 
   @override
   void init(QuestionnaireResponseModel questionnaireResponseModel) {
@@ -121,7 +125,7 @@ class NarrativeAggregator extends Aggregator<Narrative> {
 
     if (invalid) {
       div.write(
-        '<span style="color:red">${lookupFDashLocalizations(locale).dataAbsentReasonAsTextOutput} ',
+        '<span style="color:red">${localizations.dataAbsentReasonAsTextOutput} ',
       );
     }
 
@@ -129,7 +133,7 @@ class NarrativeAggregator extends Aggregator<Narrative> {
       div.write('<p>***</p>');
     } else if (dataAbsentReason == dataAbsentReasonAskedButDeclinedCode) {
       div.write(
-        '<p><i><span style="color:red">X </span>${lookupFDashLocalizations(locale).dataAbsentReasonAskedDeclinedOutput}</i></p>',
+        '<p><i><span style="color:red">X </span>${localizations.dataAbsentReasonAskedDeclinedOutput}</i></p>',
       );
     } else {
       final filledAnswers = itemModel.answeredAnswerModels;

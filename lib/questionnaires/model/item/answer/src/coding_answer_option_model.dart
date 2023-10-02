@@ -132,7 +132,7 @@ class CodingAnswerOptionModel {
         ?.valueString;
 
     final optionPrefix = (plainOptionPrefix != null)
-        ? RenderingString.fromText(plainOptionPrefix)
+        ? RenderingString.fromText(plainOptionPrefix, extensions: extensions)
         : null;
 
     RenderingString optionText;
@@ -154,6 +154,7 @@ class CodingAnswerOptionModel {
         forDisplay = _createForDisplay(coding, locale, questionnaireItemModel);
         optionText = RenderingString.fromText(
           plainText,
+          extensions: extensions,
         );
       }
     } else {

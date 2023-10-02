@@ -3,6 +3,9 @@ import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/max_occurs_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/min_occurs_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/single_selection_or_open_string_error.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart';
 
@@ -154,15 +157,6 @@ class CodingAnswerModel extends AnswerModel<OptionsOrString, OptionsOrString> {
 
   bool get isOptionsOrString => qi.type == QuestionnaireItemType.open_choice;
 
-  RenderingString get openLabel => RenderingString.fromText(
-        qi.extension_
-                ?.extensionOrNull(
-                  'http://hl7.org/fhir/uv/sdc/StructureDefinition/questionnaire-sdc-openLabel',
-                )
-                ?.valueString ??
-            lookupFDashLocalizations(locale).fillerOpenCodingOtherLabel,
-      );
-
   String _nextOptionUid() => _answerOptions.length.toString();
 
   void _addAnswerOptionFromValueSetCoding(Coding coding) {
@@ -230,6 +224,17 @@ class CodingAnswerModel extends AnswerModel<OptionsOrString, OptionsOrString> {
             ?.value {
     _createAnswerOptions();
   }
+
+  RenderingString getOpenLabel(FDashLocalizations localizations) {
+    return RenderingString.fromText(
+      _openLabel ?? localizations.fillerOpenCodingOtherLabel,
+    );
+  }
+
+  String? get _openLabel => qi.extension_
+      ?.extensionOrNull(
+          'http://hl7.org/fhir/uv/sdc/StructureDefinition/questionnaire-sdc-openLabel')
+      ?.valueString;
 
   Iterable<RenderingString> toDisplay({bool includeMedia = true}) {
     final value = this.value;
@@ -301,14 +306,14 @@ class CodingAnswerModel extends AnswerModel<OptionsOrString, OptionsOrString> {
   }
 
   @override
-  String? validateInput(OptionsOrString? inValue) {
+  void validateInput(OptionsOrString? inValue) {
     return validateValue(inValue);
   }
 
   @override
-  String? validateValue(OptionsOrString? inValue) {
+  void validateValue(OptionsOrString? inValue) {
     if (inValue == null) {
-      return null;
+      return;
     }
 
     final selectedOptionsCount = inValue.selectedOptions?.length ?? 0;
@@ -318,21 +323,18 @@ class CodingAnswerModel extends AnswerModel<OptionsOrString, OptionsOrString> {
 
     if (!(questionnaireItemModel.questionnaireItem.repeats?.value ?? false)) {
       if (totalCount != 1) {
-        return lookupFDashLocalizations(locale)
-            .validatorSingleSelectionOrSingleOpenString(openLabel.plainText);
+        throw SingleSelectionOrOpenStringError(nodeUid, _openLabel);
       }
     }
 
     if (totalCount < minOccurs) {
-      return lookupFDashLocalizations(locale).validatorMinOccurs(minOccurs);
+      throw MinOccursError(nodeUid, minOccurs);
     }
 
     final maxOccurs = this.maxOccurs;
     if (maxOccurs != null && totalCount > maxOccurs) {
-      return lookupFDashLocalizations(locale).validatorMaxOccurs(maxOccurs);
+      throw MaxOccursError(nodeUid, maxOccurs);
     }
-
-    return null;
   }
 
   @override

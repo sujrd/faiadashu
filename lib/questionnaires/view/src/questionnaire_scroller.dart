@@ -26,7 +26,6 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 /// See: [QuestionnaireScrollerPage] for a [QuestionnaireScroller] which already
 /// wraps the list in a ready-made [Scaffold], incl. some commonly used buttons.
 class QuestionnaireScroller extends StatefulWidget {
-  final Locale? locale;
   final FhirResourceProvider fhirResourceProvider;
   final LaunchContext launchContext;
   final List<Aggregator<dynamic>>? aggregators;
@@ -38,7 +37,6 @@ class QuestionnaireScroller extends StatefulWidget {
       onQuestionnaireResponseChanged;
 
   const QuestionnaireScroller({
-    this.locale,
     required this.scaffoldBuilder,
     required this.fhirResourceProvider,
     required this.launchContext,
@@ -153,12 +151,11 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = widget.locale ?? Localizations.localeOf(context);
+    final locale = Localizations.localeOf(context);
 
     return QuestionnaireResponseFiller(
       fhirResourceProvider: widget.fhirResourceProvider,
       launchContext: widget.launchContext,
-      locale: locale,
       questionnaireModelDefaults: widget.questionnaireModelDefaults,
       builder: (BuildContext context) {
         _belowFillerContext = context;
@@ -170,50 +167,46 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
           'Scroll position: ${_itemPositionsListener.itemPositions.value}',
         );
 
-        return Localizations.override(
-          context: context,
-          locale: locale,
-          child: widget.scaffoldBuilder.build(
-            context,
-            setStateCallback: (fn) {
-              setState(fn);
-            },
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                const edgeInsets = 8.0;
-                const twice = 2;
+        return widget.scaffoldBuilder.build(
+          context,
+          setStateCallback: (fn) {
+            setState(fn);
+          },
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              const edgeInsets = 8.0;
+              const twice = 2;
 
-                return ScrollablePositionedList.builder(
-                  itemScrollController: _listScrollController,
-                  itemPositionsListener: _itemPositionsListener,
-                  itemCount: totalLength,
-                  padding: const EdgeInsets.all(edgeInsets),
-                  minCacheExtent: 200, // Allow tabbing to prev/next items
-                  itemBuilder: (BuildContext context, int i) {
-                    return Row(
-                      children: [
-                        Container(
-                          constraints: BoxConstraints(
-                            maxWidth: QuestionnaireTheme.of(context)
-                                .maxItemWidth
-                                .clamp(
-                                  constraints.minWidth,
-                                  constraints.maxWidth - twice * edgeInsets,
-                                ),
-                          ),
-                          child: QuestionnaireTheme.of(context).scrollerItemBuilder(
-                            context,
-                            QuestionnaireResponseFiller.of(context),
-                            i,
-                          ),
+              return ScrollablePositionedList.builder(
+                itemScrollController: _listScrollController,
+                itemPositionsListener: _itemPositionsListener,
+                itemCount: totalLength,
+                padding: const EdgeInsets.all(edgeInsets),
+                minCacheExtent: 200, // Allow tabbing to prev/next items
+                itemBuilder: (BuildContext context, int i) {
+                  return Row(
+                    children: [
+                      Container(
+                        constraints: BoxConstraints(
+                          maxWidth:
+                              QuestionnaireTheme.of(context).maxItemWidth.clamp(
+                                    constraints.minWidth,
+                                    constraints.maxWidth - twice * edgeInsets,
+                                  ),
                         ),
-                        const Spacer(),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
+                        child:
+                            QuestionnaireTheme.of(context).scrollerItemBuilder(
+                          context,
+                          QuestionnaireResponseFiller.of(context),
+                          i,
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  );
+                },
+              );
+            },
           ),
         );
       },

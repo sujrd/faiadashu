@@ -1,4 +1,5 @@
 import 'package:faiadashu/fhir_types/fhir_types.dart';
+import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,8 @@ class _AttachmentAnswerState extends QuestionnaireAnswerFillerState<Attachment,
       );
 }
 
-class _AttachmentInputControl extends AnswerInputControl<AttachmentAnswerModel> {
+class _AttachmentInputControl
+    extends AnswerInputControl<AttachmentAnswerModel> {
   const _AttachmentInputControl(
     AttachmentAnswerModel answerModel, {
     FocusNode? focusNode,
@@ -47,7 +49,7 @@ class _AttachmentInputControl extends AnswerInputControl<AttachmentAnswerModel> 
       allowedMimeTypes: answerModel.mimeTypes,
       onChanged: (attachment) => answerModel.value = attachment,
       decoration: InputDecoration(
-        errorText: answerModel.displayErrorText,
+        errorText: answerModel.displayErrorText(FDashLocalizations.of(context)),
       ),
     );
   }

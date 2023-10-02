@@ -1,4 +1,6 @@
 import 'package:faiadashu/fhir_types/fhir_types.dart';
+import 'package:faiadashu/l10n/l10n.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/custom_validation_error.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
@@ -195,7 +197,8 @@ class _NumberFieldInputControl
             textAlignVertical: TextAlignVertical.center,
             textAlign: TextAlign.end,
             decoration: InputDecoration(
-              errorText: answerModel.displayErrorText,
+              errorText:
+                  answerModel.displayErrorText(FDashLocalizations.of(context)),
               errorStyle: (itemModel
                       .isCalculated) // Force display of error text on calculated item
                   ? TextStyle(
@@ -206,7 +209,9 @@ class _NumberFieldInputControl
               prefixIcon: itemModel.isCalculated
                   ? Icon(
                       Icons.calculate,
-                      color: (answerModel.displayErrorText != null)
+                      color: (answerModel.displayErrorText(
+                                  FDashLocalizations.of(context)) !=
+                              null)
                           ? Theme.of(context).errorColor
                           : null,
                     )
@@ -222,11 +227,16 @@ class _NumberFieldInputControl
               signed: answerModel.minValue < 0,
               decimal: answerModel.maxDecimal > 0,
             ),
-            validator: (itemModel.isCalculated)
-                ? null
-                : (inputValue) {
-                    return answerModel.validateInput(inputValue);
-                  },
+            validator: (inputValue) {
+              try {
+                if (itemModel.isCalculated) {
+                  answerModel.validateInput(inputValue);
+                }
+              } on CustomValidationError catch (exception) {
+                return exception.getMessage(FDashLocalizations.of(context));
+              }
+              return null;
+            },
             autovalidateMode: (itemModel.isCalculated)
                 ? AutovalidateMode.disabled
                 : AutovalidateMode.always,
@@ -237,11 +247,11 @@ class _NumberFieldInputControl
                 // - hasSingleUnitChoice = true (no dropdown shown), or
                 // - user has not interacted with the unit dropdown.
                 value = answerModel
-                  .copyWithUnit(answerModel.unitChoices.first.code?.value)
-                  ?.copyWith(
-                    value: value?.value,
-                    extension_: value?.extension_,
-                  );
+                    .copyWithUnit(answerModel.unitChoices.first.code?.value)
+                    ?.copyWith(
+                      value: value?.value,
+                      extension_: value?.extension_,
+                    );
               }
               answerModel.value = value;
             },
@@ -276,7 +286,8 @@ class _UnitDropDown extends AnswerInputControl<NumericalAnswerModel> {
             width: unitWidth,
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                value: answerModel.keyOfUnit ?? answerModel.unitChoices.first.code?.value,
+                value: answerModel.keyOfUnit ??
+                    answerModel.unitChoices.first.code?.value,
                 hint: const NullDashText(),
                 onChanged: (answerModel.isControlEnabled)
                     ? (String? newValue) {

@@ -1,3 +1,4 @@
+import 'package:faiadashu/extensions/string_extension.dart';
 import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
@@ -19,6 +20,7 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
   }) : super(key: key);
 
   static Widget? fromFillerItem({
+    required BuildContext context,
     required FillerItemModel fillerItem,
     required QuestionnaireThemeData questionnaireTheme,
     Key? key,
@@ -48,10 +50,14 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
               : '</p>';
 
       final prefixText = fillerItem.prefix;
+      final title = text.xhtmlText.translate(
+        questionnaireItemModel.text?.extensions ?? [],
+        Localizations.localeOf(context),
+      );
 
       final htmlTitleText = (prefixText != null)
-          ? '$openStyleTag${prefixText.xhtmlText}&nbsp;${text.xhtmlText}$requiredTag$closeStyleTag'
-          : '$openStyleTag${text.xhtmlText}$requiredTag$closeStyleTag';
+          ? '$openStyleTag${prefixText}&nbsp;${title}$requiredTag$closeStyleTag'
+          : '$openStyleTag${title}$requiredTag$closeStyleTag';
 
       return QuestionnaireItemFillerTitle._(
         htmlTitleText: htmlTitleText,

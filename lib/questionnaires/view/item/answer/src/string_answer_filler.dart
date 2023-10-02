@@ -1,3 +1,5 @@
+import 'package:faiadashu/l10n/l10n.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/custom_validation_error.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
@@ -94,7 +96,7 @@ class _StringAnswerInputControl extends AnswerInputControl<StringAnswerModel> {
           ? QuestionnaireTheme.of(context).maxLinesForTextItem
           : 1,
       decoration: InputDecoration(
-        errorText: answerModel.displayErrorText,
+        errorText: answerModel.displayErrorText(FDashLocalizations.of(context)),
         errorStyle: (itemModel
                 .isCalculated) // Force display of error text on calculated item
             ? TextStyle(
@@ -105,13 +107,22 @@ class _StringAnswerInputControl extends AnswerInputControl<StringAnswerModel> {
         prefixIcon: itemModel.isCalculated
             ? Icon(
                 Icons.calculate,
-                color: (answerModel.displayErrorText != null)
+                color: (answerModel
+                            .displayErrorText(FDashLocalizations.of(context)) !=
+                        null)
                     ? Theme.of(context).errorColor
                     : null,
               )
             : null,
       ),
-      validator: (inputValue) => answerModel.validateInput(inputValue),
+      validator: (inputValue) {
+        try {
+          answerModel.validateInput(inputValue);
+        } on CustomValidationError catch (exception) {
+          return exception.getMessage(FDashLocalizations.of(context));
+        }
+        return null;
+      },
       autovalidateMode: AutovalidateMode.always,
       onChanged: (content) {
         answerModel.value = content;

@@ -1,4 +1,5 @@
 import 'package:faiadashu/fhir_types/fhir_types.dart';
+import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart'
     show Date, FhirDateTime, QuestionnaireItemType, Time;
@@ -65,7 +66,7 @@ class _DateTimeInputControl extends AnswerInputControl<DateTimeAnswerModel> {
       datePickerEntryMode: QuestionnaireTheme.of(context).datePickerEntryMode,
       timePickerEntryMode: QuestionnaireTheme.of(context).timePickerEntryMode,
       decoration: InputDecoration(
-        errorText: answerModel.displayErrorText,
+        errorText: answerModel.displayErrorText(FDashLocalizations.of(context)),
         errorStyle: (itemModel
                 .isCalculated) // Force display of error text on calculated item
             ? TextStyle(

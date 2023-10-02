@@ -17,7 +17,11 @@ abstract class QuestionnaireItemFiller extends StatefulWidget {
 
 abstract class QuestionnaireItemFillerState<W extends QuestionnaireItemFiller>
     extends State<W> {
-  late final Widget? _titleWidget;
+  late final Widget? _titleWidget = QuestionnaireItemFillerTitle.fromFillerItem(
+    context: context,
+    fillerItem: widget.fillerItemModel,
+    questionnaireTheme: questionnaireTheme,
+  );
   Widget? get titleWidget => _titleWidget;
 
   QuestionnaireFillerData? _questionnaireFiller;
@@ -32,11 +36,6 @@ abstract class QuestionnaireItemFillerState<W extends QuestionnaireItemFiller>
   void initState() {
     super.initState();
     _focusNode = FocusNode(debugLabel: responseUid, skipTraversal: true);
-
-    _titleWidget = QuestionnaireItemFillerTitle.fromFillerItem(
-      fillerItem: widget.fillerItemModel,
-      questionnaireTheme: questionnaireTheme,
-    );
   }
 
   @override

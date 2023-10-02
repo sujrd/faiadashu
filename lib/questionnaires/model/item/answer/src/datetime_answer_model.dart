@@ -1,6 +1,6 @@
 import 'package:faiadashu/fhir_types/fhir_types.dart';
-import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/date_time_error.dart';
 import 'package:fhir/r4.dart'
     show
         Date,
@@ -53,15 +53,15 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
   }
 
   @override
-  String? validateInput(FhirDateTime? inValue) {
+  void validateInput(FhirDateTime? inValue) {
     return validateValue(inValue);
   }
 
   @override
-  String? validateValue(FhirDateTime? inValue) {
-    return inValue == null || inValue.isValid
-        ? null
-        : lookupFDashLocalizations(locale).validatorDateTime;
+  void validateValue(FhirDateTime? inValue) {
+    if (!(inValue == null || inValue.isValid)) {
+      throw DateTimeError(nodeUid);
+    }
   }
 
   @override
@@ -81,13 +81,12 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
   @override
   void populate(QuestionnaireResponseAnswer answer) {
     // NOTE: Model should probably be populated based on QuestionnaireItemType
-    value = answer.valueDateTime ?? (
-      (answer.valueDate != null)
-      ? FhirDateTime(answer.valueDate)
-      : (answer.valueTime != null)
-      // TODO: Find a better way to convert Time values to FhirDateTime
-      ? FhirDateTime('1970-01-01T${answer.valueTime}')
-      : null
-    );
+    value = answer.valueDateTime ??
+        ((answer.valueDate != null)
+            ? FhirDateTime(answer.valueDate)
+            : (answer.valueTime != null)
+                // TODO: Find a better way to convert Time values to FhirDateTime
+                ? FhirDateTime('1970-01-01T${answer.valueTime}')
+                : null);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:faiadashu/coding/coding.dart';
 import 'package:faiadashu/fhir_types/fhir_types.dart';
+import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart';
@@ -13,8 +14,12 @@ class QuestionnaireResponseAggregator
     extends Aggregator<QuestionnaireResponse> {
   static final Logger _logger = Logger(QuestionnaireResponseAggregator);
 
-  QuestionnaireResponseAggregator()
-      : super(QuestionnaireResponse(), autoAggregate: false);
+  QuestionnaireResponseAggregator({required FDashLocalizations localizations})
+      : super(
+          QuestionnaireResponse(),
+          localizations: localizations,
+          autoAggregate: false,
+        );
 
   QuestionnaireResponseItem? _fromQuestionItem(
     QuestionItemModel itemModel,

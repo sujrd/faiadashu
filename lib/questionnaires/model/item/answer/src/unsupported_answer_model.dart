@@ -16,12 +16,12 @@ class UnsupportedAnswerModel extends AnswerModel<Object, Object> {
   RenderingString get display => RenderingString.nullText;
 
   @override
-  String? validateInput(Object? inValue) {
+  void validateInput(Object? inValue) {
     return null;
   }
 
   @override
-  String? validateValue(Object? inputValue) {
+  void validateValue(Object? inputValue) {
     return null;
   }
 

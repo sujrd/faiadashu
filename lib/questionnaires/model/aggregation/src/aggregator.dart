@@ -1,3 +1,4 @@
+import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
 import 'package:flutter/material.dart';
 
@@ -8,11 +9,16 @@ import 'package:flutter/material.dart';
 abstract class Aggregator<T> extends ValueNotifier<T> {
   late final QuestionnaireResponseModel questionnaireResponseModel;
   late final Locale locale;
+  final FDashLocalizations localizations;
   final bool autoAggregate;
 
   /// [autoAggregate] specifies whether it should attach listeners to the
   /// questionnaire and aggregate when the questionnaire changes.
-  Aggregator(T initialValue, {this.autoAggregate = true}) : super(initialValue);
+  Aggregator(
+    T initialValue, {
+    required this.localizations,
+    this.autoAggregate = true,
+  }) : super(initialValue);
 
   // ignore: use_setters_to_change_properties
   /// Initialize the aggregator.

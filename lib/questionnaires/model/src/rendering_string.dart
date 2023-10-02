@@ -33,6 +33,8 @@ class RenderingString with Diagnosticable {
   /// The unaltered rendering-markdown extension
   final Markdown? renderingMarkdown;
 
+  final List<FhirExtension>? extensions;
+
   /// Construct an [RenderingString] from the provided attributes.
   ///
   /// No alterations of the attributes will take place, in particular,
@@ -44,6 +46,7 @@ class RenderingString with Diagnosticable {
     this.renderingStyle,
     this.renderingXhtml,
     this.renderingMarkdown,
+    this.extensions,
   });
 
   /// Construct an [RenderingString] from plainText and optional extensions.
@@ -107,6 +110,7 @@ class RenderingString with Diagnosticable {
       renderingStyle: renderingStyle,
       renderingXhtml: renderingXhtml,
       renderingMarkdown: renderingMarkdown,
+      extensions: extensions,
     );
   }
 
