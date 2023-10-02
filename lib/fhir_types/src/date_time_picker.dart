@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 /// The control is displayed as a text field that can be tapped to open
 /// a picker.
 class FhirDateTimePicker extends StatefulWidget {
-  final Locale? locale;
   final DateTime firstDate;
   final DateTime lastDate;
   final FhirDateTime? initialDateTime;
@@ -31,7 +30,6 @@ class FhirDateTimePicker extends StatefulWidget {
     this.timePickerEntryMode = TimePickerEntryMode.dial,
     this.decoration,
     this.onChanged,
-    this.locale,
     this.focusNode,
     this.enabled = true,
     Key? key,

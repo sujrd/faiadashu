@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 /// or components of valueQuantity.
 class ObservationValueView extends StatelessWidget {
   final Observation _observation;
-  final Locale? locale;
   final TextStyle? valueStyle;
   final TextStyle? unitStyle;
   final String componentSeparator;
@@ -20,7 +19,6 @@ class ObservationValueView extends StatelessWidget {
   const ObservationValueView(
     this._observation, {
     super.key,
-    this.locale,
     this.valueStyle,
     this.unitStyle,
     this.componentSeparator = ' | ',
@@ -33,7 +31,7 @@ class ObservationValueView extends StatelessWidget {
     final Widget valueWidget;
 
     final decimalFormat = NumberFormat.decimalPattern(
-      (locale ?? Localizations.localeOf(context)).toString(),
+      (Localizations.localeOf(context)).toString(),
     );
 
     if (_observation.valueQuantity != null) {

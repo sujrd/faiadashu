@@ -11,12 +11,10 @@ class ObservationView extends StatelessWidget {
   final Widget _valueWidget;
   final Widget _codeWidget;
   final Widget _dateTimeWidget;
-  final Locale? locale;
 
   ObservationView(
     Observation observation, {
     super.key,
-    this.locale,
     TextStyle? valueStyle,
     TextStyle? unitStyle,
     TextStyle? codeStyle,
@@ -28,7 +26,6 @@ class ObservationView extends StatelessWidget {
           observation,
           valueStyle: valueStyle,
           unitStyle: unitStyle,
-          locale: locale,
           componentSeparator: componentSeparator,
           unknownUnitText: unknownUnitText,
           unknownValueText: unknownValueText,
@@ -37,7 +34,6 @@ class ObservationView extends StatelessWidget {
             CodeableConceptText(observation.code, style: codeStyle, key: key),
         _dateTimeWidget = FhirDateTimeText(
           observation.effectiveDateTime,
-          locale: locale,
           style: dateTimeStyle,
         );
 

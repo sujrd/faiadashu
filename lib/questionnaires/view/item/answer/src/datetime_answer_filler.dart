@@ -57,7 +57,6 @@ class _DateTimeInputControl extends AnswerInputControl<DateTimeAnswerModel> {
     return FhirDateTimePicker(
       focusNode: focusNode,
       enabled: answerModel.isControlEnabled,
-      locale: locale,
       initialDateTime: initialDate,
       // TODO: This can be specified through minValue / maxValue
       firstDate: DateTime(1860),
