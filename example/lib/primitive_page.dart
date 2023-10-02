@@ -17,25 +17,49 @@ class PrimitivePage extends ExhibitPage {
         FhirDateTimeText(FhirDateTime('2010-02')),
         const Spacer(),
         Text('Germany', style: Theme.of(context).textTheme.headline6),
-        FhirDateTimeText(
-          FhirDateTime('2010-02-05 14:02'),
-          locale: const Locale.fromSubtags(languageCode: 'de', countryCode: 'DE'),
+        Localizations.override(
+          context: context,
+          locale: const Locale.fromSubtags(
+            languageCode: 'de',
+            countryCode: 'DE',
+          ),
+          child: FhirDateTimeText(
+            FhirDateTime('2010-02-05 14:02'),
+          ),
         ),
         const Spacer(),
         Text('Japan', style: Theme.of(context).textTheme.headline6),
-        FhirDateTimeText(
-          FhirDateTime('2010-02'),
-          locale: const Locale.fromSubtags(languageCode: 'ja', countryCode: 'JP'),
+        Localizations.override(
+          context: context,
+          locale: const Locale.fromSubtags(
+            languageCode: 'ja',
+            countryCode: 'JP',
+          ),
+          child: FhirDateTimeText(
+            FhirDateTime('2010-02'),
+          ),
         ),
-        FhirDateTimeText(
-          FhirDateTime('2010-02-05 14:02'),
-          locale: const Locale.fromSubtags(languageCode: 'ja', countryCode: 'JP'),
+        Localizations.override(
+          context: context,
+          locale: const Locale.fromSubtags(
+            languageCode: 'ja',
+            countryCode: 'JP',
+          ),
+          child: FhirDateTimeText(
+            FhirDateTime('2010-02-05 14:02'),
+          ),
         ),
         const Spacer(),
         Text('Bahrain', style: Theme.of(context).textTheme.headline6),
-        FhirDateTimeText(
-          FhirDateTime('2010-02-05 14:02'),
-          locale: const Locale.fromSubtags(languageCode: 'ar', countryCode: 'BH'),
+        Localizations.override(
+          context: context,
+          locale: const Locale.fromSubtags(
+            languageCode: 'ar',
+            countryCode: 'BH',
+          ),
+          child: FhirDateTimeText(
+            FhirDateTime('2010-02-05 14:02'),
+          ),
         ),
       ],
     );
