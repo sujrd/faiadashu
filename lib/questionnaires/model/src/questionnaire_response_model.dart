@@ -826,7 +826,6 @@ class QuestionnaireResponseModel {
   /// Will return the parent [QuestionItemModel] if uid corresponds to an answer.
   FillerItemModel? fillerItemModelByUid(String uid) {
     final fillerItem = orderedFillerItemModels().firstWhereOrNull((fim) {
-      print("UID:" + fim.nodeUid);
       return fim.nodeUid == uid;
     });
     if (fillerItem != null) {
