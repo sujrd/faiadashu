@@ -151,8 +151,6 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = Localizations.localeOf(context);
-
     return QuestionnaireResponseFiller(
       fhirResourceProvider: widget.fhirResourceProvider,
       launchContext: widget.launchContext,

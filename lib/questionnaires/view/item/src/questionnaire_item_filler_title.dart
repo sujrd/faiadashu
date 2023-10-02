@@ -56,7 +56,7 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
       );
 
       final htmlTitleText = (prefixText != null)
-          ? '$openStyleTag${prefixText}&nbsp;${title}$requiredTag$closeStyleTag'
+          ? '$openStyleTag${prefixText.xhtmlText}&nbsp;${title}$requiredTag$closeStyleTag'
           : '$openStyleTag${title}$requiredTag$closeStyleTag';
 
       return QuestionnaireItemFillerTitle._(
