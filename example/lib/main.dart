@@ -44,29 +44,70 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
+  MyAppState createState() => MyAppState();
+}
+
+class MyAppState extends State<MyApp> {
+  Locale _currentLocale = const Locale('en', 'US');
+
+  void _updateLocale(Locale newLocale) {
+    setState(() {
+      _currentLocale = newLocale;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(useMaterial3: true).copyWith(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.pink),
-        inputDecorationTheme: ThemeData.light(useMaterial3: true).inputDecorationTheme.copyWith(
-              filled: true,
-            ),
+    return LocaleInheritedWidget(
+      updateLocale: _updateLocale,
+      currentLocale: _currentLocale,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.light(useMaterial3: true).copyWith(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.pink),
+          inputDecorationTheme:
+              ThemeData.light(useMaterial3: true).inputDecorationTheme.copyWith(
+                    filled: true,
+                  ),
+        ),
+        darkTheme: ThemeData.dark(useMaterial3: true),
+        title: 'Faiadashu™ FHIRDash Gallery',
+        localizationsDelegates: const [
+          FDashLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: FDashLocalizations.supportedLocales,
+        locale: _currentLocale,
+        home: const HomePage(),
       ),
-      darkTheme: ThemeData.dark(useMaterial3: true),
-      title: 'Faiadashu™ FHIRDash Gallery',
-      localizationsDelegates: const [
-        FDashLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: FDashLocalizations.supportedLocales,
-      home: const HomePage(),
     );
+  }
+}
+
+class LocaleInheritedWidget extends InheritedWidget {
+  final Function(Locale) updateLocale;
+  final Locale currentLocale;
+
+  const LocaleInheritedWidget({
+    Key? key,
+    required this.updateLocale,
+    required this.currentLocale,
+    required Widget child,
+  }) : super(key: key, child: child);
+
+  @override
+  bool updateShouldNotify(LocaleInheritedWidget old) {
+    return old.currentLocale != currentLocale;
+  }
+
+  static LocaleInheritedWidget of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<LocaleInheritedWidget>()!;
   }
 }
 
@@ -123,7 +164,6 @@ class _HomePageState extends State<HomePage> {
       clientId: '4564f6f7-335f-43d3-8867-a0f4e6f901d6',
       redirectUri: FhirUri('com.legentix.faiagallery://callback'),
     );
-
   }
 
   @override
@@ -134,7 +174,8 @@ class _HomePageState extends State<HomePage> {
 
   /// Schedules repaint after login / logout.
   void _onLoginChanged() {
-    _logger.debug('_onLoginChanged: ${questionnaireResponseStorage.smartClient.isLoggedIn()}');
+    _logger.debug(
+        '_onLoginChanged: ${questionnaireResponseStorage.smartClient.isLoggedIn()}');
     setState(() {
       // Rebuild
     });
@@ -206,7 +247,8 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         actions: [
-          SmartLoginButton(questionnaireResponseStorage.smartClient, onLoginChanged: _onLoginChanged)
+          SmartLoginButton(questionnaireResponseStorage.smartClient,
+              onLoginChanged: _onLoginChanged)
         ],
       ),
       body: SafeArea(
@@ -225,7 +267,8 @@ class _HomePageState extends State<HomePage> {
                 launchContext: launchContext,
                 questionnairePath: 'assets/instruments/beverage_ig.json',
                 saveResponseFunction: questionnaireResponseStorage.saveToMemory,
-                restoreResponseFunction: questionnaireResponseStorage.restoreFromMemory,
+                restoreResponseFunction:
+                    questionnaireResponseStorage.restoreFromMemory,
                 uploadResponseFunction: uploadResponseFunction,
                 questionnaireModelDefaults: QuestionnaireModelDefaults(
                   prefixBuilder: (fim) {
@@ -358,7 +401,7 @@ class _HomePageState extends State<HomePage> {
                         child: CustomQuestionnaireStepperPage(
                           fhirResourceProvider: AssetResourceProvider.singleton(
                             questionnaireResourceUri,
-                            'assets/instruments/framingham-hcdc.json',
+                            'assets/instruments/triage.json',
                           ),
                           launchContext: launchContext,
                         ),
@@ -396,7 +439,8 @@ class _HomePageState extends State<HomePage> {
                 launchContext: launchContext,
                 questionnairePath: 'assets/instruments/bluebook.json',
                 saveResponseFunction: questionnaireResponseStorage.saveToMemory,
-                restoreResponseFunction: questionnaireResponseStorage.restoreFromMemory,
+                restoreResponseFunction:
+                    questionnaireResponseStorage.restoreFromMemory,
                 uploadResponseFunction: uploadResponseFunction,
               ),
               _launchQuestionnaire(
@@ -425,7 +469,8 @@ class _HomePageState extends State<HomePage> {
                 launchContext: launchContext,
                 questionnairePath: 'assets/instruments/argonaut_sampler.json',
                 saveResponseFunction: questionnaireResponseStorage.saveToMemory,
-                restoreResponseFunction: questionnaireResponseStorage.restoreFromMemory,
+                restoreResponseFunction:
+                    questionnaireResponseStorage.restoreFromMemory,
                 uploadResponseFunction: uploadResponseFunction,
               ),
               QuestionnaireLaunchTile(
@@ -439,7 +484,8 @@ class _HomePageState extends State<HomePage> {
                 launchContext: launchContext,
                 questionnairePath: 'assets/instruments/argonaut_sampler.json',
                 saveResponseFunction: questionnaireResponseStorage.saveToMemory,
-                restoreResponseFunction: questionnaireResponseStorage.restoreFromMemory,
+                restoreResponseFunction:
+                    questionnaireResponseStorage.restoreFromMemory,
                 uploadResponseFunction: uploadResponseFunction,
               ),
               QuestionnaireLaunchTile(
@@ -453,7 +499,8 @@ class _HomePageState extends State<HomePage> {
                 launchContext: launchContext,
                 questionnairePath: 'assets/instruments/argonaut_sampler.json',
                 saveResponseFunction: questionnaireResponseStorage.saveToMemory,
-                restoreResponseFunction: questionnaireResponseStorage.restoreFromMemory,
+                restoreResponseFunction:
+                    questionnaireResponseStorage.restoreFromMemory,
                 uploadResponseFunction: uploadResponseFunction,
               ),
               _headline(

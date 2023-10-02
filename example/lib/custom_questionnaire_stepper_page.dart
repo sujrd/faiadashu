@@ -1,4 +1,6 @@
 import 'package:faiadashu/faiadashu.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
+import 'package:faiadashu_example/main.dart';
 import 'package:flutter/material.dart';
 
 class CustomQuestionnaireStepperPage extends StatefulWidget {
@@ -40,9 +42,11 @@ class _CustomQuestionnaireStepperPageState
       return;
     }
 
-    // Validate the first matching item, and if it's valid, navigate to the next page
-    if (matchingItems.first.validate(notifyListeners: true) == null) {
+    try {
+      matchingItems.first.validate(notifyListeners: true);
       _navigateToNextPage();
+    } on ValidationError {
+      rethrow;
     }
   }
 
@@ -67,8 +71,39 @@ class _CustomQuestionnaireStepperPageState
           children: [
             Expanded(
               child: QuestionnaireStepper(
-                  scaffoldBuilder:
-                      const DefaultQuestionnairePageScaffoldBuilder(),
+                  scaffoldBuilder: DefaultQuestionnairePageScaffoldBuilder(
+                      persistentFooterButtons: [
+                        PopupMenuButton<Locale>(
+                          icon: const Icon(Icons.language),
+                          onSelected: (Locale locale) {
+                            LocaleInheritedWidget.of(context)
+                                .updateLocale(locale);
+                          },
+                          itemBuilder: (BuildContext context) =>
+                              <PopupMenuEntry<Locale>>[
+                            const PopupMenuItem<Locale>(
+                              value: Locale('en'),
+                              child: Text('English'),
+                            ),
+                            const PopupMenuItem<Locale>(
+                              value: Locale('ar'),
+                              child: Text('عَرَبِيّ'),
+                            ),
+                            const PopupMenuItem<Locale>(
+                              value: Locale('de'),
+                              child: Text('Deutsch'),
+                            ),
+                            const PopupMenuItem<Locale>(
+                              value: Locale('es'),
+                              child: Text('Español'),
+                            ),
+                            const PopupMenuItem<Locale>(
+                              value: Locale('ja'),
+                              child: Text('日本語'),
+                            ),
+                          ],
+                        ),
+                      ]),
                   fhirResourceProvider: widget.fhirResourceProvider,
                   launchContext: widget.launchContext,
                   controller: _controller,
@@ -77,8 +112,6 @@ class _CustomQuestionnaireStepperPageState
                   },
                   onPageChanged: _onPageChanged,
                   onBeforePageChanged: (currentItemModel, nextItemModel) async {
-                    /// Adding delay
-                    await Future.delayed(Duration(seconds: 1));
                     return BeforePageChangedData(canProceed: true);
                   },
                   onVisibleItemUpdated: (item) {
