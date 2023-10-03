@@ -847,27 +847,24 @@ class QuestionnaireResponseModel {
   /// * All filled fields are valid
   /// * All expression-based constraints are satisfied
   ///
-  /// Returns null, if everything is complete.
-  /// Returns a map (UID -> error text) with incomplete entries, if items are incomplete.
-  Map<String, String>? validate({
-    required FDashLocalizations localizations,
+  /// Returns an empty list if everything is complete; otherwise,
+  /// returns a list of [ValidationError], resulting from validation
+  /// for each [ResponseItemModel.validate].
+  List<ValidationError> validate({
     bool updateErrorText = true,
     bool notifyListeners = false,
   }) {
-    final invalidMap = <String, String>{};
+    List<ValidationError> validationErrors = [];
 
     for (final itemModel in orderedResponseItemModels()) {
-      try {
-        itemModel.validate(
-          updateErrorText: updateErrorText,
-          notifyListeners: notifyListeners,
-        );
-      } on ValidationError catch (exception) {
-        _logger.debug('$itemModel is invalid.');
-      }
+      final errors = itemModel.validate(
+        updateErrorText: updateErrorText,
+        notifyListeners: notifyListeners,
+      );
+      validationErrors.addAll(errors);
     }
 
-    return invalidMap.isNotEmpty ? invalidMap : null;
+    return validationErrors;
   }
 
   /// A map of UIDs -> error texts of invalid [ResponseNode]s.

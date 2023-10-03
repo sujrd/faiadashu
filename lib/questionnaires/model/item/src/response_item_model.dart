@@ -1,6 +1,5 @@
 import 'package:faiadashu/faiadashu.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/constraint_validation_error.dart';
-import 'package:faiadashu/questionnaires/model/src/validation_errors/custom_validation_error.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/required_item_error.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart';
@@ -60,31 +59,30 @@ abstract class ResponseItemModel extends FillerItemModel {
     bool updateErrorText = true,
     bool notifyListeners = false,
   }) {
-    if (questionnaireItemModel.isRequired && isUnanswered) {
-      return [RequiredItemError(nodeUid)];
-    }
+    _exception = questionnaireItemModel.isRequired && isUnanswered
+        ? RequiredItemError(nodeUid)
+        : null;
+
     try {
       validateConstraint();
-      _exception = null;
     } on ValidationError catch (exception) {
       _exception ??= exception;
 
-      if (_exception != exception) {
-        if (updateErrorText) {
-          _exception = exception;
-        }
-        if (notifyListeners) {
-          this.notifyListeners();
-        }
+      if (_exception != exception && updateErrorText) {
+        _exception = exception;
       }
-      return [_exception!];
     }
-    return [];
+
+    if (notifyListeners) {
+      this.notifyListeners();
+    }
+
+    return _exception != null ? [_exception!] : [];
   }
 
   /// Returns whether the item is satisfying the `questionnaire-constraint`.
   ///
-  /// Throws [CustomValidationError] with human-readable text if not satisfied.
+  /// Throws [ValidationError] if not satisfied.
   void validateConstraint() {
     final constraintExpression = _constraintExpression;
     if (constraintExpression == null) {

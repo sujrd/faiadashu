@@ -1,5 +1,4 @@
 import 'package:faiadashu/faiadashu.dart';
-import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:faiadashu_example/main.dart';
 import 'package:flutter/material.dart';
 
@@ -42,11 +41,9 @@ class _CustomQuestionnaireStepperPageState
       return;
     }
 
-    try {
-      matchingItems.first.validate(notifyListeners: true);
+    final errors = matchingItems.first.validate(notifyListeners: true);
+    if (errors.isEmpty) {
       _navigateToNextPage();
-    } on ValidationError {
-      rethrow;
     }
   }
 
