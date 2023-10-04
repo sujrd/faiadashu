@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:collection/collection.dart';
 import 'package:faiadashu/faiadashu.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/common_validation_error.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/primitive_types/primitive_types.dart';
 import 'package:fhir/r4/r4.dart';
@@ -419,9 +420,10 @@ class QuestionItemModel extends ResponseItemModel {
       // Write the value back to the answer model
       firstAnswerModel.populateFromExpression(evaluationResult);
     } catch (ex) {
-      // errorText =
-      //     (ex is FhirPathEvaluationException) ? ex.message : ex.toString();
-      if (ex is FhirPathEvaluationException) {}
+      validationError = CommonValidationError(
+        nodeUid,
+        ex is FhirPathEvaluationException ? ex.message : ex.toString(),
+      );
       _qimLogger.warn('Calculation problem: $_calculatedExpression', error: ex);
       notifyListeners(); // This could be added to a setter for errorText, but might have side-effects.
     }

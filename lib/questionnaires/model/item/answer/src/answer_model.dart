@@ -76,14 +76,16 @@ abstract class AnswerModel<I, V> extends ResponseNode {
   ///
   /// This is used to validate external input from a view.
   ///
-  /// Throws [ValidationError] when when [inputValue] is invalid.
-  void validateInput(I? inputValue);
+  /// Returns null when [inputValue] is invalid; otherwise
+  /// Returns [ValidationError].
+  ValidationError? validateInput(I? inputValue);
 
   /// Validates a value against the constraints of the answer model.
   /// Does not change the [value] of the answer model.
   ///
-  /// Throws [ValidationError] when when [inputValue] is invalid.
-  void validateValue(V? inputValue);
+  /// Returns null when [inputValue] is invalid; otherwise
+  /// Returns [ValidationError].
+  ValidationError? validateValue(V? inputValue);
 
   /// Validates whether the current [value] will pass the completeness check.
   ///
@@ -99,19 +101,21 @@ abstract class AnswerModel<I, V> extends ResponseNode {
     bool updateErrorText = true,
     bool notifyListeners = false,
   }) {
-    try {
-      validateValue(value);
+    final validationError = validateValue(value);
 
-      if (notifyListeners) {
-        this.notifyListeners();
-      }
-      return [];
-    } on ValidationError catch (exception) {
-      if (updateErrorText) {
-        _error = exception;
-      }
-      return [exception];
+    if (_validationError == validationError && validationError != null) {
+      return [validationError];
     }
+
+    if (updateErrorText) {
+      _validationError = validationError;
+    }
+
+    if (notifyListeners) {
+      this.notifyListeners();
+    }
+
+    return _validationError != null ? [_validationError!] : [];
   }
 
   /// Returns whether any answer (valid or invalid) has been provided.
@@ -120,13 +124,13 @@ abstract class AnswerModel<I, V> extends ResponseNode {
   /// Returns whether this question is unanswered.
   bool get isEmpty;
 
-  ValidationError? _error;
+  ValidationError? _validationError;
 
   /// Returns an error text for display in the answer's control.
   ///
   /// This might return an error text from the parent [QuestionItemModel].
   String? displayErrorText(FDashLocalizations localizations) =>
-      _error?.getMessage(localizations) ??
+      _validationError?.getMessage(localizations) ??
       responseItemModel.getErrorText(localizations);
 
   /// Returns a [QuestionnaireResponseAnswer] based on the current value.

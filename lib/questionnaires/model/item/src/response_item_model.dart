@@ -50,26 +50,26 @@ abstract class ResponseItemModel extends FillerItemModel {
   ///
   /// Localized text if an error exists. Or null if no error exists.
   String? getErrorText(FDashLocalizations localizations) {
-    return _exception?.getMessage(localizations);
+    return validationError?.getMessage(localizations);
   }
 
-  ValidationError? _exception;
+  ValidationError? validationError;
 
   List<ValidationError> validate({
     bool updateErrorText = true,
     bool notifyListeners = false,
   }) {
-    _exception = questionnaireItemModel.isRequired && isUnanswered
+    validationError = questionnaireItemModel.isRequired && isUnanswered
         ? RequiredItemError(nodeUid)
         : null;
 
     try {
       validateConstraint();
     } on ValidationError catch (exception) {
-      _exception ??= exception;
+      validationError ??= exception;
 
-      if (_exception != exception && updateErrorText) {
-        _exception = exception;
+      if (exception != exception && updateErrorText) {
+        validationError = exception;
       }
     }
 
@@ -77,7 +77,7 @@ abstract class ResponseItemModel extends FillerItemModel {
       this.notifyListeners();
     }
 
-    return _exception != null ? [_exception!] : [];
+    return validationError != null ? [validationError!] : [];
   }
 
   /// Returns whether the item is satisfying the `questionnaire-constraint`.

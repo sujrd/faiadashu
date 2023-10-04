@@ -1,6 +1,5 @@
 import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/l10n/l10n.dart';
-import 'package:faiadashu/questionnaires/model/src/validation_errors/custom_validation_error.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
@@ -228,14 +227,12 @@ class _NumberFieldInputControl
               decimal: answerModel.maxDecimal > 0,
             ),
             validator: (inputValue) {
-              try {
-                if (itemModel.isCalculated) {
-                  answerModel.validateInput(inputValue);
-                }
-              } on CustomValidationError catch (exception) {
-                return exception.getMessage(FDashLocalizations.of(context));
+              if (!itemModel.isCalculated) {
+                return null;
               }
-              return null;
+              return answerModel
+                  .validateInput(inputValue)
+                  ?.getMessage(FDashLocalizations.of(context));
             },
             autovalidateMode: (itemModel.isCalculated)
                 ? AutovalidateMode.disabled

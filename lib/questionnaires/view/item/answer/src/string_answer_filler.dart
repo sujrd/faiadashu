@@ -1,5 +1,4 @@
 import 'package:faiadashu/l10n/l10n.dart';
-import 'package:faiadashu/questionnaires/model/src/validation_errors/custom_validation_error.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
@@ -115,14 +114,9 @@ class _StringAnswerInputControl extends AnswerInputControl<StringAnswerModel> {
               )
             : null,
       ),
-      validator: (inputValue) {
-        try {
-          answerModel.validateInput(inputValue);
-        } on CustomValidationError catch (exception) {
-          return exception.getMessage(FDashLocalizations.of(context));
-        }
-        return null;
-      },
+      validator: (inputValue) => answerModel
+          .validateInput(inputValue)
+          ?.getMessage(FDashLocalizations.of(context)),
       autovalidateMode: AutovalidateMode.always,
       onChanged: (content) {
         answerModel.value = content;

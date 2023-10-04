@@ -5,6 +5,7 @@ import 'package:faiadashu/questionnaires/model/src/validation_errors/entry_forma
 import 'package:faiadashu/questionnaires/model/src/validation_errors/min_length_error.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/regex_error.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/url_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart';
 
 enum StringAnswerKeyboard { plain, email, phone, number, multiline, url }
@@ -64,73 +65,73 @@ class StringAnswerModel extends AnswerModel<String, String> {
       : RenderingString.nullText;
 
   @override
-  void validateInput(String? inValue) {
+  ValidationError? validateInput(String? inValue) {
     final checkValue = inValue?.trim();
 
     return validateValue(checkValue);
   }
 
   @override
-  void validateValue(String? inputValue) {
+  ValidationError? validateValue(String? inputValue) {
     if (inputValue == null || inputValue.isEmpty) {
-      return;
+      return null;
     }
 
     if (inputValue.length < minLength) {
-      throw MinLengthError(nodeUid, minLength);
+      return MinLengthError(nodeUid, minLength);
     }
 
     if (maxLength != null && inputValue.length > maxLength!) {
-      throw MinLengthError(nodeUid, maxLength!);
+      return MinLengthError(nodeUid, maxLength!);
     }
 
     if (qi.type == QuestionnaireItemType.url) {
       if (!_urlRegExp.hasMatch(inputValue)) {
-        throw UrlError(nodeUid);
+        return UrlError(nodeUid);
       }
     }
 
     if (regExp != null) {
       if (!regExp!.hasMatch(inputValue)) {
-        throw (entryFormat != null)
+        return (entryFormat != null)
             ? EntryFormatError(nodeUid, entryFormat!)
             : RegexError(nodeUid);
       }
     }
+
+    return null;
   }
 
   @override
   QuestionnaireResponseAnswer? createFhirAnswer(
     List<QuestionnaireResponseItem>? items,
   ) {
-    try {
-      final value = this.value?.trim();
+    final value = this.value?.trim();
 
-      validateInput(value);
+    final valid = validateInput(value) == null;
 
-      final dataAbsentReasonExtension = [
-        FhirExtension(
-          url: dataAbsentReasonExtensionUrl,
-          valueCode: dataAbsentReasonAsTextCode,
-        ),
-      ];
+    final dataAbsentReasonExtension = !valid
+        ? [
+            FhirExtension(
+              url: dataAbsentReasonExtensionUrl,
+              valueCode: dataAbsentReasonAsTextCode,
+            ),
+          ]
+        : null;
 
-      return (value != null && value.isNotEmpty)
-          ? (qi.type != QuestionnaireItemType.url)
-              ? QuestionnaireResponseAnswer(
-                  valueString: value,
-                  extension_: dataAbsentReasonExtension,
-                  item: items,
-                )
-              : QuestionnaireResponseAnswer(
-                  valueUri: FhirUri(value),
-                  extension_: dataAbsentReasonExtension,
-                  item: items,
-                )
-          : null;
-    } on Exception {
-      return null;
-    }
+    return (value != null && value.isNotEmpty)
+        ? (qi.type != QuestionnaireItemType.url)
+            ? QuestionnaireResponseAnswer(
+                valueString: value,
+                extension_: dataAbsentReasonExtension,
+                item: items,
+              )
+            : QuestionnaireResponseAnswer(
+                valueUri: FhirUri(value),
+                extension_: dataAbsentReasonExtension,
+                item: items,
+              )
+        : null;
   }
 
   @override

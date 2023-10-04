@@ -29,8 +29,10 @@ class Xhtml extends StatelessWidget {
     TextStyle? defaultTextStyle,
     Key? key,
   }) {
-    final xhtmlString =
-        RenderingString.fromText(plainText, extensions: extensions);
+    final xhtmlString = RenderingString.fromText(
+      plainText,
+      extensions: extensions,
+    );
 
     return Xhtml.fromRenderingString(
       context,

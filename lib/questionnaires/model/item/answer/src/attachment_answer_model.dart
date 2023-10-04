@@ -2,6 +2,7 @@ import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/max_size_error.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/mime_types_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart';
 
 class AttachmentAnswerModel extends AnswerModel<Attachment, Attachment> {
@@ -29,18 +30,18 @@ class AttachmentAnswerModel extends AnswerModel<Attachment, Attachment> {
       : RenderingString.nullText;
 
   @override
-  void validateInput(Attachment? inValue) {
-    validateValue(inValue);
+  ValidationError? validateInput(Attachment? inValue) {
+    return validateValue(inValue);
   }
 
   @override
-  void validateValue(Attachment? inputValue) {
+  ValidationError? validateValue(Attachment? inputValue) {
     if (inputValue == null) return null;
 
     if (maxSize > 0) {
       final attachmentSize = inputValue.size?.value;
       if (attachmentSize == null || attachmentSize > maxSize) {
-        throw MaxSizeError(nodeUid, maxSize);
+        return MaxSizeError(nodeUid, maxSize);
       }
     }
 
@@ -48,7 +49,7 @@ class AttachmentAnswerModel extends AnswerModel<Attachment, Attachment> {
       final attachmentMimeType = inputValue.contentType?.value;
       if (attachmentMimeType == null ||
           !mimeTypes.contains(attachmentMimeType)) {
-        throw MimeTypesError(nodeUid, mimeTypes);
+        return MimeTypesError(nodeUid, mimeTypes);
       }
     }
 

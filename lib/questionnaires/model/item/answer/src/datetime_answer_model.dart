@@ -1,6 +1,7 @@
 import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/date_time_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart'
     show
         Date,
@@ -53,15 +54,16 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
   }
 
   @override
-  void validateInput(FhirDateTime? inValue) {
+  ValidationError? validateInput(FhirDateTime? inValue) {
     return validateValue(inValue);
   }
 
   @override
-  void validateValue(FhirDateTime? inValue) {
+  ValidationError? validateValue(FhirDateTime? inValue) {
     if (!(inValue == null || inValue.isValid)) {
-      throw DateTimeError(nodeUid);
+      return DateTimeError(nodeUid);
     }
+    return null;
   }
 
   @override

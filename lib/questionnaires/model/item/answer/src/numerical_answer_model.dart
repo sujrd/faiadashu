@@ -1,11 +1,11 @@
 import 'package:faiadashu/coding/coding.dart';
-import 'package:faiadashu/extensions/function_extension.dart';
 import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/max_value_error.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/min_value_error.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/nan_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart';
 import 'package:intl/intl.dart';
 
@@ -189,9 +189,9 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
       : RenderingString.nullText;
 
   @override
-  void validateInput(String? inputValue) {
+  ValidationError? validateInput(String? inputValue) {
     if (inputValue == null || inputValue.isEmpty) {
-      return;
+      return null;
     }
     num number = double.nan;
     try {
@@ -200,16 +200,16 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
       // Ignore FormatException, number remains nan.
     }
     if (number.isNaN) {
-      throw NanError(nodeUid);
+      return NanError(nodeUid);
     }
 
     final quantity = _valueFromNumber(number);
 
-    validateValue(quantity);
+    return validateValue(quantity);
   }
 
   @override
-  void validateValue(Quantity? inputValue) {
+  ValidationError? validateValue(Quantity? inputValue) {
     if (inputValue == null) {
       return null;
     }
@@ -221,10 +221,10 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
     }
 
     if (number > _maxValue) {
-      throw MaxValueError(nodeUid, Decimal(_maxValue).format(locale));
+      return MaxValueError(nodeUid, Decimal(_maxValue).format(locale));
     }
     if (number < _minValue) {
-      throw MinValueError(nodeUid, Decimal(_minValue).format(locale));
+      return MinValueError(nodeUid, Decimal(_minValue).format(locale));
     }
 
     return null;
@@ -265,9 +265,9 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
   /// * Updates the numerical value based on text input
   /// * Keeps the unit
   Quantity? copyWithTextInput(String textInput) {
-    final valid = (() => validateInput(textInput)).callSafely() ?? false;
+    final valid = validateInput(textInput);
 
-    final dataAbsentReasonExtension = !valid
+    final dataAbsentReasonExtension = valid != null
         ? [
             FhirExtension(
               url: dataAbsentReasonExtensionUrl,

@@ -6,6 +6,7 @@ import 'package:faiadashu/questionnaires/model/model.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/max_occurs_error.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/min_occurs_error.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/single_selection_or_open_string_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart';
 
@@ -306,14 +307,14 @@ class CodingAnswerModel extends AnswerModel<OptionsOrString, OptionsOrString> {
   }
 
   @override
-  void validateInput(OptionsOrString? inValue) {
+  ValidationError? validateInput(OptionsOrString? inValue) {
     return validateValue(inValue);
   }
 
   @override
-  void validateValue(OptionsOrString? inValue) {
+  ValidationError? validateValue(OptionsOrString? inValue) {
     if (inValue == null) {
-      return;
+      return null;
     }
 
     final selectedOptionsCount = inValue.selectedOptions?.length ?? 0;
@@ -323,18 +324,20 @@ class CodingAnswerModel extends AnswerModel<OptionsOrString, OptionsOrString> {
 
     if (!(questionnaireItemModel.questionnaireItem.repeats?.value ?? false)) {
       if (totalCount != 1) {
-        throw SingleSelectionOrOpenStringError(nodeUid, _openLabel);
+        return SingleSelectionOrOpenStringError(nodeUid, _openLabel);
       }
     }
 
     if (totalCount < minOccurs) {
-      throw MinOccursError(nodeUid, minOccurs);
+      return MinOccursError(nodeUid, minOccurs);
     }
 
     final maxOccurs = this.maxOccurs;
     if (maxOccurs != null && totalCount > maxOccurs) {
-      throw MaxOccursError(nodeUid, maxOccurs);
+      return MaxOccursError(nodeUid, maxOccurs);
     }
+
+    return null;
   }
 
   @override
