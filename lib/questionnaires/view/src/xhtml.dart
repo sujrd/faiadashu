@@ -57,10 +57,7 @@ class Xhtml extends StatelessWidget {
   }) {
     _logger.trace('enter fromRenderingString $renderingString');
 
-    final xhtml = renderingString.xhtmlText.translate(
-      renderingString.extensions,
-      Localizations.localeOf(context),
-    );
+    final xhtml = renderingString.xhtmlText;
     final plainText = renderingString.plainText.translate(
       renderingString.extensions,
       Localizations.localeOf(context),
