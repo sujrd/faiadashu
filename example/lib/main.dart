@@ -401,7 +401,7 @@ class _HomePageState extends State<HomePage> {
                         child: CustomQuestionnaireStepperPage(
                           fhirResourceProvider: AssetResourceProvider.singleton(
                             questionnaireResourceUri,
-                            'assets/instruments/triage.json',
+                            'assets/instruments/framingham-hcdc.json',
                           ),
                           launchContext: launchContext,
                         ),

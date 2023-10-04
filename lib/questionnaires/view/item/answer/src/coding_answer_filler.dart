@@ -46,17 +46,13 @@ class _CodingInputControl extends AnswerInputControl<CodingAnswerModel> {
     final errorText =
         answerModel.displayErrorText(FDashLocalizations.of(context));
 
-    return Column(
-      children: [
-        QuestionnaireTheme.of(context).codingControlLayoutBuilder(
-          context,
-          _buildCodingControl(context),
-          openStringInputControlWidget: answerModel.isOptionsOrString
-              ? _OpenStringInputControl(answerModel)
-              : null,
-          errorText: errorText,
-        )
-      ],
+    return QuestionnaireTheme.of(context).codingControlLayoutBuilder(
+      context,
+      _buildCodingControl(context),
+      openStringInputControlWidget: answerModel.isOptionsOrString
+          ? _OpenStringInputControl(answerModel)
+          : null,
+      errorText: errorText,
     );
   }
 

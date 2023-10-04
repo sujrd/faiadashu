@@ -59,12 +59,13 @@ class _QuestionnaireLaunchTileState extends State<QuestionnaireLaunchTile> {
   }
 
   Future<QuestionnaireResponseModel> _createModelFuture(
-      FDashLocalizations localizations) {
+    BuildContext context,
+  ) {
     return QuestionnaireResponseModel.fromFhirResourceBundle(
-      localizations: localizations,
+      localizations: FDashLocalizations.of(context),
       fhirResourceProvider: _questionnaireProvider,
       launchContext: widget.launchContext,
-      locale: Locale('ja'),
+      locale: Localizations.localeOf(context),
     ).then<QuestionnaireResponseModel>((qrm) {
       qrm.populate(
         widget.restoreResponseFunction.call(widget.questionnairePath),
@@ -79,7 +80,7 @@ class _QuestionnaireLaunchTileState extends State<QuestionnaireLaunchTile> {
     _percentPattern = NumberFormat.percentPattern(
       Localizations.localeOf(context).toString(),
     );
-    _modelFuture = _createModelFuture(FDashLocalizations.of(context));
+    _modelFuture = _createModelFuture(context);
   }
 
   @override
@@ -238,7 +239,7 @@ class _QuestionnaireLaunchTileState extends State<QuestionnaireLaunchTile> {
         ).then((value) {
           // This triggers after return from questionnaire filler
           setState(() {
-            _modelFuture = _createModelFuture(FDashLocalizations.of(context));
+            _modelFuture = _createModelFuture(context);
           });
         });
       },
