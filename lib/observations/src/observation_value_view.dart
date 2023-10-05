@@ -31,7 +31,7 @@ class ObservationValueView extends StatelessWidget {
     final Widget valueWidget;
 
     final decimalFormat = NumberFormat.decimalPattern(
-      (Localizations.localeOf(context)).toString(),
+      Localizations.localeOf(context).toString(),
     );
 
     if (_observation.valueQuantity != null) {
