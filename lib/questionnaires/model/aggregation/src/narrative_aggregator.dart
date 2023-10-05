@@ -207,7 +207,10 @@ class NarrativeAggregator extends Aggregator<Narrative> {
     }
     // Manually invoke the update, because the order matters and enableWhen calcs need to come after answer value updates.
     questionnaireResponseModel.updateEnabledItems(
-      notifyListeners: false,
+      // Setting `notifyListeners` to false may result in incorrect computed values for calculated expressions in some cases.
+      // Thus far the issues with endless refresh and stack overflow reported in the comment below cannot be reproduced.
+      // TODO: Clean this up after conducting significant testing.
+      // notifyListeners: false,
     ); // Setting this to true might result in endless refresh and stack overflow
     _narrative = _generateNarrative(questionnaireResponseModel);
     _generation = questionnaireResponseModel.generation;

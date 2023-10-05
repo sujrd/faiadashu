@@ -430,10 +430,22 @@ class QuestionnaireResponseModel {
 
   Map<String, dynamic>? _cachedQuestionnaireResponse;
 
-  /// INTERNAL ONLY - Returns a FHIR JSON fragment for a node with a given [uid].
-  Map<String, dynamic>? fhirResponseItemByUid(String uid) {
+  /// Generates a cached QuestionnaireResponse used for Fhirpath calculated expressions.
+  /// The response status is set to completed so that values from disabled questions are excluded
+  /// from computation.
+  void _cacheQuestionnaireResponseForFhirPath() {
     _cachedQuestionnaireResponse ??=
-        aggregator<QuestionnaireResponseAggregator>().aggregateResponseItems();
+        aggregator<QuestionnaireResponseAggregator>().aggregateResponseItems(
+          responseStatus: QuestionnaireResponseStatus.completed,
+          generateNarrative: false,
+        );
+  }
+
+  /// INTERNAL ONLY - Returns a FHIR JSON fragment for a node with a given [uid].
+  /// Note: This method is apparently meant to be called for Fhirpath expression evaluators only.
+  ///       Do not use in any other scenarios.
+  Map<String, dynamic>? fhirResponseItemByUid(String uid) {
+    _cacheQuestionnaireResponseForFhirPath();
 
     return _cachedQuestionnaireResponse?[uid] as Map<String, dynamic>?;
   }
@@ -445,11 +457,7 @@ class QuestionnaireResponseModel {
   ///
   /// The response matches the model as of the current generation.
   QuestionnaireResponse? createQuestionnaireResponseForFhirPath() {
-    _cachedQuestionnaireResponse ??=
-        aggregator<QuestionnaireResponseAggregator>().aggregateResponseItems(
-      responseStatus: QuestionnaireResponseStatus.completed,
-      generateNarrative: false,
-    );
+    _cacheQuestionnaireResponseForFhirPath();
 
     return _cachedQuestionnaireResponse?[QuestionnaireResponseAggregator
         .questionnaireResponseKey] as QuestionnaireResponse?;
