@@ -185,6 +185,8 @@ class _NumberFieldInputControl
       );
     }
 
+    final localizations = FDashLocalizations.of(context);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -196,8 +198,7 @@ class _NumberFieldInputControl
             textAlignVertical: TextAlignVertical.center,
             textAlign: TextAlign.end,
             decoration: InputDecoration(
-              errorText:
-                  answerModel.displayErrorText(FDashLocalizations.of(context)),
+              errorText: answerModel.displayErrorText(localizations),
               errorStyle: (itemModel
                       .isCalculated) // Force display of error text on calculated item
                   ? TextStyle(
@@ -208,11 +209,10 @@ class _NumberFieldInputControl
               prefixIcon: itemModel.isCalculated
                   ? Icon(
                       Icons.calculate,
-                      color: (answerModel.displayErrorText(
-                                  FDashLocalizations.of(context)) !=
-                              null)
-                          ? Theme.of(context).errorColor
-                          : null,
+                      color:
+                          (answerModel.displayErrorText(localizations) != null)
+                              ? Theme.of(context).errorColor
+                              : null,
                     )
                   : null,
               suffixIcon: (answerModel.hasUnitChoices)
@@ -226,14 +226,13 @@ class _NumberFieldInputControl
               signed: answerModel.minValue < 0,
               decimal: answerModel.maxDecimal > 0,
             ),
-            validator: (inputValue) {
-              if (!itemModel.isCalculated) {
-                return null;
-              }
-              return answerModel
-                  .validateInput(inputValue)
-                  ?.getMessage(FDashLocalizations.of(context));
-            },
+            validator: (itemModel.isCalculated)
+                ? null
+                : (inputValue) {
+                    return answerModel
+                        .validateInput(inputValue)
+                        ?.getMessage(localizations);
+                  },
             autovalidateMode: (itemModel.isCalculated)
                 ? AutovalidateMode.disabled
                 : AutovalidateMode.always,
