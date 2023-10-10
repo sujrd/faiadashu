@@ -59,34 +59,34 @@ abstract class ResponseItemModel extends FillerItemModel {
     bool updateErrorText = true,
     bool notifyListeners = false,
   }) {
-    validationError = questionnaireItemModel.isRequired && isUnanswered
-        ? RequiredItemError(nodeUid)
-        : null;
+    ValidationError? newValidationError;
 
-    try {
-      validateConstraint();
-    } on ValidationError catch (exception) {
-      validationError ??= exception;
+    if (questionnaireItemModel.isRequired && isUnanswered) {
+      newValidationError = RequiredItemError(nodeUid);
+    }
 
-      if (exception != exception && updateErrorText) {
-        validationError = exception;
+    final constraintError = validateConstraint();
+    newValidationError ??= constraintError;
+
+    if (validationError != newValidationError) {
+      if (updateErrorText) {
+        validationError = newValidationError;
+      }
+      if (notifyListeners) {
+        this.notifyListeners();
       }
     }
 
-    if (notifyListeners) {
-      this.notifyListeners();
-    }
-
-    return validationError != null ? [validationError!] : [];
+    return newValidationError != null ? [newValidationError] : [];
   }
 
   /// Returns whether the item is satisfying the `questionnaire-constraint`.
   ///
-  /// Throws [ValidationError] if not satisfied.
-  void validateConstraint() {
+  /// Returns [ValidationError] if not satisfied; otherwise null
+  ValidationError? validateConstraint() {
     final constraintExpression = _constraintExpression;
     if (constraintExpression == null) {
-      return;
+      return null;
     }
 
     final isSatisfied = constraintExpression.fetchBoolValue(
@@ -95,11 +95,11 @@ abstract class ResponseItemModel extends FillerItemModel {
       location: nodeUid,
     );
 
-    if (!isSatisfied) {
-      throw ConstraintValidationError(
-        nodeUid,
-        questionnaireItemModel.constraintHuman,
-      );
-    }
+    return isSatisfied
+        ? null
+        : ConstraintValidationError(
+            nodeUid,
+            questionnaireItemModel.constraintHuman,
+          );
   }
 }
