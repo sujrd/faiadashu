@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:faiadashu/extensions/string_extension.dart';
 import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:fhir/r4.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:markdown/markdown.dart';
 
 /// Representation of a Fhir string which is plain text with optional
@@ -62,6 +64,7 @@ class RenderingString with Diagnosticable {
   /// * rendering-xhtml
   factory RenderingString.fromText(
     String plainText, {
+    Locale? locale,
     List<FhirExtension>? extensions,
     String? xhtmlText,
   }) {
@@ -83,7 +86,8 @@ class RenderingString with Diagnosticable {
         )
         ?.valueMarkdown;
 
-    final escapedPlainText = _htmlEscape.convert(plainText);
+    final text = plainText.translate(extensions, locale);
+    final escapedPlainText = _htmlEscape.convert(text);
 
     final outputXhtmlText = (xhtmlText != null)
         ? xhtmlText
@@ -98,7 +102,7 @@ class RenderingString with Diagnosticable {
                   )
                 : (renderingStyle != null)
                     ? '<span style="$renderingStyle">$escapedPlainText</span>'
-                    : plainText;
+                    : text;
 
     return RenderingString._(
       plainText,

@@ -273,6 +273,7 @@ class QuestionnaireItemModel with Diagnosticable {
     return (plainText != null)
         ? RenderingString.fromText(
             plainText,
+            locale: questionnaireModel.locale,
             extensions: questionnaireItem.textElement?.extension_,
           )
         : null;
@@ -290,6 +291,7 @@ class QuestionnaireItemModel with Diagnosticable {
     return (plainPrefix != null)
         ? RenderingString.fromText(
             plainPrefix,
+            locale: questionnaireModel.locale,
             extensions: questionnaireItem.prefixElement?.extension_,
           )
         : null;

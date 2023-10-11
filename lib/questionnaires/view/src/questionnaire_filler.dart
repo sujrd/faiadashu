@@ -144,6 +144,9 @@ class _QuestionnaireResponseFillerState
 
               return QuestionnaireLoadingIndicator(snapshot);
             }
+            if (_questionnaireResponseModel?.locale != snapshot.data?.locale) {
+              _handleQuestionnaireResponseModelChangeListenerFunction = null;
+            }
             if (snapshot.hasData) {
               _logger.debug('FutureBuilder hasData');
               _questionnaireResponseModel = snapshot.data;

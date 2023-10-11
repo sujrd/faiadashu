@@ -1,4 +1,3 @@
-import 'package:faiadashu/extensions/string_extension.dart';
 import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
@@ -50,10 +49,7 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
               : '</p>';
 
       final prefixText = fillerItem.prefix;
-      final title = text.xhtmlText.translate(
-        questionnaireItemModel.text?.extensions ?? [],
-        Localizations.localeOf(context),
-      );
+      final title = text.xhtmlText;
 
       final htmlTitleText = (prefixText != null)
           ? '$openStyleTag${prefixText.xhtmlText}&nbsp;${title}$requiredTag$closeStyleTag'

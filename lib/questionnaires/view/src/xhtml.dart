@@ -1,4 +1,3 @@
-import 'package:faiadashu/extensions/string_extension.dart';
 import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
@@ -31,6 +30,7 @@ class Xhtml extends StatelessWidget {
   }) {
     final xhtmlString = RenderingString.fromText(
       plainText,
+      locale: Localizations.localeOf(context),
       extensions: extensions,
     );
 
@@ -58,10 +58,7 @@ class Xhtml extends StatelessWidget {
     _logger.trace('enter fromRenderingString $renderingString');
 
     final xhtml = renderingString.xhtmlText;
-    final plainText = renderingString.plainText.translate(
-      renderingString.extensions,
-      Localizations.localeOf(context),
-    );
+    final plainText = renderingString.plainText;
 
     if (renderingString.isPlain) {
       return Xhtml._(

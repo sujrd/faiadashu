@@ -75,6 +75,7 @@ class CodingAnswerOptionModel {
       final plainText = coding.localizedDisplay(locale);
       optionText = RenderingString.fromText(
         plainText,
+        locale: locale,
         extensions: coding.displayElement?.extension_,
       );
       forDisplay = plainText;
@@ -132,7 +133,11 @@ class CodingAnswerOptionModel {
         ?.valueString;
 
     final optionPrefix = (plainOptionPrefix != null)
-        ? RenderingString.fromText(plainOptionPrefix, extensions: extensions)
+        ? RenderingString.fromText(
+            plainOptionPrefix,
+            locale: locale,
+            extensions: extensions,
+          )
         : null;
 
     RenderingString optionText;
@@ -146,6 +151,7 @@ class CodingAnswerOptionModel {
         forDisplay = plainText;
         optionText = RenderingString.fromText(
           plainText,
+          locale: locale,
           extensions: xhtmlExtensions,
         );
       } else {
@@ -154,6 +160,7 @@ class CodingAnswerOptionModel {
         forDisplay = _createForDisplay(coding, locale, questionnaireItemModel);
         optionText = RenderingString.fromText(
           plainText,
+          locale: locale,
           extensions: extensions,
         );
       }
@@ -170,6 +177,7 @@ class CodingAnswerOptionModel {
       forDisplay = plainText;
       optionText = RenderingString.fromText(
         plainText,
+        locale: locale,
         extensions: xhtmlExtensions,
       );
     }
