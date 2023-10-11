@@ -40,7 +40,9 @@ class _QuestionnaireCompleteButtonState
                   validation.getMessage(FDashLocalizations.of(context)) ?? ""
           };
 
-          return;
+          if (validationErrors.isNotEmpty) {
+            return;
+          }
         }
 
         final newResponseStatus =

@@ -151,7 +151,6 @@ class QuestionnaireThemeData {
   ///
   /// [pageIndex] is the index of the page that's being currently built.
   final QuestionnaireItemFiller? Function(
-    BuildContext context,
     QuestionnaireFillerData responseFiller,
     int pageIndex,
   ) stepperQuestionnaireItemFiller;
@@ -177,12 +176,14 @@ class QuestionnaireThemeData {
     this.datePickerEntryMode = DatePickerEntryMode.calendar,
     this.timePickerEntryMode = TimePickerEntryMode.dial,
     this.createQuestionnaireAnswerFiller = _createDefaultAnswerFiller,
-    this.questionResponseItemLayoutBuilder = _defaultQuestionResponseItemLayoutBuilder,
+    this.questionResponseItemLayoutBuilder =
+        _defaultQuestionResponseItemLayoutBuilder,
     this.groupItemLayoutBuilder = _defaultGroupItemLayoutBuilder,
     this.displayItemLayoutBuilder = _defaultDisplayItemLayoutBuilder,
     this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
     this.scrollerItemBuilder = _defaultScrollerItemBuilder,
-    this.stepperQuestionnaireItemFiller = _defaultStepperQuestionnaireItemFiller,
+    this.stepperQuestionnaireItemFiller =
+        _defaultStepperQuestionnaireItemFiller,
     this.stepperPageItemBuilder = _defaultStepperPageItemBuilder,
   });
 
@@ -191,8 +192,7 @@ class QuestionnaireThemeData {
   /// Used by [QuestionnaireResponseFiller].
   QuestionnaireItemFiller createQuestionnaireItemFiller(
     QuestionnaireFillerData questionnaireFiller,
-    FillerItemModel fillerItemModel,
-    Locale locale, {
+    FillerItemModel fillerItemModel, {
     Key? key,
   }) {
     if (fillerItemModel is QuestionItemModel) {
@@ -428,15 +428,14 @@ class QuestionnaireThemeData {
     QuestionnaireFillerData responseFiller,
     int index,
   ) {
-    return responseFiller.itemFillerAt(context, index);
+    return responseFiller.itemFillerAt(index);
   }
 
   static QuestionnaireItemFiller? _defaultStepperQuestionnaireItemFiller(
-    BuildContext context,
     QuestionnaireFillerData responseFiller,
     int index,
   ) {
-    final itemFiller = responseFiller.visibleItemFillerAt(context, index);
+    final itemFiller = responseFiller.visibleItemFillerAt(index);
     if (itemFiller == null) return null;
 
     return itemFiller;

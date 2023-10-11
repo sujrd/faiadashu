@@ -61,6 +61,7 @@ class _StringAnswerInputControl extends AnswerInputControl<StringAnswerModel> {
   @override
   Widget build(BuildContext context) {
     final answerModel = this.answerModel;
+    final locale = FDashLocalizations.of(context);
 
     // FIXME: What should be the repaint mechanism for calculated items?
     // (it is getting repainted currently, but further optimization might break that)
@@ -95,7 +96,7 @@ class _StringAnswerInputControl extends AnswerInputControl<StringAnswerModel> {
           ? QuestionnaireTheme.of(context).maxLinesForTextItem
           : 1,
       decoration: InputDecoration(
-        errorText: answerModel.displayErrorText(FDashLocalizations.of(context)),
+        errorText: answerModel.displayErrorText(locale),
         errorStyle: (itemModel
                 .isCalculated) // Force display of error text on calculated item
             ? TextStyle(
@@ -106,17 +107,14 @@ class _StringAnswerInputControl extends AnswerInputControl<StringAnswerModel> {
         prefixIcon: itemModel.isCalculated
             ? Icon(
                 Icons.calculate,
-                color: (answerModel
-                            .displayErrorText(FDashLocalizations.of(context)) !=
-                        null)
+                color: (answerModel.displayErrorText(locale) != null)
                     ? Theme.of(context).errorColor
                     : null,
               )
             : null,
       ),
-      validator: (inputValue) => answerModel
-          .validateInput(inputValue)
-          ?.getMessage(FDashLocalizations.of(context)),
+      validator: (inputValue) =>
+          answerModel.validateInput(inputValue)?.getMessage(locale),
       autovalidateMode: AutovalidateMode.always,
       onChanged: (content) {
         answerModel.value = content;

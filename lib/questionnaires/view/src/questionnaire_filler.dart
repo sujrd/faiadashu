@@ -250,7 +250,7 @@ class QuestionnaireFillerData extends InheritedWidget {
   /// The [QuestionnaireItemFiller]s are ordered based on 'pre-order'.
   ///
   /// see: https://en.wikipedia.org/wiki/Tree_traversal#Pre-order,_NLR
-  QuestionnaireItemFiller itemFillerAt(BuildContext context, int index) {
+  QuestionnaireItemFiller itemFillerAt(int index) {
     _logger.trace('itemFillerAt $index');
     final item = _itemFillers[index];
 
@@ -259,7 +259,6 @@ class QuestionnaireFillerData extends InheritedWidget {
       _itemFillers[index] = questionnaireTheme.createQuestionnaireItemFiller(
         this,
         fillerItemModels.elementAt(index),
-        Localizations.localeOf(context),
         key: ValueKey<String>(
           'item-filler-${fillerItemModels.elementAt(index).nodeUid}',
         ),
@@ -289,11 +288,10 @@ class QuestionnaireFillerData extends InheritedWidget {
 
   /// Returns the [QuestionnaireItemFiller] of the [visibleIndex]-th item that is currently
   /// visible.
-  QuestionnaireItemFiller? visibleItemFillerAt(
-      BuildContext context, int visibleIndex) {
+  QuestionnaireItemFiller? visibleItemFillerAt(int visibleIndex) {
     final index = indexOfVisibleItemAt(visibleIndex);
 
-    return index < 0 ? null : itemFillerAt(context, index);
+    return index < 0 ? null : itemFillerAt(index);
   }
 
   /// Returns the integer range of items corresponding to the [visibleRootIndex]-th root item

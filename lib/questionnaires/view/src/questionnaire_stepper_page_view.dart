@@ -50,7 +50,6 @@ class _QuestionnaireStepperPageViewState
     final fillerData = QuestionnaireResponseFiller.of(context);
 
     final nextPageFillerItem = themeData.stepperQuestionnaireItemFiller(
-      context,
       fillerData,
       currentPage + 1,
     );
@@ -77,7 +76,6 @@ class _QuestionnaireStepperPageViewState
     final responseFiller = QuestionnaireResponseFiller.of(context);
 
     final data = QuestionnaireTheme.of(context).stepperQuestionnaireItemFiller(
-      context,
       responseFiller,
       index,
     );
@@ -107,7 +105,6 @@ class _QuestionnaireStepperPageViewState
 
         final data =
             QuestionnaireTheme.of(context).stepperQuestionnaireItemFiller(
-          context,
           responseFillerData,
           index,
         );

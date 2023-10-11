@@ -19,7 +19,6 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
   }) : super(key: key);
 
   static Widget? fromFillerItem({
-    required BuildContext context,
     required FillerItemModel fillerItem,
     required QuestionnaireThemeData questionnaireTheme,
     Key? key,
