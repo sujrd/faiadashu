@@ -41,6 +41,7 @@ class _CustomQuestionnaireStepperPageState
       return;
     }
 
+    // Validate the first matching item, and if it's valid, navigate to the next page
     final errors = matchingItems.first.validate(notifyListeners: true);
     if (errors.isEmpty) {
       _navigateToNextPage();
