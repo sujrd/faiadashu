@@ -133,11 +133,7 @@ class CodingAnswerOptionModel {
         ?.valueString;
 
     final optionPrefix = (plainOptionPrefix != null)
-        ? RenderingString.fromText(
-            plainOptionPrefix,
-            locale: locale,
-            extensions: extensions,
-          )
+        ? RenderingString.fromText(plainOptionPrefix)
         : null;
 
     RenderingString optionText;
@@ -151,18 +147,13 @@ class CodingAnswerOptionModel {
         forDisplay = plainText;
         optionText = RenderingString.fromText(
           plainText,
-          locale: locale,
           extensions: xhtmlExtensions,
         );
       } else {
         final plainText =
             _createMultiColumn(coding, locale, questionnaireItemModel);
         forDisplay = _createForDisplay(coding, locale, questionnaireItemModel);
-        optionText = RenderingString.fromText(
-          plainText,
-          locale: locale,
-          extensions: extensions,
-        );
+        optionText = RenderingString.fromText(plainText);
       }
     } else {
       // The spec only allows valueCoding, but valueString occurs in the real world
