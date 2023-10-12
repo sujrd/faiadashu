@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 /// The control is displayed as a text field that can be tapped to open
 /// a picker.
 class FhirDateTimePicker extends StatefulWidget {
-  final Locale? locale;
   final DateTime firstDate;
   final DateTime lastDate;
   final FhirDateTime? initialDateTime;
@@ -31,7 +30,6 @@ class FhirDateTimePicker extends StatefulWidget {
     this.timePickerEntryMode = TimePickerEntryMode.dial,
     this.decoration,
     this.onChanged,
-    this.locale,
     this.focusNode,
     this.enabled = true,
     Key? key,
@@ -76,8 +74,8 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
     if (value == null || dateTime == null) return '';
 
     return (widget.pickerType == Time)
-      ? DateFormat.jm(locale.toString()).format(dateTime)
-      : value.format(locale, withTimeZone: widget.pickerType == FhirDateTime);
+        ? DateFormat.jm(locale.toString()).format(dateTime)
+        : value.format(locale, withTimeZone: widget.pickerType == FhirDateTime);
   }
 
   Future<void> _showPicker(Locale locale) async {
@@ -113,13 +111,15 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
               // Get new BuildContext with overridden locale
               builder: (context) {
                 // Get time of day format of current locale
-                final timeOfDayFormat = MaterialLocalizations.of(context).timeOfDayFormat();
+                final timeOfDayFormat =
+                    MaterialLocalizations.of(context).timeOfDayFormat();
                 return MediaQuery(
                   data: MediaQuery.of(context).copyWith(
                     // Workaround for time picker validation bug in `input` mode with locales specifying a 24h TimeOfDayFormat.
                     // - https://github.com/sujrd/faiadashu/pull/32#issuecomment-1678639964
                     // - https://github.com/flutter/flutter/issues/85527
-                    alwaysUse24HourFormat: timeOfDay24hFormats.contains(timeOfDayFormat),
+                    alwaysUse24HourFormat:
+                        timeOfDay24hFormats.contains(timeOfDayFormat),
                   ),
                   child: child!,
                 );
@@ -157,7 +157,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = widget.locale ?? Localizations.localeOf(context);
+    final locale = Localizations.localeOf(context);
 
     // There is no Locale in initState.
     if (!_fieldInitialized) {

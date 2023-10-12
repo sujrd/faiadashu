@@ -119,12 +119,18 @@ class ObservationPage extends ExhibitPage {
         const SizedBox(
           height: 16,
         ),
-        ObservationView(
-          bpObservationWHR,
-          valueStyle: Theme.of(context).textTheme.headline4,
-          codeStyle: Theme.of(context).textTheme.subtitle2,
-          dateTimeStyle: Theme.of(context).textTheme.caption,
-          locale: const Locale.fromSubtags(languageCode: 'ar', countryCode: 'BH'),
+        Localizations.override(
+          context: context,
+          locale: const Locale.fromSubtags(
+            languageCode: 'ar',
+            countryCode: 'BH',
+          ),
+          child: ObservationView(
+            bpObservationWHR,
+            valueStyle: Theme.of(context).textTheme.headline4,
+            codeStyle: Theme.of(context).textTheme.subtitle2,
+            dateTimeStyle: Theme.of(context).textTheme.caption,
+          ),
         ),
       ],
     );

@@ -1,3 +1,4 @@
+import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,9 @@ class _GroupItemState extends ResponseItemFillerState<GroupItem> {
     return AnimatedBuilder(
       animation: widget.responseItemModel,
       builder: (context, _) {
-        final errorText = widget.responseItemModel.errorText;
+        final errorText = widget.responseItemModel.getErrorText(
+          FDashLocalizations.of(context),
+        );
 
         return widget.responseItemModel.displayVisibility !=
                 DisplayVisibility.hidden

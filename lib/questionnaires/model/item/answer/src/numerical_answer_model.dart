@@ -1,8 +1,11 @@
 import 'package:faiadashu/coding/coding.dart';
 import 'package:faiadashu/fhir_types/fhir_types.dart';
-import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/max_value_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/min_value_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/nan_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart';
 import 'package:intl/intl.dart';
 
@@ -161,16 +164,21 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
     }
 
     qi.extension_
-      ?.whereExtensionIs('http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption')
-      ?.forEach((extension) {
-        final coding = extension.valueCoding;
-        if (coding == null) return;
-        _units[keyForUnitChoice(coding)] = coding;
-      });
+        ?.whereExtensionIs(
+            'http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption')
+        ?.forEach((extension) {
+      final coding = extension.valueCoding;
+      if (coding == null) return;
+      _units[keyForUnitChoice(coding)] = coding;
+    });
 
     // Using updated usage for questionnaire-unit in R5 (http://hl7.org/fhir/extensions/StructureDefinition-questionnaire-unit.html)
-    final questionnaireUnit = qi.extension_?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/questionnaire-unit')?.valueCoding;
-    if (questionnaireUnit != null && questionnaireUnit.display != null) _units[keyForUnitChoice(questionnaireUnit)] = questionnaireUnit;
+    final questionnaireUnit = qi.extension_
+        ?.extensionOrNull(
+            'http://hl7.org/fhir/StructureDefinition/questionnaire-unit')
+        ?.valueCoding;
+    if (questionnaireUnit != null && questionnaireUnit.display != null)
+      _units[keyForUnitChoice(questionnaireUnit)] = questionnaireUnit;
   }
 
   @override
@@ -181,7 +189,7 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
       : RenderingString.nullText;
 
   @override
-  String? validateInput(String? inputValue) {
+  ValidationError? validateInput(String? inputValue) {
     if (inputValue == null || inputValue.isEmpty) {
       return null;
     }
@@ -191,8 +199,8 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
     } catch (_) {
       // Ignore FormatException, number remains nan.
     }
-    if (number == double.nan) {
-      return lookupFDashLocalizations(locale).validatorNan;
+    if (number.isNaN) {
+      return NanError(nodeUid);
     }
 
     final quantity = _valueFromNumber(number);
@@ -201,7 +209,7 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
   }
 
   @override
-  String? validateValue(Quantity? inputValue) {
+  ValidationError? validateValue(Quantity? inputValue) {
     if (inputValue == null) {
       return null;
     }
@@ -213,12 +221,10 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
     }
 
     if (number > _maxValue) {
-      return lookupFDashLocalizations(locale)
-          .validatorMaxValue(Decimal(_maxValue).format(locale));
+      return MaxValueError(nodeUid, Decimal(_maxValue).format(locale));
     }
     if (number < _minValue) {
-      return lookupFDashLocalizations(locale)
-          .validatorMinValue(Decimal(_minValue).format(locale));
+      return MinValueError(nodeUid, Decimal(_minValue).format(locale));
     }
 
     return null;
@@ -259,8 +265,9 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
   /// * Updates the numerical value based on text input
   /// * Keeps the unit
   Quantity? copyWithTextInput(String textInput) {
-    final valid = validateInput(textInput) == null;
-    final dataAbsentReasonExtension = !valid
+    final valid = validateInput(textInput);
+
+    final dataAbsentReasonExtension = valid != null
         ? [
             FhirExtension(
               url: dataAbsentReasonExtensionUrl,

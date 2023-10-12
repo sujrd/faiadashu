@@ -33,11 +33,10 @@ class DefaultQuestionnairePageScaffoldBuilder
   @override
   Widget build(
     BuildContext context, {
-    Locale? locale,
     required void Function(void Function()) setStateCallback,
     required Widget child,
   }) {
-    final theLocale = locale ?? Localizations.localeOf(context);
+    final theLocale = Localizations.localeOf(context);
 
     final questionnaireFiller = QuestionnaireResponseFiller.of(context);
     final questionnaire = questionnaireFiller

@@ -30,7 +30,8 @@ class QuestionnaireStepperPageView extends StatefulWidget {
       _QuestionnaireStepperPageViewState();
 }
 
-class _QuestionnaireStepperPageViewState extends State<QuestionnaireStepperPageView> {
+class _QuestionnaireStepperPageViewState
+    extends State<QuestionnaireStepperPageView> {
   PageController _pageController = PageController();
   bool _hasRequestsRunning = false;
   QuestionnaireItemFiller? _currentQuestionnaireItemFiller;
@@ -74,8 +75,10 @@ class _QuestionnaireStepperPageViewState extends State<QuestionnaireStepperPageV
   void _updateVisibleItem(int index) {
     final responseFiller = QuestionnaireResponseFiller.of(context);
 
-    final data = QuestionnaireTheme.of(context)
-        .stepperQuestionnaireItemFiller(responseFiller, index);
+    final data = QuestionnaireTheme.of(context).stepperQuestionnaireItemFiller(
+      responseFiller,
+      index,
+    );
 
     _currentQuestionnaireItemFiller = data;
     widget.onVisibleItemUpdated?.call(data?.fillerItemModel);
@@ -100,8 +103,11 @@ class _QuestionnaireStepperPageViewState extends State<QuestionnaireStepperPageV
       itemBuilder: (BuildContext context, int index) {
         final responseFillerData = QuestionnaireResponseFiller.of(context);
 
-        final data = QuestionnaireTheme.of(context)
-            .stepperQuestionnaireItemFiller(responseFillerData, index);
+        final data =
+            QuestionnaireTheme.of(context).stepperQuestionnaireItemFiller(
+          responseFillerData,
+          index,
+        );
 
         _updateVisibleItem(index);
         if (data == null) return null;

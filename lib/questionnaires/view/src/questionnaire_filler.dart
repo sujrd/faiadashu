@@ -1,3 +1,4 @@
+import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:faiadashu/resource_provider/resource_provider.dart';
@@ -13,7 +14,6 @@ import 'package:flutter/material.dart';
 /// see: [QuestionnaireScrollerPage]
 /// see: [QuestionnaireStepperPage]
 class QuestionnaireResponseFiller extends StatefulWidget {
-  final Locale locale;
   final WidgetBuilder builder;
   final List<Aggregator<dynamic>>? aggregators;
   final void Function(BuildContext context, Uri url)? onLinkTap;
@@ -24,19 +24,19 @@ class QuestionnaireResponseFiller extends StatefulWidget {
   final FhirResourceProvider fhirResourceProvider;
   final LaunchContext launchContext;
 
-  Future<QuestionnaireResponseModel>
-      _createQuestionnaireResponseModel() async =>
-          QuestionnaireResponseModel.fromFhirResourceBundle(
-            locale: locale,
-            aggregators: aggregators,
-            fhirResourceProvider: fhirResourceProvider,
-            launchContext: launchContext,
-            questionnaireModelDefaults: questionnaireModelDefaults,
-          );
+  Future<QuestionnaireResponseModel> _createQuestionnaireResponseModel({
+    required BuildContext context,
+  }) async =>
+      QuestionnaireResponseModel.fromFhirResourceBundle(
+          locale: Localizations.localeOf(context),
+          aggregators: aggregators,
+          fhirResourceProvider: fhirResourceProvider,
+          launchContext: launchContext,
+          questionnaireModelDefaults: questionnaireModelDefaults,
+          localizations: FDashLocalizations.of(context));
 
   const QuestionnaireResponseFiller({
     Key? key,
-    required this.locale,
     required this.builder,
     required this.fhirResourceProvider,
     required this.launchContext,
@@ -65,17 +65,10 @@ class _QuestionnaireResponseFillerState
     extends State<QuestionnaireResponseFiller> {
   static final _logger = Logger(_QuestionnaireResponseFillerState);
 
-  late final Future<QuestionnaireResponseModel> builderFuture;
   QuestionnaireResponseModel? _questionnaireResponseModel;
   VoidCallback? _handleQuestionnaireResponseModelChangeListenerFunction;
   // ignore: use_late_for_private_fields_and_variables
   QuestionnaireFillerData? _questionnaireFillerData;
-
-  @override
-  void initState() {
-    super.initState();
-    builderFuture = widget._createQuestionnaireResponseModel();
-  }
 
   @override
   void didChangeDependencies() {
@@ -110,7 +103,6 @@ class _QuestionnaireResponseFillerState
         () {
           _questionnaireFillerData = QuestionnaireFillerData._(
             _questionnaireResponseModel!,
-            locale: widget.locale,
             builder: widget.builder,
             onLinkTap: widget.onLinkTap,
             onDataAvailable: widget.onDataAvailable,
@@ -134,7 +126,7 @@ class _QuestionnaireResponseFillerState
     _logger.trace('Enter build()');
 
     return FutureBuilder<QuestionnaireResponseModel>(
-      future: builderFuture,
+      future: widget._createQuestionnaireResponseModel(context: context),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.active:
@@ -152,6 +144,13 @@ class _QuestionnaireResponseFillerState
 
               return QuestionnaireLoadingIndicator(snapshot);
             }
+            // If the locale of `_questionnaireResponseModel` doesn't match the locale of `snapshot.data`,
+            // reset `_handleQuestionnaireResponseModelChangeListenerFunction` to null.
+            // This ensures that `_questionnaireFillerData` will be re-initialized
+            // using the most recent questionnaire response model that has the updated locale
+            if (_questionnaireResponseModel?.locale != snapshot.data?.locale) {
+              _handleQuestionnaireResponseModelChangeListenerFunction = null;
+            }
             if (snapshot.hasData) {
               _logger.debug('FutureBuilder hasData');
               _questionnaireResponseModel = snapshot.data;
@@ -168,7 +167,6 @@ class _QuestionnaireResponseFillerState
 
                 _questionnaireFillerData = QuestionnaireFillerData._(
                   _questionnaireResponseModel!,
-                  locale: widget.locale,
                   builder: widget.builder,
                   onLinkTap: widget.onLinkTap,
                   onDataAvailable: widget.onDataAvailable,
@@ -191,7 +189,6 @@ class _QuestionnaireResponseFillerState
 class QuestionnaireFillerData extends InheritedWidget {
   static final _logger = Logger(QuestionnaireFillerData);
 
-  final Locale locale;
   final QuestionnaireResponseModel questionnaireResponseModel;
   // TODO: Should this copy exist, or just refer to the qrm as the source of truth?
   final List<FillerItemModel> fillerItemModels;
@@ -206,7 +203,6 @@ class QuestionnaireFillerData extends InheritedWidget {
   QuestionnaireFillerData._(
     this.questionnaireResponseModel, {
     Key? key,
-    required this.locale,
     this.onDataAvailable,
     this.onLinkTap,
     required this.questionnaireTheme,
@@ -260,8 +256,9 @@ class QuestionnaireFillerData extends InheritedWidget {
   /// see: https://en.wikipedia.org/wiki/Tree_traversal#Pre-order,_NLR
   QuestionnaireItemFiller itemFillerAt(int index) {
     _logger.trace('itemFillerAt $index');
+    final item = _itemFillers[index];
 
-    if (_itemFillers[index] == null) {
+    if (item == null) {
       _logger.debug('itemFillerAt $index will be created.');
       _itemFillers[index] = questionnaireTheme.createQuestionnaireItemFiller(
         this,
@@ -284,11 +281,13 @@ class QuestionnaireFillerData extends InheritedWidget {
   /// that is currently visible.
   int indexOfVisibleItemAt(int visibleIndex, {bool rootsOnly = false}) {
     final visibleItems = fillerItemModels
-      .where((item) => item.displayVisibility != DisplayVisibility.hidden)
-      .where((item) => !rootsOnly || item.parentNode == null)
-      .toList(growable: false);
+        .where((item) => item.displayVisibility != DisplayVisibility.hidden)
+        .where((item) => !rootsOnly || item.parentNode == null)
+        .toList(growable: false);
 
-    return visibleItems.length > visibleIndex ? fillerItemModels.indexOf(visibleItems[visibleIndex]) : -1;
+    return visibleItems.length > visibleIndex
+        ? fillerItemModels.indexOf(visibleItems[visibleIndex])
+        : -1;
   }
 
   /// Returns the [QuestionnaireItemFiller] of the [visibleIndex]-th item that is currently
@@ -306,8 +305,8 @@ class QuestionnaireFillerData extends InheritedWidget {
     if (rootIndex < 0) return [-1, -1];
 
     final descendantsCount = fillerItemModels
-      .where((item) => item.rootNode == fillerItemModels[rootIndex])
-      .length;
+        .where((item) => item.rootNode == fillerItemModels[rootIndex])
+        .length;
 
     return [rootIndex, rootIndex + descendantsCount + 1];
   }

@@ -43,12 +43,15 @@ class _CodingInputControl extends AnswerInputControl<CodingAnswerModel> {
 
   @override
   Widget build(BuildContext context) {
-    final errorText = answerModel.displayErrorText;
+    final errorText =
+        answerModel.displayErrorText(FDashLocalizations.of(context));
 
     return QuestionnaireTheme.of(context).codingControlLayoutBuilder(
       context,
       _buildCodingControl(context),
-      openStringInputControlWidget: answerModel.isOptionsOrString ? _OpenStringInputControl(answerModel) : null,
+      openStringInputControlWidget: answerModel.isOptionsOrString
+          ? _OpenStringInputControl(answerModel)
+          : null,
       errorText: errorText,
     );
   }
@@ -314,7 +317,7 @@ class _CodingDropdown extends AnswerInputControl<CodingAnswerModel> {
         // Empty error texts triggers red border, but showing text would result in a duplicate.
         errorStyle:
             const TextStyle(height: 0, color: Color.fromARGB(0, 0, 0, 0)),
-        errorText: answerModel.displayErrorText,
+        errorText: answerModel.displayErrorText(FDashLocalizations.of(context)),
       ),
     );
   }
@@ -472,7 +475,9 @@ class _CodingChoiceDecorator extends StatelessWidget {
       child: AnimatedBuilder(
         animation: Focus.of(context),
         builder: (context, child) {
-          final hasError = answerModel.displayErrorText != null;
+          final hasError =
+              answerModel.displayErrorText(FDashLocalizations.of(context)) !=
+                  null;
           final decoTheme = Theme.of(context).inputDecorationTheme;
 
           // TODO: Return something borderless when filled = true
@@ -591,7 +596,7 @@ class _OpenStringInputControlState extends State<_OpenStringInputControl> {
       children: [
         Xhtml.fromRenderingString(
           context,
-          answerModel.openLabel,
+          answerModel.getOpenLabel(FDashLocalizations.of(context)),
           defaultTextStyle: Theme.of(context)
               .textTheme
               .bodyText2
@@ -615,7 +620,8 @@ class _OpenStringInputControlState extends State<_OpenStringInputControl> {
               errorStyle:
                   const TextStyle(height: 0, color: Color.fromARGB(0, 0, 0, 0)),
 
-              errorText: answerModel.displayErrorText,
+              errorText:
+                  answerModel.displayErrorText(FDashLocalizations.of(context)),
             ),
           ),
         ),
@@ -650,7 +656,7 @@ class _FDashAutocompleteField extends StatelessWidget {
         onFieldSubmitted();
       },
       decoration: InputDecoration(
-        errorText: answerModel.displayErrorText,
+        errorText: answerModel.displayErrorText(FDashLocalizations.of(context)),
         hintText: FDashLocalizations.of(context).autoCompleteSearchTermInput,
       ),
     );

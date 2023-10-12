@@ -1,6 +1,7 @@
-import 'package:faiadashu/l10n/l10n.dart';
-import 'package:faiadashu/logging/logging.dart';
-import 'package:faiadashu/questionnaires/model/model.dart';
+import 'package:faiadashu/faiadashu.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/constraint_validation_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/required_item_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart';
 
 /// Model a response item
@@ -48,46 +49,41 @@ abstract class ResponseItemModel extends FillerItemModel {
   /// Returns a description of the current error situation with this item.
   ///
   /// Localized text if an error exists. Or null if no error exists.
-  String? errorText;
+  String? getErrorText(FDashLocalizations localizations) {
+    return validationError?.getMessage(localizations);
+  }
 
-  Map<String, String>? validate({
+  ValidationError? validationError;
+
+  List<ValidationError> validate({
     bool updateErrorText = true,
     bool notifyListeners = false,
   }) {
-    String? newErrorText;
+    ValidationError? newValidationError;
 
     if (questionnaireItemModel.isRequired && isUnanswered) {
-      newErrorText = lookupFDashLocalizations(questionnaireResponseModel.locale)
-          .validatorRequiredItem;
+      newValidationError = RequiredItemError(nodeUid);
     }
 
     final constraintError = validateConstraint();
-    newErrorText ??= constraintError;
+    newValidationError ??= constraintError;
 
-    if (errorText != newErrorText) {
+    if (validationError != newValidationError) {
       if (updateErrorText) {
-        errorText = newErrorText;
+        validationError = newValidationError;
       }
       if (notifyListeners) {
         this.notifyListeners();
       }
     }
 
-    if (newErrorText == null) {
-      return null;
-    } else {
-      final resultMap = <String, String>{};
-      resultMap[nodeUid] = newErrorText;
-
-      return resultMap;
-    }
+    return newValidationError != null ? [newValidationError] : [];
   }
 
   /// Returns whether the item is satisfying the `questionnaire-constraint`.
   ///
-  /// Returns null if satisfied, or a human-readable text if not satisfied.
-  /// Returns null if no constraint is specified.
-  String? validateConstraint() {
+  /// Returns [ValidationError] if not satisfied; otherwise null
+  ValidationError? validateConstraint() {
     final constraintExpression = _constraintExpression;
     if (constraintExpression == null) {
       return null;
@@ -99,6 +95,11 @@ abstract class ResponseItemModel extends FillerItemModel {
       location: nodeUid,
     );
 
-    return isSatisfied ? null : questionnaireItemModel.constraintHuman;
+    return isSatisfied
+        ? null
+        : ConstraintValidationError(
+            nodeUid,
+            questionnaireItemModel.constraintHuman,
+          );
   }
 }

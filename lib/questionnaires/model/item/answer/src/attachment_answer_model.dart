@@ -1,8 +1,9 @@
 import 'package:faiadashu/fhir_types/fhir_types.dart';
-import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/max_size_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/mime_types_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart';
-import 'package:filesize/filesize.dart';
 
 class AttachmentAnswerModel extends AnswerModel<Attachment, Attachment> {
   final num maxSize;
@@ -10,14 +11,18 @@ class AttachmentAnswerModel extends AnswerModel<Attachment, Attachment> {
 
   AttachmentAnswerModel(super.responseModel)
       : maxSize = responseModel.questionnaireItem.extension_
-                ?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/maxSize')
+                ?.extensionOrNull(
+                    'http://hl7.org/fhir/StructureDefinition/maxSize')
                 ?.valueDecimal
-                ?.value ?? 0,
+                ?.value ??
+            0,
         mimeTypes = responseModel.questionnaireItem.extension_
-                ?.whereExtensionIs('http://hl7.org/fhir/StructureDefinition/mimeType')
+                ?.whereExtensionIs(
+                    'http://hl7.org/fhir/StructureDefinition/mimeType')
                 ?.map((ext) => ext.valueCode?.value ?? '')
                 .where((mimeType) => mimeType != '')
-                .toList() ?? [];
+                .toList() ??
+            [];
 
   @override
   RenderingString get display => (value != null)
@@ -25,25 +30,26 @@ class AttachmentAnswerModel extends AnswerModel<Attachment, Attachment> {
       : RenderingString.nullText;
 
   @override
-  String? validateInput(Attachment? inValue) {
+  ValidationError? validateInput(Attachment? inValue) {
     return validateValue(inValue);
   }
 
   @override
-  String? validateValue(Attachment? inputValue) {
+  ValidationError? validateValue(Attachment? inputValue) {
     if (inputValue == null) return null;
 
     if (maxSize > 0) {
       final attachmentSize = inputValue.size?.value;
       if (attachmentSize == null || attachmentSize > maxSize) {
-        return lookupFDashLocalizations(locale).validatorMaxSize(filesize(maxSize));
+        return MaxSizeError(nodeUid, maxSize);
       }
     }
 
     if (mimeTypes.isNotEmpty) {
       final attachmentMimeType = inputValue.contentType?.value;
-      if (attachmentMimeType == null || !mimeTypes.contains(attachmentMimeType)) {
-        return lookupFDashLocalizations(locale).validatorMimeTypes(mimeTypes.join(', '));
+      if (attachmentMimeType == null ||
+          !mimeTypes.contains(attachmentMimeType)) {
+        return MimeTypesError(nodeUid, mimeTypes);
       }
     }
 

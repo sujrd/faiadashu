@@ -1,6 +1,4 @@
-import 'package:faiadashu/l10n/l10n.dart';
-import 'package:faiadashu/logging/logging.dart';
-import 'package:faiadashu/questionnaires/questionnaires.dart';
+import 'package:faiadashu/faiadashu.dart';
 import 'package:flutter/material.dart';
 
 /// Should coding selections be presented in a compact or an expanded format?
@@ -178,12 +176,14 @@ class QuestionnaireThemeData {
     this.datePickerEntryMode = DatePickerEntryMode.calendar,
     this.timePickerEntryMode = TimePickerEntryMode.dial,
     this.createQuestionnaireAnswerFiller = _createDefaultAnswerFiller,
-    this.questionResponseItemLayoutBuilder = _defaultQuestionResponseItemLayoutBuilder,
+    this.questionResponseItemLayoutBuilder =
+        _defaultQuestionResponseItemLayoutBuilder,
     this.groupItemLayoutBuilder = _defaultGroupItemLayoutBuilder,
     this.displayItemLayoutBuilder = _defaultDisplayItemLayoutBuilder,
     this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
     this.scrollerItemBuilder = _defaultScrollerItemBuilder,
-    this.stepperQuestionnaireItemFiller = _defaultStepperQuestionnaireItemFiller,
+    this.stepperQuestionnaireItemFiller =
+        _defaultStepperQuestionnaireItemFiller,
     this.stepperPageItemBuilder = _defaultStepperPageItemBuilder,
   });
 
@@ -344,14 +344,12 @@ class QuestionnaireThemeData {
             padding: const EdgeInsets.only(top: 8),
             child: titleWidget,
           ),
-        if (promptTextWidget != null)
-          promptTextWidget,
+        if (promptTextWidget != null) promptTextWidget,
         Container(
           padding: const EdgeInsets.only(top: 8),
           child: answerFillerWidget,
         ),
-        if (questionSkipperWidget != null)
-          questionSkipperWidget,
+        if (questionSkipperWidget != null) questionSkipperWidget,
         const SizedBox(height: 16),
       ],
     );
@@ -413,13 +411,14 @@ class QuestionnaireThemeData {
       children: [
         codingControlWidget,
         if (openStringInputControlWidget != null) openStringInputControlWidget,
-        if (errorText != null) Text(
-          errorText,
-          style: Theme.of(context)
-              .textTheme
-              .caption
-              ?.copyWith(color: Theme.of(context).errorColor),
-        ),
+        if (errorText != null)
+          Text(
+            errorText,
+            style: Theme.of(context)
+                .textTheme
+                .caption
+                ?.copyWith(color: Theme.of(context).errorColor),
+          ),
       ],
     );
   }

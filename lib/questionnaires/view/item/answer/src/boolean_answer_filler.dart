@@ -1,3 +1,4 @@
+import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
@@ -47,9 +48,11 @@ class _BooleanInputControl extends AnswerInputControl<BooleanAnswerModel> {
           value: (answerModel.isTriState)
               ? answerModel.value?.value
               : (answerModel.value?.value != null),
-          activeColor: (answerModel.displayErrorText != null)
-              ? Theme.of(context).errorColor
-              : null,
+          activeColor:
+              (answerModel.displayErrorText(FDashLocalizations.of(context)) !=
+                      null)
+                  ? Theme.of(context).errorColor
+                  : null,
           tristate: answerModel.isTriState,
           onChanged: (answerModel.isControlEnabled)
               ? (newValue) {
@@ -62,9 +65,10 @@ class _BooleanInputControl extends AnswerInputControl<BooleanAnswerModel> {
                 }
               : null,
         ),
-        if (answerModel.displayErrorText != null)
+        if (answerModel.displayErrorText(FDashLocalizations.of(context)) !=
+            null)
           Text(
-            answerModel.displayErrorText!,
+            answerModel.displayErrorText(FDashLocalizations.of(context))!,
             style: Theme.of(context)
                 .textTheme
                 .caption!

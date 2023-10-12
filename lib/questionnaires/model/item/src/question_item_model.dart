@@ -1,10 +1,9 @@
 import 'dart:developer';
 
 import 'package:collection/collection.dart';
-import 'package:faiadashu/coding/coding.dart';
-import 'package:faiadashu/fhir_types/fhir_types.dart';
-import 'package:faiadashu/logging/logging.dart';
-import 'package:faiadashu/questionnaires/questionnaires.dart';
+import 'package:faiadashu/faiadashu.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/common_validation_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/primitive_types/primitive_types.dart';
 import 'package:fhir/r4/r4.dart';
 import 'package:fhir_path/fhir_path.dart';
@@ -172,36 +171,27 @@ class QuestionItemModel extends ResponseItemModel {
   }
 
   @override
-  Map<String, String>? validate({
+  List<ValidationError> validate({
     bool updateErrorText = true,
     bool notifyListeners = false,
   }) {
     // Non-existent answer models can be invalid, e.g. if minOccurs is not met.
     _ensureAnswerModel();
 
-    final responseErrorTexts = super.validate(
-          updateErrorText: updateErrorText,
-          notifyListeners: notifyListeners,
-        ) ??
-        <String, String>{};
+    List<ValidationError> errors = super.validate(
+      updateErrorText: updateErrorText,
+      notifyListeners: notifyListeners,
+    );
 
-    final answersErrorTexts = <String, String>{};
     for (final am in answerModels) {
-      final answerValidationText = am.validate(
+      final amErrors = am.validate(
         updateErrorText: updateErrorText,
         notifyListeners: notifyListeners,
       );
-
-      if (answerValidationText != null) {
-        answersErrorTexts[am.nodeUid] = answerValidationText;
-      }
+      errors.addAll(amErrors);
     }
 
-    final combinedErrorTexts = responseErrorTexts..addAll(answersErrorTexts);
-
-    return responseErrorTexts.isEmpty && answersErrorTexts.isEmpty
-        ? null
-        : combinedErrorTexts;
+    return errors;
   }
 
   @override
@@ -430,8 +420,10 @@ class QuestionItemModel extends ResponseItemModel {
       // Write the value back to the answer model
       firstAnswerModel.populateFromExpression(evaluationResult);
     } catch (ex) {
-      errorText =
-          (ex is FhirPathEvaluationException) ? ex.message : ex.toString();
+      validationError = CommonValidationError(
+        nodeUid,
+        ex is FhirPathEvaluationException ? ex.message : ex.toString(),
+      );
       _qimLogger.warn('Calculation problem: $_calculatedExpression', error: ex);
       notifyListeners(); // This could be added to a setter for errorText, but might have side-effects.
     }

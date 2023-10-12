@@ -1,4 +1,5 @@
 import 'package:faiadashu/questionnaires/model/model.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart';
 
 class BooleanAnswerModel extends AnswerModel<Boolean, Boolean> {
@@ -23,12 +24,12 @@ class BooleanAnswerModel extends AnswerModel<Boolean, Boolean> {
         );
 
   @override
-  String? validateInput(Boolean? inValue) {
+  ValidationError? validateInput(Boolean? inValue) {
     return null;
   }
 
   @override
-  String? validateValue(Boolean? inputValue) {
+  ValidationError? validateValue(Boolean? inputValue) {
     return null;
   }
 

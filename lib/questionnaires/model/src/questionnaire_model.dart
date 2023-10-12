@@ -113,6 +113,7 @@ class QuestionnaireModel {
     return (plainTitle != null)
         ? RenderingString.fromText(
             plainTitle,
+            locale: locale,
             extensions: questionnaire.titleElement?.extension_,
           )
         : null;
