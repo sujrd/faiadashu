@@ -32,7 +32,7 @@ class QuestionnaireStepperPageView extends StatefulWidget {
 
 class _QuestionnaireStepperPageViewState
     extends State<QuestionnaireStepperPageView> {
-  PageController _pageController = PageController(keepPage: true);
+  PageController _pageController = PageController();
   bool _hasRequestsRunning = false;
   QuestionnaireItemFiller? _currentQuestionnaireItemFiller;
 
