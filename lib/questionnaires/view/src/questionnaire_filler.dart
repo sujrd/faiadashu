@@ -144,6 +144,10 @@ class _QuestionnaireResponseFillerState
 
               return QuestionnaireLoadingIndicator(snapshot);
             }
+            // If the locale of `_questionnaireResponseModel` doesn't match the locale of `snapshot.data`,
+            // reset `_handleQuestionnaireResponseModelChangeListenerFunction` to null.
+            // This ensures that `_questionnaireFillerData` will be re-initialized
+            // using the most recent questionnaire response model that has the updated locale
             if (_questionnaireResponseModel?.locale != snapshot.data?.locale) {
               _handleQuestionnaireResponseModelChangeListenerFunction = null;
             }
