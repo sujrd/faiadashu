@@ -79,13 +79,18 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
   }
 
   NumericalAnswerModel(super.responseModel) {
+    _initializeRanges();
+    _initializeFormatting();
+    _initializeUnits();
+  }
+
+  void _initializeRanges() {
     _isSliding =
         questionnaireItemModel.questionnaireItem.isItemControl('slider');
 
     final minValueExtension = qi.extension_
         ?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/minValue');
-    final maxValueExtension = questionnaireItemModel
-        .questionnaireItem.extension_
+    final maxValueExtension = qi.extension_
         ?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/maxValue');
     _minValue = minValueExtension?.valueDecimal?.value ??
         minValueExtension?.valueInteger?.value?.toDouble() ??
@@ -107,8 +112,9 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
       _upperSliderLabel = questionnaireItemModel.upperTextItem?.text;
       _lowerSliderLabel = questionnaireItemModel.lowerTextItem?.text;
     }
+  }
 
-    // TODO: Evaluate max length
+  void _initializeFormatting() {
     switch (qi.type) {
       case QuestionnaireItemType.integer:
         _maxDecimal = 0;
@@ -133,12 +139,13 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
       locale: locale.toLanguageTag(), // TODO: toString or toLanguageTag?
       decimalDigits: _maxDecimal,
     );
+  }
 
+  void _initializeUnits() {
     _units = <String, Coding>{};
+
     final unitsUri = qi.extension_
-        ?.extensionOrNull(
-          'http://hl7.org/fhir/StructureDefinition/questionnaire-unitValueSet',
-        )
+        ?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/questionnaire-unitValueSet')
         ?.valueCanonical
         .toString();
     if (unitsUri != null) {
@@ -152,8 +159,7 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
     }
 
     qi.extension_
-        ?.whereExtensionIs(
-            'http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption')
+        ?.whereExtensionIs('http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption')
         ?.forEach((extension) {
       final coding = extension.valueCoding;
       if (coding == null) return;
@@ -165,8 +171,9 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
         ?.extensionOrNull(
             'http://hl7.org/fhir/StructureDefinition/questionnaire-unit')
         ?.valueCoding;
-    if (questionnaireUnit != null && questionnaireUnit.display != null)
+    if (questionnaireUnit != null && questionnaireUnit.display != null) {
       _units[keyForUnitChoice(questionnaireUnit)] = questionnaireUnit;
+    }
   }
 
   @override
