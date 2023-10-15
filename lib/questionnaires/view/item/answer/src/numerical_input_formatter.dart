@@ -36,6 +36,11 @@ class NumericalTextInputFormatter extends TextInputFormatter {
 
     try {
       final parsed = numberFormat.parse(newValue.text);
+
+      // Parsed numbers always contain decimals (12 -> 12.0, 12.3 -> 12.3)
+      final decimals = parsed.toString().split('.')[1];
+      if (decimals != '0' && decimals.length > numberFormat.maximumFractionDigits) return oldValue;
+
       _logger.trace('parsed: ${newValue.text} -> $parsed');
 
       return newValue;
