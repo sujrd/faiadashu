@@ -22,6 +22,9 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
   late final double? _sliderStepValue;
   late final int? _sliderDivisions;
 
+  late final Map<String, double> _minQuantity;
+  late final Map<String, double> _maxQuantity;
+
   RenderingString? _upperSliderLabel;
   RenderingString? _lowerSliderLabel;
 
@@ -99,6 +102,27 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
         maxValueExtension?.valueInteger?.value?.toDouble() ??
         (_isSliding ? modelDefaults.sliderMaxValue : double.maxFinite);
 
+    // Get any min/maxQuantity extensions and index them by measurement unit.
+    // If multiple units are used, contrary to spec, separate extensions need to be defined for each unit.
+    _minQuantity = <String, double>{};
+    qi.extension_
+        ?.whereExtensionIs('http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-minQuantity')
+        ?.forEach((extension) {
+          final code = extension.valueQuantity?.code?.value;
+          final value = extension.valueQuantity?.value?.value;
+          if (code != null && value != null) _minQuantity[code] = value;
+        });
+
+    _maxQuantity = <String, double>{};
+    qi.extension_
+        ?.whereExtensionIs('http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-maxQuantity')
+        ?.forEach((extension) {
+          final code = extension.valueQuantity?.code?.value;
+          final value = extension.valueQuantity?.value?.value;
+          if (code != null && value != null) _maxQuantity[code] = value;
+        });
+
+    // TODO: How should min/max quantities be handled for sliders?
     if (_isSliding) {
       final sliderStepValueExtension = qi.extension_?.extensionOrNull(
         'http://hl7.org/fhir/StructureDefinition/questionnaire-sliderStepValue',
@@ -215,11 +239,15 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
       return null;
     }
 
-    if (number > _maxValue) {
-      return MaxValueError(nodeUid, Decimal(_maxValue).format(locale));
+    final unitCode = inputValue.code?.value;
+    final maxValue = _maxQuantity[unitCode] ?? _maxValue;
+    final minValue = _minQuantity[unitCode] ?? _minValue;
+
+    if (number > maxValue) {
+      return MaxValueError(nodeUid, Decimal(maxValue).format(locale));
     }
-    if (number < _minValue) {
-      return MinValueError(nodeUid, Decimal(_minValue).format(locale));
+    if (number < minValue) {
+      return MinValueError(nodeUid, Decimal(minValue).format(locale));
     }
 
     return null;
