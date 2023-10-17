@@ -37,7 +37,7 @@ class _NumericalAnswerState extends QuestionnaireAnswerFillerState<Quantity,
     );
 
     const averageDivisor = 2.0;
-    _sliderValueDuringChange.value = (answerModel.value != null)
+    _sliderValueDuringChange.value = (answerModel.value?.value != null)
         ? answerModel.value!.value!.value!
         : (answerModel.maxValue - answerModel.minValue) / averageDivisor;
 
