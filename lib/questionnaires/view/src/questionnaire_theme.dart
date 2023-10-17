@@ -336,6 +336,7 @@ class QuestionnaireThemeData {
     Widget? questionSkipperWidget,
   }) {
     return Column(
+      key: const Key('questionnaire-response-item'),
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -86,6 +86,7 @@ class _QuestionnaireLaunchTileState extends State<QuestionnaireLaunchTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      key: Key(widget.title),
       title: Text(widget.title),
       subtitle: FutureBuilder<QuestionnaireResponseModel>(
         future: _modelFuture,
