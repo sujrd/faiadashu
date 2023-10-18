@@ -129,22 +129,10 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
     }
 
     // Build a number format based on item and SDC properties.
-    final maxIntegerDigits = (_maxValue != double.maxFinite)
-        ? '############'.substring(0, _maxValue.toInt().toString().length)
-        : '############';
-    final maxFractionDigits =
-        (_maxDecimal != 0) ? '.0#####'.substring(0, _maxDecimal + 1) : '';
-
-    _numberPattern = '$maxIntegerDigits$maxFractionDigits';
-
-    _logger.debug(
-      'input format for ${questionnaireItemModel.linkId}: "$_numberPattern"',
+    _numberFormat = NumberFormat.decimalPatternDigits(
+      locale: locale.toLanguageTag(), // TODO: toString or toLanguageTag?
+      decimalDigits: _maxDecimal,
     );
-
-    _numberFormat = NumberFormat(
-      _numberPattern,
-      locale.toLanguageTag(),
-    ); // TODO: toString or toLanguageTag?
 
     _units = <String, Coding>{};
     final unitsUri = qi.extension_
