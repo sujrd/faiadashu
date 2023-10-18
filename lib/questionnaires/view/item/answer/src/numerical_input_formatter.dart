@@ -37,9 +37,13 @@ class NumericalTextInputFormatter extends TextInputFormatter {
     try {
       final parsed = numberFormat.parse(newValue.text);
 
-      // Parsed numbers always contain decimals (12 -> 12.0, 12.3 -> 12.3)
-      final decimals = parsed.toString().split('.')[1];
-      if (decimals != '0' && decimals.length > numberFormat.maximumFractionDigits) return oldValue;
+      // The assumption here is that if parsing was successful, the text should be a valid
+      // numberical string, and can thus be split in integer and decimal parts.
+      final numberParts = newValue.text.split(numberFormat.symbols.DECIMAL_SEP);
+      if (numberParts.length > 1) {
+        final decimals = numberParts[1];
+        if (decimals.length > numberFormat.maximumFractionDigits) return oldValue;
+      }
 
       _logger.trace('parsed: ${newValue.text} -> $parsed');
 
