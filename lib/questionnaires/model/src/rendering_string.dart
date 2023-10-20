@@ -99,7 +99,7 @@ class RenderingString with Diagnosticable {
                   )
                 : (renderingStyle != null)
                     ? '<span style="$renderingStyle">$escapedPlainText</span>'
-                    : text;
+                    : escapedPlainText;
 
     return RenderingString._(
       plainText,
