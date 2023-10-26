@@ -124,6 +124,9 @@ abstract class AnswerModel<I, V> extends ResponseNode {
   /// Returns whether this question is unanswered.
   bool get isEmpty;
 
+  /// Is there a dialog shown on screen?
+  bool isDialogShown = false;
+
   ValidationError? _validationError;
 
   /// Returns an error text for display in the answer's control.

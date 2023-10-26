@@ -29,6 +29,13 @@ class GroupItemModel extends ResponseItemModel {
   }
 
   @override
+  bool get isDialogShown {
+    return questionnaireResponseModel
+        .orderedResponseItemModelsWithParent(parent: this)
+        .every((rim) => rim.isDialogShown);
+  }
+
+  @override
   bool get isPopulated {
     return questionnaireResponseModel
         .orderedResponseItemModelsWithParent(parent: this)

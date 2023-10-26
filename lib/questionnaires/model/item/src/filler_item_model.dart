@@ -513,6 +513,9 @@ abstract class FillerItemModel extends ResponseNode {
   /// Items which are not enabled are not unanswered.
   bool get isUnanswered;
 
+  /// Is there a dialog shown?
+  bool get isDialogShown;
+
   /// Is the item invalid?
   bool get isInvalid;
 

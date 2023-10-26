@@ -217,6 +217,14 @@ class QuestionItemModel extends ResponseItemModel {
   }
 
   @override
+  bool get isDialogShown {
+    final returnValue = answerModels.every((am) => am.isDialogShown);
+    _qimLogger.debug('isDialogShown $nodeUid: $returnValue');
+
+    return returnValue;
+  }
+
+  @override
   bool get isPopulated {
     return answerModels.any((am) => am.isNotEmpty);
   }
