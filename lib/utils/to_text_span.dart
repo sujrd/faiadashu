@@ -12,13 +12,11 @@ TextSpan toTextSpan(BuildContext context, String htmlContent, {
   return HTML.toTextSpan(
     context,
     htmlContent
-      // Replace &nbsp; with white spaces. This is done by simple_html_css here: https://github.com/ali-thowfeek/simple_html_css_flutter/blob/main/lib/src/html_stylist.dart#L71
-      // After replacing all `&` by &amp; as done below, &nbsp; instances end up being rendered as-is in text, so we remove them here instead.
-      .replaceAll('&nbsp;', ' ')
-      // Replace `&` with &amp;, which converts, for example, `&lt;` to `&amp;lt;`.
+      // Replace `&lt;` with `&amp;lt;`.
       // Once unescaping is performed in https://github.com/ali-thowfeek/simple_html_css_flutter/blob/main/lib/src/html_stylist.dart#L76
       // `&amp;lt;` should go back to `&lt;` allowing it to be parsed correctly as an HTML escaped entity.
-      .replaceAll('&', '&amp;'),
+      .replaceAll('&lt;', '&amp;lt;')
+      .replaceAll('&gt;', '&amp;gt;'),
     defaultTextStyle: defaultTextStyle,
   );
 }
