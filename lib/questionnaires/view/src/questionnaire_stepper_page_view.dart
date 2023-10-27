@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 /// [QuestionnaireStepperPageView] seamlessly integrates with [QuestionnaireStepperPageViewController]
 /// to parent widget navigating the page view, or retrieve information related the view.
 class QuestionnaireStepperPageView extends StatefulWidget {
-  final QuestionnaireStepperPageViewController? controller;
+  late final QuestionnaireStepperPageViewController controller;
+  final ScrollPhysics? physics;
   final ValueChanged<int>? onPageChanged;
   final Future<BeforePageChangedData> Function(
     FillerItemModel,
@@ -19,11 +20,21 @@ class QuestionnaireStepperPageView extends StatefulWidget {
   final void Function(FillerItemModel?)? onVisibleItemUpdated;
 
   QuestionnaireStepperPageView({
-    this.controller,
+    QuestionnaireStepperPageViewController? controller,
+    this.physics,
     this.onPageChanged,
     this.onBeforePageChanged,
     this.onVisibleItemUpdated,
-  });
+  }) {
+    this.controller = controller ?? QuestionnaireStepperPageViewController();
+  }
+
+  static QuestionnaireStepperPageViewData of(BuildContext context) {
+    final result = context.dependOnInheritedWidgetOfExactType<QuestionnaireStepperPageViewData>();
+    assert(result != null, 'No QuestionnaireStepperPageViewData found in context');
+
+    return result!;
+  }
 
   @override
   _QuestionnaireStepperPageViewState createState() =>
@@ -39,7 +50,7 @@ class _QuestionnaireStepperPageViewState
   @override
   void initState() {
     super.initState();
-    widget.controller?._attach(this);
+    widget.controller._attach(this);
   }
 
   /// Determines if we can proceed to the next page.
@@ -95,31 +106,32 @@ class _QuestionnaireStepperPageViewState
 
   @override
   Widget build(BuildContext context) {
-    return PageView.builder(
-      /// [PageView.scrollDirection] defaults to [Axis.horizontal].
-      /// Use [Axis.vertical] to scroll vertically.
-      controller: _pageController,
-      onPageChanged: _handleChangedPage,
-      itemBuilder: (BuildContext context, int index) {
-        final responseFillerData = QuestionnaireResponseFiller.of(context);
+    return QuestionnaireStepperPageViewData(
+      controller: widget.controller,
+      child: PageView.builder(
+        /// [PageView.scrollDirection] defaults to [Axis.horizontal].
+        /// Use [Axis.vertical] to scroll vertically.
+        controller: _pageController,
+        onPageChanged: _handleChangedPage,
+        itemBuilder: (BuildContext context, int index) {
+          final responseFillerData = QuestionnaireResponseFiller.of(context);
 
-        final data =
-            QuestionnaireTheme.of(context).stepperQuestionnaireItemFiller(
-          responseFillerData,
-          index,
-        );
+          final data =
+              QuestionnaireTheme.of(context).stepperQuestionnaireItemFiller(
+            responseFillerData,
+            index,
+          );
 
-        _updateVisibleItem(index);
-        if (data == null) return null;
+          _updateVisibleItem(index);
+          if (data == null) return null;
 
-        return QuestionnaireTheme.of(context).stepperPageItemBuilder(
-          context,
-          data,
-        );
-      },
-      physics: widget.controller != null
-          ? const NeverScrollableScrollPhysics()
-          : null,
+          return QuestionnaireTheme.of(context).stepperPageItemBuilder(
+            context,
+            data,
+          );
+        },
+        physics: widget.physics,
+      ),
     );
   }
 
@@ -177,6 +189,27 @@ class QuestionnaireStepperPageViewController {
       duration: duration ?? const Duration(milliseconds: 250),
     );
   }
+
+  /// Jump to specific page in the `QuestionnaireStepperPageView`.
+  void jumpToPage(int page) {
+    /// This will prevent racing issue
+    if (_state?._hasRequestsRunning ?? false) {
+      return;
+    }
+    _state?._pageController.jumpToPage(page);
+  }
+
+  /// Animated transition to specific page in the `QuestionnaireStepperPageView`.
+  void animateToPage(int page, {
+    Duration duration = const Duration(milliseconds: 250),
+    Curve curve = Curves.easeIn,
+  }) {
+    /// This will prevent racing issue
+    if (_state?._hasRequestsRunning ?? false) {
+      return;
+    }
+    _state?._pageController.animateToPage(page, duration: duration, curve: curve);
+  }
 }
 
 /// This class is used in conjunction with the [OnBeforePageChanged] callback,
@@ -189,4 +222,20 @@ class BeforePageChangedData {
   BeforePageChangedData({
     required this.canProceed,
   });
+}
+
+// ignore: prefer-single-widget-per-file
+class QuestionnaireStepperPageViewData extends InheritedWidget {
+  final QuestionnaireStepperPageViewController controller;
+
+  QuestionnaireStepperPageViewData({
+    required this.controller,
+    super.key,
+    required super.child,
+  });
+
+  @override
+  bool updateShouldNotify(QuestionnaireStepperPageViewData oldWidget) {
+    return oldWidget.controller != controller;
+  }
 }

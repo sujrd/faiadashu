@@ -69,6 +69,7 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
               Expanded(
                 child: QuestionnaireStepperPageView(
                   controller: _controller,
+                  physics: widget.controller != null ? const NeverScrollableScrollPhysics() : null,
                   onPageChanged: widget.onPageChanged,
                   onBeforePageChanged: widget.onBeforePageChanged,
                   onVisibleItemUpdated: widget.onVisibleItemUpdated,
@@ -117,7 +118,7 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                   if (widget.controller == null)
                     IconButton(
                       icon: const Icon(Icons.arrow_forward),
-                      onPressed: () => widget.controller?.nextPage(),
+                      onPressed: () => _controller?.nextPage(),
                     ),
                 ],
               ),
