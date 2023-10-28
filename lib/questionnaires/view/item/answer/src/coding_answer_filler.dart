@@ -478,7 +478,9 @@ class _CodingChoiceDecorator extends StatelessWidget {
           final hasError =
               answerModel.displayErrorText(FDashLocalizations.of(context)) !=
                   null;
-          final decoTheme = Theme.of(context).inputDecorationTheme;
+          final theme = Theme.of(context);
+          final cardTheme = theme.cardTheme;
+          final decoTheme = theme.inputDecorationTheme;
 
           // TODO: Return something borderless when filled = true
           return Card(
@@ -486,8 +488,8 @@ class _CodingChoiceDecorator extends StatelessWidget {
             //       widgets with elevation > 0 (default is 1): https://github.com/sujrd/faiadashu/issues/16
             //       For now, this sets elevation = 0 (which also removes Card shadows) and modulates
             //       the elevation-based color change of the Card instead.
-            elevation: 0,
-            color: ElevationOverlay.overlayColor(context, 1),
+            elevation: cardTheme.elevation ?? 0,
+            color: cardTheme.color ?? ElevationOverlay.overlayColor(context, 1),
             shape: Focus.of(context).hasFocus
                 ? hasError
                     ? decoTheme.focusedErrorBorder
