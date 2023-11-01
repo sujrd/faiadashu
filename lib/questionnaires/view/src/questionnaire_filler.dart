@@ -33,10 +33,10 @@ class QuestionnaireResponseFiller extends StatefulWidget {
           fhirResourceProvider: fhirResourceProvider,
           launchContext: launchContext,
           questionnaireModelDefaults: questionnaireModelDefaults,
-          localizations: FDashLocalizations.of(context));
+          localizations: FDashLocalizations.of(context),);
 
   const QuestionnaireResponseFiller({
-    Key? key,
+    super.key,
     required this.builder,
     required this.fhirResourceProvider,
     required this.launchContext,
@@ -45,7 +45,7 @@ class QuestionnaireResponseFiller extends StatefulWidget {
     this.onLinkTap,
     this.questionnaireTheme = const QuestionnaireThemeData(),
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
-  }) : super(key: key);
+  });
 
   static QuestionnaireFillerData of(BuildContext context) {
     final result =
@@ -202,7 +202,6 @@ class QuestionnaireFillerData extends InheritedWidget {
 
   QuestionnaireFillerData._(
     this.questionnaireResponseModel, {
-    Key? key,
     this.onDataAvailable,
     this.onLinkTap,
     required this.questionnaireTheme,
@@ -213,7 +212,7 @@ class QuestionnaireFillerData extends InheritedWidget {
           questionnaireResponseModel.orderedFillerItemModels().length,
           null,
         ),
-        super(key: key, child: Builder(builder: builder)) {
+        super(child: Builder(builder: builder)) {
     _logger.trace('constructor _');
     onDataAvailable?.call(questionnaireResponseModel);
   }

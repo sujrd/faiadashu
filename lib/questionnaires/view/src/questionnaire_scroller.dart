@@ -44,8 +44,8 @@ class QuestionnaireScroller extends StatefulWidget {
     this.onLinkTap,
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
     this.onQuestionnaireResponseChanged,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<StatefulWidget> createState() {

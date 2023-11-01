@@ -80,7 +80,7 @@ class ObservationValueView extends StatelessWidget {
         unknownValueText,
         style: valueStyle?.copyWith(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).errorColor,
+          color: Theme.of(context).colorScheme.error,
         ),
       );
     }

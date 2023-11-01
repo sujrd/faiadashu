@@ -268,7 +268,7 @@ class QuestionnaireItemModel with Diagnosticable {
   /// The name of a section, the text of a question or text content for a display item.
   RenderingString? get text {
     final plainText = questionnaireItem.text?.translate(
-        questionnaireItem.textElement?.extension_, questionnaireModel.locale);
+        questionnaireItem.textElement?.extension_, questionnaireModel.locale,);
 
     return (plainText != null)
         ? RenderingString.fromText(

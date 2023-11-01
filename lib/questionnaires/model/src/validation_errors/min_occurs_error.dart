@@ -3,7 +3,7 @@ import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_
 
 class MinOccursError extends ValidationError {
   final int minOccurs;
-  MinOccursError(String nodeUid, this.minOccurs) : super(nodeUid);
+  MinOccursError(super.nodeUid, this.minOccurs);
 
   @override
   String? getMessage(FDashLocalizations localizations) {

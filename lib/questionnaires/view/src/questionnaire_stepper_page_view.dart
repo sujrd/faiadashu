@@ -21,7 +21,7 @@ class QuestionnaireStepperPageView extends StatefulWidget {
     final result = context.dependOnInheritedWidgetOfExactType<
         _QuestionnaireStepperPageViewInheritedWidget>();
     assert(result != null,
-        'No QuestionnaireStepperInheritedWidget found in context');
+        'No QuestionnaireStepperInheritedWidget found in context',);
     return result!.data;
   }
 
@@ -32,7 +32,7 @@ class QuestionnaireStepperPageView extends StatefulWidget {
 
 class _QuestionnaireStepperPageViewState
     extends State<QuestionnaireStepperPageView> {
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
   bool _hasRequestsRunning = false;
   QuestionnaireItemFiller? _currentQuestionnaireItemFiller;
 
@@ -223,7 +223,6 @@ class _QuestionnaireStepperPageViewInheritedWidget extends InheritedWidget {
   final QuestionnaireStepperPageViewData data;
 
   const _QuestionnaireStepperPageViewInheritedWidget({
-    super.key,
     required super.child,
     required this.data,
   });

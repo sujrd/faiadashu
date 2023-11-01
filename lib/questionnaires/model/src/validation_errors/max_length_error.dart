@@ -3,7 +3,7 @@ import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_
 
 class MaxLengthError extends ValidationError {
   final int maxLength;
-  MaxLengthError(String nodeUid, this.maxLength) : super(nodeUid);
+  MaxLengthError(super.nodeUid, this.maxLength);
 
   @override
   String? getMessage(FDashLocalizations localizations) {

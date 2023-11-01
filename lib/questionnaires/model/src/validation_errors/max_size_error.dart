@@ -4,7 +4,7 @@ import 'package:filesize/filesize.dart';
 
 class MaxSizeError extends ValidationError {
   final size;
-  MaxSizeError(String nodeUid, this.size) : super(nodeUid);
+  MaxSizeError(super.nodeUid, this.size);
 
   @override
   String? getMessage(FDashLocalizations localizations) {

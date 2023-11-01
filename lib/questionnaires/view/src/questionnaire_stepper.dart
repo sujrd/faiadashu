@@ -93,7 +93,7 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                                   FDashLocalizations.of(context)
                                       .aggregationScore(scoreString),
                                   key: ValueKey<String>(scoreString),
-                                  style: Theme.of(context).textTheme.headline4,
+                                  style: Theme.of(context).textTheme.headlineMedium,
                                 ),
                               );
                             },

@@ -18,7 +18,7 @@ class TotalScoreAggregator extends Aggregator<Decimal> {
 
   late final QuestionItemModel? totalScoreItem;
   TotalScoreAggregator(
-      {required FDashLocalizations localizations, bool autoAggregate = true})
+      {required FDashLocalizations localizations, bool autoAggregate = true,})
       : super(
           Decimal(0),
           localizations: localizations,

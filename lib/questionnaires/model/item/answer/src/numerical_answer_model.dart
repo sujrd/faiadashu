@@ -153,7 +153,7 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
 
     qi.extension_
         ?.whereExtensionIs(
-            'http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption')
+            'http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption',)
         ?.forEach((extension) {
       final coding = extension.valueCoding;
       if (coding == null) return;
@@ -163,10 +163,11 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
     // Using updated usage for questionnaire-unit in R5 (http://hl7.org/fhir/extensions/StructureDefinition-questionnaire-unit.html)
     final questionnaireUnit = qi.extension_
         ?.extensionOrNull(
-            'http://hl7.org/fhir/StructureDefinition/questionnaire-unit')
+            'http://hl7.org/fhir/StructureDefinition/questionnaire-unit',)
         ?.valueCoding;
-    if (questionnaireUnit != null && questionnaireUnit.display != null)
+    if (questionnaireUnit != null && questionnaireUnit.display != null) {
       _units[keyForUnitChoice(questionnaireUnit)] = questionnaireUnit;
+    }
   }
 
   @override

@@ -29,8 +29,8 @@ class FhirResourceEditor extends ConsumerStatefulWidget {
     this.showFhirPath = true,
     this.fhirPathOutputMinLines = 3,
     this.fhirPathOutputMaxLines = 3,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -227,7 +227,7 @@ class _FhirResourceEditorState extends ConsumerState<FhirResourceEditor> {
                       if (fhirResource.hasError) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            backgroundColor: Theme.of(context).errorColor,
+                            backgroundColor: Theme.of(context).colorScheme.error,
                             content: Text(fhirResource.errorMessage!),
                           ),
                         );

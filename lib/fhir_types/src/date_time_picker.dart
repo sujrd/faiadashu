@@ -32,8 +32,8 @@ class FhirDateTimePicker extends StatefulWidget {
     this.onChanged,
     this.focusNode,
     this.enabled = true,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   // ignore: library_private_types_in_public_api

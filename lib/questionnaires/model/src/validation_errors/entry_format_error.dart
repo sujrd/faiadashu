@@ -4,7 +4,7 @@ import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_
 class EntryFormatError extends ValidationError {
   final String entryFormat;
 
-  const EntryFormatError(String nodeUid, this.entryFormat) : super(nodeUid);
+  const EntryFormatError(super.nodeUid, this.entryFormat);
 
   @override
   String? getMessage(FDashLocalizations localizations) {

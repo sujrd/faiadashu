@@ -9,8 +9,8 @@ class CodeableConceptText extends StatelessWidget {
   const CodeableConceptText(
     this.codeableConcept, {
     this.style,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
