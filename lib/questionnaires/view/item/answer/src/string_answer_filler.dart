@@ -88,6 +88,7 @@ class _StringAnswerInputControl extends AnswerInputControl<StringAnswerModel> {
     }[answerModel.keyboard]!;
 
     return TextFormField(
+      key: const Key('string-answer-filler'),
       focusNode: focusNode,
       enabled: answerModel.isControlEnabled,
       keyboardType: keyboardType,
