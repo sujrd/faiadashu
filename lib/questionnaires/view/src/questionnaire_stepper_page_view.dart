@@ -17,6 +17,14 @@ class QuestionnaireStepperPageView extends StatefulWidget {
     required this.data,
   });
 
+  static QuestionnaireStepperPageViewData of(BuildContext context) {
+    final result = context.dependOnInheritedWidgetOfExactType<
+        _QuestionnaireStepperPageViewInheritedWidget>();
+    assert(result != null,
+        'No QuestionnaireStepperInheritedWidget found in context');
+    return result!.data;
+  }
+
   @override
   _QuestionnaireStepperPageViewState createState() =>
       _QuestionnaireStepperPageViewState();
@@ -87,7 +95,7 @@ class _QuestionnaireStepperPageViewState
 
   @override
   Widget build(BuildContext context) {
-    return QuestionnaireStepperPageViewInheritedWidget(
+    return _QuestionnaireStepperPageViewInheritedWidget(
       data: widget.data,
       child: PageView.builder(
         /// [PageView.scrollDirection] defaults to [Axis.horizontal].
@@ -211,26 +219,18 @@ class BeforePageChangedData {
 }
 
 // ignore: prefer-single-widget-per-file
-class QuestionnaireStepperPageViewInheritedWidget extends InheritedWidget {
+class _QuestionnaireStepperPageViewInheritedWidget extends InheritedWidget {
   final QuestionnaireStepperPageViewData data;
 
-  const QuestionnaireStepperPageViewInheritedWidget({
+  const _QuestionnaireStepperPageViewInheritedWidget({
     super.key,
     required super.child,
     required this.data,
   });
 
-  static QuestionnaireStepperPageViewData of(BuildContext context) {
-    final result = context.dependOnInheritedWidgetOfExactType<
-        QuestionnaireStepperPageViewInheritedWidget>();
-    assert(result != null,
-        'No QuestionnaireStepperInheritedWidget found in context');
-    return result!.data;
-  }
-
   @override
   bool updateShouldNotify(
-    QuestionnaireStepperPageViewInheritedWidget oldWidget,
+    _QuestionnaireStepperPageViewInheritedWidget oldWidget,
   ) {
     return data != oldWidget.data;
   }
