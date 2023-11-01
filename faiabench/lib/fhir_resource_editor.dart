@@ -126,9 +126,9 @@ class _FhirResourceEditorState extends ConsumerState<FhirResourceEditor> {
                   height: 120,
                   child: Stack(
                     children: [
-                      Container(
+                      const ColoredBox(
                         color: Colors.black54,
-                        child: const SizedBox.expand(),
+                        child: SizedBox.expand(),
                       ),
                       Column(
                         mainAxisSize: MainAxisSize.min,

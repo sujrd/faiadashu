@@ -286,7 +286,7 @@ class _UnitDropDown extends AnswerInputControl<NumericalAnswerModel> {
                       value: answerModel.keyForUnitChoice(value),
                       child: Text(value.localizedDisplay(locale)),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),

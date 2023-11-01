@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -48,10 +46,9 @@ class ObservationValueView extends StatelessWidget {
         _observation.component!.isNotEmpty) {
       final componentText = StringBuffer();
       String? currentUnit;
-      final componentIterator =
-          HasNextIterator(_observation.component!.iterator);
-      do {
-        final ObservationComponent component = componentIterator.next();
+      final componentIterator = _observation.component!.iterator;
+      while (componentIterator.moveNext()) {
+        final ObservationComponent component = componentIterator.current;
         final unitString =
             ' ${component.valueQuantity?.unit ?? unknownUnitText}';
         // Avoid duplicate output of same unit:
@@ -69,7 +66,7 @@ class ObservationValueView extends StatelessWidget {
         } else {
           componentText.write('$componentSeparator$valueString');
         }
-      } while (componentIterator.hasNext);
+      }
       componentText.write(currentUnit);
       valueWidget = Text(
         componentText.toString(),

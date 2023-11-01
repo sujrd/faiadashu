@@ -97,6 +97,11 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
       dateTime = date.toLocal();
     }
 
+    // To address use_build_context_synchronously as recommended, although this still triggers the linter
+    // https://dart.dev/tools/linter-rules/use_build_context_synchronously
+    // ignore: use_build_context_synchronously
+    if (!context.mounted) return;
+
     if (widget.pickerType == FhirDateTime || widget.pickerType == Time) {
       final time = await showTimePicker(
         initialTime:

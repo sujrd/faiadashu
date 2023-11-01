@@ -26,7 +26,7 @@ class QuestionnaireStepperPageView extends StatefulWidget {
   }
 
   @override
-  _QuestionnaireStepperPageViewState createState() =>
+  State<QuestionnaireStepperPageView> createState() =>
       _QuestionnaireStepperPageViewState();
 }
 
@@ -141,6 +141,7 @@ class QuestionnaireStepperPageViewController {
   /// Attaches the provided state to this controller.
   /// This internal method is used to establish a connection between the
   /// controller and the `_QuestionnaireStepperPageViewState`.
+  // ignore: use_setters_to_change_properties
   void _attach(_QuestionnaireStepperPageViewState state) {
     _state = state;
   }

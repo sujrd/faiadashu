@@ -3,7 +3,7 @@ import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_
 import 'package:filesize/filesize.dart';
 
 class MaxSizeError extends ValidationError {
-  final size;
+  final num size;
   MaxSizeError(super.nodeUid, this.size);
 
   @override
