@@ -15,18 +15,6 @@ class QuestionnaireStepper extends StatefulWidget {
   final void Function(QuestionnaireResponseModel?)?
       onQuestionnaireResponseChanged;
 
-  @Deprecated('Use `data` instead')
-  final QuestionnaireStepperPageViewController? controller;
-  @Deprecated('Use `data` instead')
-  final void Function(int)? onPageChanged;
-  @Deprecated('Use `data` instead')
-  final Future<BeforePageChangedData> Function(
-    FillerItemModel,
-    FillerItemModel?,
-  )? onBeforePageChanged;
-  @Deprecated('Use `data` instead')
-  final void Function(FillerItemModel?)? onVisibleItemUpdated;
-
   const QuestionnaireStepper({
     super.key,
     required this.scaffoldBuilder,
@@ -35,10 +23,6 @@ class QuestionnaireStepper extends StatefulWidget {
     this.data,
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
     this.onQuestionnaireResponseChanged,
-    @Deprecated('Use `data` instead') this.onPageChanged,
-    @Deprecated('Use `data` instead') this.onBeforePageChanged,
-    @Deprecated('Use `data` instead') this.onVisibleItemUpdated,
-    @Deprecated('Use `data` instead') this.controller,
   });
 
   @override
