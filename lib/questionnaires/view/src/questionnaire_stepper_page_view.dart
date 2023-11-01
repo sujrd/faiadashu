@@ -238,7 +238,7 @@ class QuestionnaireStepperPageViewInheritedWidget extends InheritedWidget {
 
 // ignore: prefer-single-widget-per-file
 class QuestionnaireStepperPageViewData {
-  final QuestionnaireStepperPageViewController controller;
+  late final QuestionnaireStepperPageViewController controller;
   final ScrollPhysics? physics;
   final ValueChanged<int>? onPageChanged;
   final Future<BeforePageChangedData> Function(
@@ -247,11 +247,13 @@ class QuestionnaireStepperPageViewData {
   )? onBeforePageChanged;
   final void Function(FillerItemModel?)? onVisibleItemUpdated;
 
-  const QuestionnaireStepperPageViewData({
-    required this.controller,
+  QuestionnaireStepperPageViewData({
+    QuestionnaireStepperPageViewController? controller,
     this.physics,
     this.onPageChanged,
     this.onBeforePageChanged,
     this.onVisibleItemUpdated,
-  });
+  }) {
+    this.controller = controller ?? QuestionnaireStepperPageViewController();
+  }
 }
