@@ -316,9 +316,17 @@ class QuestionItemModel extends ResponseItemModel {
       firstAnswerModel.populateFromExpression(initialEvaluationResult);
     } else {
       // initial.value[x]
-      final initialValues = questionnaireItem.initial;
+      final initialValues = questionnaireItem.initial ?? [];
 
-      if (initialValues != null) {
+      if ({QuestionnaireItemType.choice,QuestionnaireItemType.open_choice}.contains(questionnaireItem.type)) {
+        // Add answerOptions marked as initialSelected to array of initialValues
+        final initialSelected = questionnaireItem.answerOption
+            ?.where((option) => option.initialSelected?.value == true && option.valueCoding != null)
+            .map((option) => QuestionnaireInitial(valueCoding: option.valueCoding));
+        initialValues.addAll(initialSelected ?? []);
+      }
+
+      if (initialValues.isNotEmpty) {
         final initialValue = initialValues.first;
 
         switch (questionnaireItem.type) {
