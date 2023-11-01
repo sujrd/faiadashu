@@ -316,7 +316,9 @@ class QuestionItemModel extends ResponseItemModel {
       firstAnswerModel.populateFromExpression(initialEvaluationResult);
     } else {
       // initial.value[x]
-      final initialValues = questionnaireItem.initial ?? [];
+      // toList is to handle "Unhandled Exception: Unsupported operation: Cannot add to an unmodifiable list"
+      // errors
+      final initialValues = (questionnaireItem.initial ?? []).toList();
 
       if ({QuestionnaireItemType.choice,QuestionnaireItemType.open_choice}.contains(questionnaireItem.type)) {
         // Add answerOptions marked as initialSelected to array of initialValues
