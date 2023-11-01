@@ -10,20 +10,20 @@ import 'package:flutter/material.dart';
 /// [QuestionnaireStepperPageView] seamlessly integrates with [QuestionnaireStepperPageViewController]
 /// to parent widget navigating the page view, or retrieve information related the view.
 class QuestionnaireStepperPageView extends StatefulWidget {
-  final QuestionnaireStepperPageViewController? controller;
-  final ValueChanged<int>? onPageChanged;
-  final Future<BeforePageChangedData> Function(
-    FillerItemModel,
-    FillerItemModel?,
-  )? onBeforePageChanged;
-  final void Function(FillerItemModel?)? onVisibleItemUpdated;
+  final QuestionnaireStepperPageViewData data;
 
-  QuestionnaireStepperPageView({
-    this.controller,
-    this.onPageChanged,
-    this.onBeforePageChanged,
-    this.onVisibleItemUpdated,
+  const QuestionnaireStepperPageView({
+    super.key,
+    required this.data,
   });
+
+  static QuestionnaireStepperPageViewData of(BuildContext context) {
+    final result = context.dependOnInheritedWidgetOfExactType<
+        _QuestionnaireStepperPageViewInheritedWidget>();
+    assert(result != null,
+        'No QuestionnaireStepperInheritedWidget found in context');
+    return result!.data;
+  }
 
   @override
   _QuestionnaireStepperPageViewState createState() =>
@@ -39,7 +39,7 @@ class _QuestionnaireStepperPageViewState
   @override
   void initState() {
     super.initState();
-    widget.controller?._attach(this);
+    widget.data.controller._attach(this);
   }
 
   /// Determines if we can proceed to the next page.
@@ -57,7 +57,7 @@ class _QuestionnaireStepperPageViewState
     final defaultData = BeforePageChangedData(canProceed: true);
 
     if (_currentQuestionnaireItemFiller != null) {
-      final data = await widget.onBeforePageChanged?.call(
+      final data = await widget.data.onBeforePageChanged?.call(
         _currentQuestionnaireItemFiller!.fillerItemModel,
         nextPageFillerItem?.fillerItemModel,
       );
@@ -81,7 +81,7 @@ class _QuestionnaireStepperPageViewState
     );
 
     _currentQuestionnaireItemFiller = data;
-    widget.onVisibleItemUpdated?.call(data?.fillerItemModel);
+    widget.data.onVisibleItemUpdated?.call(data?.fillerItemModel);
   }
 
   /// Manages tasks related to page index changes.
@@ -90,42 +90,43 @@ class _QuestionnaireStepperPageViewState
   /// It updates the visible item, and notifies listeners of the change.
   void _handleChangedPage(int index) {
     _updateVisibleItem(index);
-    widget.onPageChanged?.call(index);
+    widget.data.onPageChanged?.call(index);
   }
 
   @override
   Widget build(BuildContext context) {
-    return PageView.builder(
-      /// [PageView.scrollDirection] defaults to [Axis.horizontal].
-      /// Use [Axis.vertical] to scroll vertically.
-      controller: _pageController,
-      onPageChanged: _handleChangedPage,
-      itemBuilder: (BuildContext context, int index) {
-        final responseFillerData = QuestionnaireResponseFiller.of(context);
+    return _QuestionnaireStepperPageViewInheritedWidget(
+      data: widget.data,
+      child: PageView.builder(
+        /// [PageView.scrollDirection] defaults to [Axis.horizontal].
+        /// Use [Axis.vertical] to scroll vertically.
+        controller: _pageController,
+        onPageChanged: _handleChangedPage,
+        itemBuilder: (BuildContext context, int index) {
+          final responseFillerData = QuestionnaireResponseFiller.of(context);
 
-        final data =
-            QuestionnaireTheme.of(context).stepperQuestionnaireItemFiller(
-          responseFillerData,
-          index,
-        );
+          final data =
+              QuestionnaireTheme.of(context).stepperQuestionnaireItemFiller(
+            responseFillerData,
+            index,
+          );
 
-        _updateVisibleItem(index);
-        if (data == null) return null;
+          _updateVisibleItem(index);
+          if (data == null) return null;
 
-        return QuestionnaireTheme.of(context).stepperPageItemBuilder(
-          context,
-          data,
-        );
-      },
-      physics: widget.controller != null
-          ? const NeverScrollableScrollPhysics()
-          : null,
+          return QuestionnaireTheme.of(context).stepperPageItemBuilder(
+            context,
+            data,
+          );
+        },
+        physics: widget.data.physics,
+      ),
     );
   }
 
   @override
   void dispose() {
-    widget.controller?._detach();
+    widget.data.controller._detach();
     super.dispose();
   }
 }
@@ -177,6 +178,32 @@ class QuestionnaireStepperPageViewController {
       duration: duration ?? const Duration(milliseconds: 250),
     );
   }
+
+  /// Jump to specific page in the `QuestionnaireStepperPageView`.
+  void jumpToPage(int page) {
+    /// This will prevent racing issue
+    if (_state?._hasRequestsRunning ?? false) {
+      return;
+    }
+    _state?._pageController.jumpToPage(page);
+  }
+
+  /// Animated transition to specific page in the `QuestionnaireStepperPageView`.
+  void animateToPage(
+    int page, {
+    Duration duration = const Duration(milliseconds: 250),
+    Curve curve = Curves.easeIn,
+  }) {
+    /// This will prevent racing issue
+    if (_state?._hasRequestsRunning ?? false) {
+      return;
+    }
+    _state?._pageController.animateToPage(
+      page,
+      duration: duration,
+      curve: curve,
+    );
+  }
 }
 
 /// This class is used in conjunction with the [OnBeforePageChanged] callback,
@@ -189,4 +216,44 @@ class BeforePageChangedData {
   BeforePageChangedData({
     required this.canProceed,
   });
+}
+
+// ignore: prefer-single-widget-per-file
+class _QuestionnaireStepperPageViewInheritedWidget extends InheritedWidget {
+  final QuestionnaireStepperPageViewData data;
+
+  const _QuestionnaireStepperPageViewInheritedWidget({
+    super.key,
+    required super.child,
+    required this.data,
+  });
+
+  @override
+  bool updateShouldNotify(
+    _QuestionnaireStepperPageViewInheritedWidget oldWidget,
+  ) {
+    return data != oldWidget.data;
+  }
+}
+
+// ignore: prefer-single-widget-per-file
+class QuestionnaireStepperPageViewData {
+  late final QuestionnaireStepperPageViewController controller;
+  final ScrollPhysics? physics;
+  final ValueChanged<int>? onPageChanged;
+  final Future<BeforePageChangedData> Function(
+    FillerItemModel,
+    FillerItemModel?,
+  )? onBeforePageChanged;
+  final void Function(FillerItemModel?)? onVisibleItemUpdated;
+
+  QuestionnaireStepperPageViewData({
+    QuestionnaireStepperPageViewController? controller,
+    this.physics,
+    this.onPageChanged,
+    this.onBeforePageChanged,
+    this.onVisibleItemUpdated,
+  }) {
+    this.controller = controller ?? QuestionnaireStepperPageViewController();
+  }
 }
