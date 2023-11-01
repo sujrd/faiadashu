@@ -25,14 +25,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.0"
-  charcode:
-    dependency: transitive
-    description:
-      name: charcode
-      sha256: fb98c0f6d12c920a02ee2d998da788bca066ca5f148492b7085ee23372b12306
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.3.1"
   clock:
     dependency: transitive
     description:
@@ -139,10 +131,10 @@ packages:
     dependency: transitive
     description:
       name: file_selector
-      sha256: "1d2fde93dddf634a9c3c0faa748169d7ac0d83757135555707e52f02c017ad4f"
+      sha256: "84eaf3e034d647859167d1f01cfe7b6352488f34c1b4932635012b202014c25b"
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.5"
+    version: "1.0.1"
   file_selector_android:
     dependency: transitive
     description:
@@ -354,10 +346,10 @@ packages:
     dependency: transitive
     description:
       name: markdown
-      sha256: "39caf989ccc72c63e87b961851a74257141938599ed2db45fbd9403fee0db423"
+      sha256: acf35edccc0463a9d7384e437c015a3535772e09714cf60e07eeef3a15870dcd
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.0"
+    version: "7.1.1"
   matcher:
     dependency: transitive
     description:
@@ -514,10 +506,10 @@ packages:
     dependency: "direct main"
     description:
       name: simple_html_css
-      sha256: b290f005e819f80dfe4f361526877d75f21883db45b94a0196f1f35e4e0bc9ef
+      sha256: af730b15c0b37c97a14b6aeceabe68128855c4630dc500030f3c3e176e8fc57f
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.1+1"
+    version: "4.0.0"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -703,10 +695,10 @@ packages:
     dependency: transitive
     description:
       name: xml
-      sha256: "80d494c09849dc3f899d227a78c30c5b949b985ededf884cb3f3bcd39f4b447a"
+      sha256: ac0e3f4bf00ba2708c33fbabbbe766300e509f8c82dbd4ab6525039813f7e2fb
       url: "https://pub.dev"
     source: hosted
-    version: "5.4.1"
+    version: "6.1.0"
   yaml:
     dependency: transitive
     description:
