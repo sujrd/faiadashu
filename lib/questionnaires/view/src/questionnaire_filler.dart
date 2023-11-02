@@ -65,6 +65,7 @@ class _QuestionnaireResponseFillerState
     extends State<QuestionnaireResponseFiller> {
   static final _logger = Logger(_QuestionnaireResponseFillerState);
 
+  Future<QuestionnaireResponseModel>? builderFuture;
   QuestionnaireResponseModel? _questionnaireResponseModel;
   VoidCallback? _handleQuestionnaireResponseModelChangeListenerFunction;
   // ignore: use_late_for_private_fields_and_variables
@@ -125,8 +126,11 @@ class _QuestionnaireResponseFillerState
   Widget build(BuildContext context) {
     _logger.trace('Enter build()');
 
+    // Make sure to set this once only, or it may lead to flickering
+    builderFuture ??= widget._createQuestionnaireResponseModel(context: context);
+
     return FutureBuilder<QuestionnaireResponseModel>(
-      future: widget._createQuestionnaireResponseModel(context: context),
+      future: builderFuture,
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.active:
