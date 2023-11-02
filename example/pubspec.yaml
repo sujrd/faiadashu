@@ -38,7 +38,7 @@ dependencies:
   simple_html_css: ^3.0.1+1
 
 dev_dependencies:
-  lint: ^1.8.2
+  lint: ^2.0.0
 
 
 flutter:

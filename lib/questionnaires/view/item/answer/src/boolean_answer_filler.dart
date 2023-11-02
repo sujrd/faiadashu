@@ -31,12 +31,9 @@ class _BooleanItemState extends QuestionnaireAnswerFillerState<Boolean,
 
 class _BooleanInputControl extends AnswerInputControl<BooleanAnswerModel> {
   const _BooleanInputControl(
-    BooleanAnswerModel answerModel, {
-    FocusNode? focusNode,
-  }) : super(
-          answerModel,
-          focusNode: focusNode,
-        );
+    super.answerModel, {
+    super.focusNode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +48,7 @@ class _BooleanInputControl extends AnswerInputControl<BooleanAnswerModel> {
           activeColor:
               (answerModel.displayErrorText(FDashLocalizations.of(context)) !=
                       null)
-                  ? Theme.of(context).errorColor
+                  ? Theme.of(context).colorScheme.error
                   : null,
           tristate: answerModel.isTriState,
           onChanged: (answerModel.isControlEnabled)
@@ -71,8 +68,8 @@ class _BooleanInputControl extends AnswerInputControl<BooleanAnswerModel> {
             answerModel.displayErrorText(FDashLocalizations.of(context))!,
             style: Theme.of(context)
                 .textTheme
-                .caption!
-                .copyWith(color: Theme.of(context).errorColor),
+                .bodySmall!
+                .copyWith(color: Theme.of(context).colorScheme.error),
           ),
       ],
     );

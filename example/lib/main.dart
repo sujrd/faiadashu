@@ -45,7 +45,7 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   MyAppState createState() => MyAppState();
@@ -95,11 +95,11 @@ class LocaleInheritedWidget extends InheritedWidget {
   final Locale currentLocale;
 
   const LocaleInheritedWidget({
-    Key? key,
+    super.key,
     required this.updateLocale,
     required this.currentLocale,
-    required Widget child,
-  }) : super(key: key, child: child);
+    required super.child,
+  });
 
   @override
   bool updateShouldNotify(LocaleInheritedWidget old) {
@@ -112,7 +112,7 @@ class LocaleInheritedWidget extends InheritedWidget {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -175,7 +175,7 @@ class _HomePageState extends State<HomePage> {
   /// Schedules repaint after login / logout.
   void _onLoginChanged() {
     _logger.debug(
-        '_onLoginChanged: ${questionnaireResponseStorage.smartClient.isLoggedIn()}');
+        '_onLoginChanged: ${questionnaireResponseStorage.smartClient.isLoggedIn()}',);
     setState(() {
       // Rebuild
     });
@@ -212,7 +212,7 @@ class _HomePageState extends State<HomePage> {
               title,
               style: Theme.of(context)
                   .textTheme
-                  .headline6
+                  .titleLarge
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
             Text(subtitle)
@@ -248,7 +248,7 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           SmartLoginButton(questionnaireResponseStorage.smartClient,
-              onLoginChanged: _onLoginChanged)
+              onLoginChanged: _onLoginChanged,)
         ],
       ),
       body: SafeArea(

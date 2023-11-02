@@ -57,13 +57,14 @@ class _CustomQuestionnaireStepperPageState
   }
 
   void _onPageChanged(int index) {
+    // ignore: avoid_print
     print('Page index is changed: $index');
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Container(
+      child: ColoredBox(
         color: Colors.white,
         child: Column(
           children: [

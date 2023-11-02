@@ -178,7 +178,7 @@ class QuestionItemModel extends ResponseItemModel {
     // Non-existent answer models can be invalid, e.g. if minOccurs is not met.
     _ensureAnswerModel();
 
-    List<ValidationError> errors = super.validate(
+    final errors = super.validate(
       updateErrorText: updateErrorText,
       notifyListeners: notifyListeners,
     );

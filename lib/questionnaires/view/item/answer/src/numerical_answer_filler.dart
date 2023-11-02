@@ -67,15 +67,10 @@ class _SliderInputControl extends AnswerInputControl<NumericalAnswerModel> {
   final ValueNotifier<double> sliderValueDuringChange;
 
   const _SliderInputControl(
-    NumericalAnswerModel answerModel, {
+    super.answerModel, {
     required this.sliderValueDuringChange,
-    FocusNode? focusNode,
-    Key? key,
-  }) : super(
-          answerModel,
-          focusNode: focusNode,
-          key: key,
-        );
+    super.focusNode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -131,14 +126,14 @@ class _SliderInputControl extends AnswerInputControl<NumericalAnswerModel> {
                 Xhtml.fromRenderingString(
                   context,
                   lowerSliderLabel,
-                  defaultTextStyle: Theme.of(context).textTheme.button,
+                  defaultTextStyle: Theme.of(context).textTheme.labelLarge,
                 ),
               const Expanded(child: SizedBox()),
               if (upperSliderLabel != null)
                 Xhtml.fromRenderingString(
                   context,
                   upperSliderLabel,
-                  defaultTextStyle: Theme.of(context).textTheme.button,
+                  defaultTextStyle: Theme.of(context).textTheme.labelLarge,
                 ),
               const SizedBox(width: 8.0),
             ],
@@ -154,17 +149,11 @@ class _NumberFieldInputControl
   final TextInputFormatter numberInputFormatter;
 
   _NumberFieldInputControl(
-    NumericalAnswerModel answerModel, {
+    super.answerModel, {
     required this.editingController,
-    FocusNode? focusNode,
-    Key? key,
+    super.focusNode,
   })  : numberInputFormatter =
-            NumericalTextInputFormatter(answerModel.numberFormat),
-        super(
-          answerModel,
-          focusNode: focusNode,
-          key: key,
-        );
+            NumericalTextInputFormatter(answerModel.numberFormat);
 
   @override
   Widget build(BuildContext context) {
@@ -202,7 +191,7 @@ class _NumberFieldInputControl
               errorStyle: (itemModel
                       .isCalculated) // Force display of error text on calculated item
                   ? TextStyle(
-                      color: Theme.of(context).errorColor,
+                      color: Theme.of(context).colorScheme.error,
                     )
                   : null,
               hintText: answerModel.entryFormat,
@@ -211,7 +200,7 @@ class _NumberFieldInputControl
                       Icons.calculate,
                       color:
                           (answerModel.displayErrorText(localizations) != null)
-                              ? Theme.of(context).errorColor
+                              ? Theme.of(context).colorScheme.error
                               : null,
                     )
                   : null,
@@ -260,8 +249,8 @@ class _NumberFieldInputControl
 
 class _UnitDropDown extends AnswerInputControl<NumericalAnswerModel> {
   const _UnitDropDown(
-    NumericalAnswerModel answerModel,
-  ) : super(answerModel);
+    super.answerModel,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -274,7 +263,7 @@ class _UnitDropDown extends AnswerInputControl<NumericalAnswerModel> {
             width: unitWidth,
             child: Text(
               answerModel.unitChoices.first.localizedDisplay(locale),
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
           )
         : Container(
@@ -297,7 +286,7 @@ class _UnitDropDown extends AnswerInputControl<NumericalAnswerModel> {
                       value: answerModel.keyForUnitChoice(value),
                       child: Text(value.localizedDisplay(locale)),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),

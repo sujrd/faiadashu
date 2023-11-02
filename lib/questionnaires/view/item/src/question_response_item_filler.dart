@@ -153,9 +153,7 @@ class _HorizontalAnswerFillers extends StatefulWidget {
 
   const _HorizontalAnswerFillers(
     this.questionResponseItemModel,
-    this.questionnaireTheme, {
-    Key? key,
-  }) : super(key: key);
+    this.questionnaireTheme,);
 
   @override
   _HorizontalAnswerFillersState createState() =>

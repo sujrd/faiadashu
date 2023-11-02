@@ -3,8 +3,8 @@ import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_
 import 'package:filesize/filesize.dart';
 
 class MaxSizeError extends ValidationError {
-  final size;
-  MaxSizeError(String nodeUid, this.size) : super(nodeUid);
+  final num size;
+  MaxSizeError(super.nodeUid, this.size);
 
   @override
   String? getMessage(FDashLocalizations localizations) {

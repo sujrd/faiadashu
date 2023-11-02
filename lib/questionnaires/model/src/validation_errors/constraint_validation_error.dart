@@ -3,8 +3,7 @@ import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_
 
 class ConstraintValidationError extends ValidationError {
   final String? message;
-  const ConstraintValidationError(String nodeUid, this.message)
-      : super(nodeUid);
+  const ConstraintValidationError(super.nodeUid, this.message);
 
   @override
   String? getMessage(FDashLocalizations localizations) {

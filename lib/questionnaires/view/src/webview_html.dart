@@ -12,7 +12,7 @@ Widget createWebView(String xhtml, {Key? key}) => _FullHtmlViewer(
 class _FullHtmlViewer extends StatelessWidget {
   final String xhtml;
 
-  const _FullHtmlViewer(this.xhtml, {Key? key}) : super(key: key);
+  const _FullHtmlViewer(this.xhtml, {super.key});
 
   @override
   Widget build(BuildContext context) {

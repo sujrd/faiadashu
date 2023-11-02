@@ -21,18 +21,18 @@ class QuestionnaireStepperPageView extends StatefulWidget {
     final result = context.dependOnInheritedWidgetOfExactType<
         _QuestionnaireStepperPageViewInheritedWidget>();
     assert(result != null,
-        'No QuestionnaireStepperInheritedWidget found in context');
+        'No QuestionnaireStepperInheritedWidget found in context',);
     return result!.data;
   }
 
   @override
-  _QuestionnaireStepperPageViewState createState() =>
+  State<QuestionnaireStepperPageView> createState() =>
       _QuestionnaireStepperPageViewState();
 }
 
 class _QuestionnaireStepperPageViewState
     extends State<QuestionnaireStepperPageView> {
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
   bool _hasRequestsRunning = false;
   QuestionnaireItemFiller? _currentQuestionnaireItemFiller;
 
@@ -141,6 +141,7 @@ class QuestionnaireStepperPageViewController {
   /// Attaches the provided state to this controller.
   /// This internal method is used to establish a connection between the
   /// controller and the `_QuestionnaireStepperPageViewState`.
+  // ignore: use_setters_to_change_properties
   void _attach(_QuestionnaireStepperPageViewState state) {
     _state = state;
   }
@@ -223,7 +224,6 @@ class _QuestionnaireStepperPageViewInheritedWidget extends InheritedWidget {
   final QuestionnaireStepperPageViewData data;
 
   const _QuestionnaireStepperPageViewInheritedWidget({
-    super.key,
     required super.child,
     required this.data,
   });

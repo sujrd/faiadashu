@@ -862,7 +862,7 @@ class QuestionnaireResponseModel {
     bool updateErrorText = true,
     bool notifyListeners = false,
   }) {
-    List<ValidationError> validationErrors = [];
+    final List<ValidationError> validationErrors = [];
 
     for (final itemModel in orderedResponseItemModels()) {
       final errors = itemModel.validate(

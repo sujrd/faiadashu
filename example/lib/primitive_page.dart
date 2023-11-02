@@ -5,18 +5,18 @@ import 'package:flutter/material.dart';
 import 'exhibit_page.dart';
 
 class PrimitivePage extends ExhibitPage {
-  const PrimitivePage({Key? key}) : super(key: key);
+  const PrimitivePage({super.key});
 
   @override
   Widget buildExhibit(BuildContext context) {
     return Column(
       children: [
-        Text('Default locale', style: Theme.of(context).textTheme.headline6),
+        Text('Default locale', style: Theme.of(context).textTheme.titleLarge),
         FhirDateTimeText(FhirDateTime('2002-02-05')),
         FhirDateTimeText(FhirDateTime('2010-02-05 14:02')),
         FhirDateTimeText(FhirDateTime('2010-02')),
         const Spacer(),
-        Text('Germany', style: Theme.of(context).textTheme.headline6),
+        Text('Germany', style: Theme.of(context).textTheme.titleLarge),
         Localizations.override(
           context: context,
           locale: const Locale.fromSubtags(
@@ -28,7 +28,7 @@ class PrimitivePage extends ExhibitPage {
           ),
         ),
         const Spacer(),
-        Text('Japan', style: Theme.of(context).textTheme.headline6),
+        Text('Japan', style: Theme.of(context).textTheme.titleLarge),
         Localizations.override(
           context: context,
           locale: const Locale.fromSubtags(
@@ -50,7 +50,7 @@ class PrimitivePage extends ExhibitPage {
           ),
         ),
         const Spacer(),
-        Text('Bahrain', style: Theme.of(context).textTheme.headline6),
+        Text('Bahrain', style: Theme.of(context).textTheme.titleLarge),
         Localizations.override(
           context: context,
           locale: const Locale.fromSubtags(
