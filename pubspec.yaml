@@ -44,8 +44,8 @@ dependencies:
   mime: ^1.0.4
   scrollable_positioned_list: ^0.3.2
   simple_html_css: ^4.0.0
-  webview_flutter: ^3.0.4
-  webview_flutter_web: ^0.1.0+3
+  webview_flutter: ^4.0.0
+  webview_flutter_web: ^0.2.0
 
 dev_dependencies:
   dart_code_metrics: ^4.15.0

@@ -27,11 +27,14 @@ class _FullHtmlViewer extends StatelessWidget {
       xhtml,
       mimeType: 'text/html',
       encoding: Encoding.getByName('utf-8'),
-    ).toString();
+    );
+
+    final controller = WebViewController();
+    controller.loadRequest(dataUrl);
 
     return SizedBox.expand(
-      child: WebView(
-        initialUrl: dataUrl,
+      child: WebViewWidget(
+        controller: controller,
       ),
     );
   }

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:webview_flutter_web/webview_flutter_web.dart';
 
 Widget createWebView(String xhtml, {Key? key}) => _FullHtmlViewer(
       xhtml,
@@ -16,18 +15,18 @@ class _FullHtmlViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // required while web support is in preview
-    WebView.platform = WebWebViewPlatform();
-
     final dataUrl = Uri.dataFromString(
       xhtml,
       mimeType: 'text/html',
       encoding: Encoding.getByName('utf-8'),
-    ).toString();
+    );
+
+    final controller = WebViewController();
+    controller.loadRequest(dataUrl);
 
     return SizedBox.expand(
-      child: WebView(
-        initialUrl: dataUrl,
+      child: WebViewWidget(
+        controller: controller,
       ),
     );
   }
