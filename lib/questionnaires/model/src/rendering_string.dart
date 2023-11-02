@@ -33,7 +33,7 @@ class RenderingString with Diagnosticable {
   final String? renderingXhtml;
 
   /// The unaltered rendering-markdown extension
-  final Markdown? renderingMarkdown;
+  final FhirMarkdown? renderingMarkdown;
 
   /// Construct an [RenderingString] from the provided attributes.
   ///

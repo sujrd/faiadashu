@@ -1,7 +1,7 @@
 import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart'
     show QuestionnaireResponseFiller;
-import 'package:fhir/r4/r4.dart' show QuestionnaireResponseStatus;
+import 'package:fhir/r4.dart' show FhirCode;
 import 'package:flutter/material.dart';
 
 /// A button to complete a questionnaire.
@@ -29,7 +29,7 @@ class _QuestionnaireCompleteButtonState
         final qrm = qf.questionnaireResponseModel;
         final currentResponseStatus = qrm.responseStatus;
 
-        if (currentResponseStatus != QuestionnaireResponseStatus.completed) {
+        if (currentResponseStatus != FhirCode('completed')) {
           final validationErrors = qrm.validate(
             notifyListeners: true,
           );
@@ -45,28 +45,28 @@ class _QuestionnaireCompleteButtonState
         }
 
         final newResponseStatus =
-            (currentResponseStatus == QuestionnaireResponseStatus.completed)
-                ? QuestionnaireResponseStatus.in_progress
-                : QuestionnaireResponseStatus.completed;
+            (currentResponseStatus == FhirCode('completed'))
+                ? FhirCode('in-progress')
+                : FhirCode('completed');
 
         setState(() {
           qrm.responseStatus = newResponseStatus;
         });
 
-        if (newResponseStatus == QuestionnaireResponseStatus.completed) {
+        if (newResponseStatus == FhirCode('completed')) {
           widget.onCompleted?.call();
         }
       },
       icon: (QuestionnaireResponseFiller.of(context)
                   .questionnaireResponseModel
                   .responseStatus !=
-              QuestionnaireResponseStatus.completed)
+              FhirCode('completed'))
           ? const Icon(Icons.check_circle)
           : const Icon(Icons.edit),
       label: (QuestionnaireResponseFiller.of(context)
                   .questionnaireResponseModel
                   .responseStatus !=
-              QuestionnaireResponseStatus.completed)
+              FhirCode('completed'))
           ? Text(
               FDashLocalizations.of(context)
                   .responseStatusToCompleteButtonLabel,

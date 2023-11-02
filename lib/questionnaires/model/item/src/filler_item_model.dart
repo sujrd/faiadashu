@@ -277,18 +277,18 @@ abstract class FillerItemModel extends ResponseNode {
       }
 
       enableWhenTrigger.incrementAllConditionCount();
-      switch (qew.operator_) {
-        case QuestionnaireEnableWhenOperator.exists:
+      switch (qew.operator_?.value) {
+        case 'exists':
           _evaluateExistsOperator(qew, enableWhenTrigger);
           break;
-        case QuestionnaireEnableWhenOperator.eq:
-        case QuestionnaireEnableWhenOperator.ne:
+        case '=':
+        case '!=':
           _evaluateEqualityOperator(questionLinkId, qew, enableWhenTrigger);
           break;
-        case QuestionnaireEnableWhenOperator.lt:
-        case QuestionnaireEnableWhenOperator.gt:
-        case QuestionnaireEnableWhenOperator.ge:
-        case QuestionnaireEnableWhenOperator.le:
+        case '<':
+        case '>':
+        case '>=':
+        case '<=':
           _evaluateComparisonOperator(questionLinkId, qew, enableWhenTrigger);
           break;
         default:
@@ -300,19 +300,19 @@ abstract class FillerItemModel extends ResponseNode {
     });
 
     // TODO: Optimization: 'any' could stop evaluation after first trigger.
-    switch (questionnaireItem.enableBehavior) {
-      case QuestionnaireItemEnableBehavior.any:
+    switch (questionnaireItem.enableBehavior?.value) {
+      case 'any':
       case null:
         if (!enableWhenTrigger.anyTriggered) {
           _nextGenerationDisableWithDescendants();
         }
         break;
-      case QuestionnaireItemEnableBehavior.all:
+      case 'all':
         if (!enableWhenTrigger.allTriggered) {
           _nextGenerationDisableWithDescendants();
         }
         break;
-      case QuestionnaireItemEnableBehavior.unknown:
+      case 'unknown':
         throw QuestionnaireFormatException(
           'enableWhen with unknown enableBehavior: ${questionnaireItem.enableBehavior}',
           questionnaireItem,
@@ -359,24 +359,24 @@ abstract class FillerItemModel extends ResponseNode {
           );
         }
 
-        switch (qew.operator_) {
-          case QuestionnaireEnableWhenOperator.gt:
+        switch (qew.operator_?.value) {
+          case '>':
             if (answerValue > comparisonValue) {
               enableWhenTrigger.trigger();
             }
             break;
-          case QuestionnaireEnableWhenOperator.ge:
+          case '>=':
             if (answerValue >= comparisonValue) {
               enableWhenTrigger.trigger();
             }
             break;
-          case QuestionnaireEnableWhenOperator.lt:
+          case '<':
             if (answerValue < comparisonValue) {
               enableWhenTrigger.trigger();
             }
             break;
-          case QuestionnaireEnableWhenOperator.le:
-            if (answerValue >= comparisonValue) {
+          case '<=':
+            if (answerValue <= comparisonValue) {
               enableWhenTrigger.trigger();
             }
             break;
@@ -423,7 +423,7 @@ abstract class FillerItemModel extends ResponseNode {
 
       if (firstAnswer == null) {
         // null equals nothing
-        if (qew.operator_ == QuestionnaireEnableWhenOperator.ne) {
+        if (qew.operator_ == FhirCode('!=')) {
           enableWhenTrigger.trigger();
         }
       } else if (firstAnswer is CodingAnswerModel) {
@@ -431,14 +431,14 @@ abstract class FillerItemModel extends ResponseNode {
           _fimLogger.debug(
             'enableWhen: ${firstAnswer.value} == ${qew.answerCoding}',
           );
-          if (qew.operator_ == QuestionnaireEnableWhenOperator.eq) {
+          if (qew.operator_ == FhirCode('=')) {
             enableWhenTrigger.trigger();
           }
         } else {
           _fimLogger.debug(
             'enableWhen: ${firstAnswer.value} != ${qew.answerCoding}',
           );
-          if (qew.operator_ == QuestionnaireEnableWhenOperator.ne) {
+          if (qew.operator_ == FhirCode('!=')) {
             enableWhenTrigger.trigger();
           }
         }
@@ -542,7 +542,7 @@ abstract class FillerItemModel extends ResponseNode {
     DisplayVisibility resultVisibility = DisplayVisibility.shown;
 
     if (questionnaireResponseModel.responseStatus ==
-        QuestionnaireResponseStatus.completed) {
+        FhirCode('completed')) {
       resultVisibility =
           _maxVisibility(resultVisibility, DisplayVisibility.protected);
     }

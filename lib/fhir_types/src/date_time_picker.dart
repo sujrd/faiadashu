@@ -73,7 +73,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
     final dateTime = value?.valueDateTime;
     if (value == null || dateTime == null) return '';
 
-    return (widget.pickerType == Time)
+    return (widget.pickerType == FhirTime)
         ? DateFormat.jm(locale.toString()).format(dateTime)
         : value.format(locale, withTimeZone: widget.pickerType == FhirDateTime);
   }
@@ -81,7 +81,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
   Future<void> _showPicker(Locale locale) async {
     DateTime dateTime = DateTime(1970);
 
-    if (widget.pickerType != Time) {
+    if (widget.pickerType != FhirTime) {
       final date = await showDatePicker(
         initialDate: _dateTimeValue?.value ?? DateTime.now(),
         initialEntryMode: widget.datePickerEntryMode,
@@ -102,7 +102,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
     // ignore: use_build_context_synchronously
     if (!context.mounted) return;
 
-    if (widget.pickerType == FhirDateTime || widget.pickerType == Time) {
+    if (widget.pickerType == FhirDateTime || widget.pickerType == FhirTime) {
       final time = await showTimePicker(
         initialTime:
             TimeOfDay.fromDateTime(_dateTimeValue?.value ?? DateTime.now()),
@@ -149,7 +149,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
 
     final fhirDateTime = FhirDateTime.fromDateTime(
       dateTime,
-      (widget.pickerType == Date)
+      (widget.pickerType == FhirDate)
           ? DateTimePrecision.YYYYMMDD
           : DateTimePrecision.FULL,
     );
@@ -178,7 +178,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
           enabled: widget.enabled,
           textAlignVertical: TextAlignVertical.center,
           decoration: widget.decoration?.copyWith(
-            prefixIcon: (widget.pickerType == Time)
+            prefixIcon: (widget.pickerType == FhirTime)
                 ? const Icon(Icons.access_time)
                 : const Icon(Icons.calendar_today_outlined),
           ),

@@ -5,7 +5,7 @@ import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// Filler for answers of type [Integer], [Decimal], and [Quantity].
+/// Filler for answers of type [Integer], [FhirDecimal], and [Quantity].
 class NumericalAnswerFiller extends QuestionnaireAnswerFiller {
   NumericalAnswerFiller(
     super.answerModel, {
@@ -92,7 +92,7 @@ class _SliderInputControl extends AnswerInputControl<NumericalAnswerModel> {
                 max: answerModel.maxValue,
                 divisions: answerModel.sliderDivisions,
                 value: sliderValueDuringChange.value,
-                label: Decimal(sliderValueDuringChange.value).format(locale),
+                label: FhirDecimal(sliderValueDuringChange.value).format(locale),
                 // Changes are only propagated to the model at change-end time.
                 // onChange would cause very high-frequency storm of model updates
                 onChanged: answerModel.isControlEnabled
@@ -104,7 +104,7 @@ class _SliderInputControl extends AnswerInputControl<NumericalAnswerModel> {
                     ? (sliderValue) {
                         sliderValueDuringChange.value = sliderValue;
                         answerModel.value =
-                            answerModel.copyWithValue(Decimal(sliderValue));
+                            answerModel.copyWithValue(FhirDecimal(sliderValue));
                       }
                     : null,
                 onChangeStart: (_) {

@@ -87,7 +87,7 @@ class _StringAnswerInputControl extends AnswerInputControl<StringAnswerModel> {
       enabled: answerModel.isControlEnabled,
       keyboardType: keyboardType,
       controller: editingController,
-      maxLines: (qi.type == QuestionnaireItemType.text)
+      maxLines: (qi.type == FhirCode('text'))
           ? QuestionnaireTheme.of(context).maxLinesForTextItem
           : 1,
       decoration: InputDecoration(

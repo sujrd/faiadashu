@@ -180,7 +180,7 @@ class _QuestionnaireLaunchTileState extends State<QuestionnaireLaunchTile> {
                                 .aggregator<QuestionnaireResponseAggregator>()
                                 .aggregate(
                                   responseStatus:
-                                      QuestionnaireResponseStatus.completed,
+                                      FhirCode('completed'),
                                 ),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(

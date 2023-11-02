@@ -20,7 +20,7 @@ Future<QuestionnaireResponse> createOrUpdateQuestionnaireResponse(
   );
 
   // Select whether update or create scenario applies
-  final serverRequest = questionnaireResponse.id == null ? FhirRequest.create(
+  final serverRequest = questionnaireResponse.fhirId == null ? FhirRequest.create(
     base: baseUri,
     resource: questionnaireResponse,
     client: client,

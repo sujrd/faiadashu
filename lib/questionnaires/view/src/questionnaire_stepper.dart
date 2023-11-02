@@ -78,10 +78,10 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                     child: Column(
                       children: [
                         if (QuestionnaireTheme.of(context).showScore)
-                          ValueListenableBuilder<Decimal>(
+                          ValueListenableBuilder<FhirDecimal>(
                             builder: (
                               BuildContext context,
-                              Decimal value,
+                              FhirDecimal value,
                               Widget? child,
                             ) {
                               final scoreString =

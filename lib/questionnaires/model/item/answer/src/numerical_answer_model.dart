@@ -109,12 +109,12 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
     }
 
     // TODO: Evaluate max length
-    switch (qi.type) {
-      case QuestionnaireItemType.integer:
+    switch (qi.type.value) {
+      case 'integer':
         _maxDecimal = 0;
         break;
-      case QuestionnaireItemType.decimal:
-      case QuestionnaireItemType.quantity:
+      case 'decimal':
+      case 'quantity':
         // TODO: Evaluate special extensions for quantities
         _maxDecimal = qi.extension_
                 ?.extensionOrNull(
@@ -210,10 +210,10 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
     }
 
     if (number > _maxValue) {
-      return MaxValueError(nodeUid, Decimal(_maxValue).format(locale));
+      return MaxValueError(nodeUid, FhirDecimal(_maxValue).format(locale));
     }
     if (number < _minValue) {
-      return MinValueError(nodeUid, Decimal(_minValue).format(locale));
+      return MinValueError(nodeUid, FhirDecimal(_minValue).format(locale));
     }
 
     return null;
@@ -241,9 +241,9 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
 
   /// Returns a modified copy of the current [value].
   ///
-  /// * Updates the numerical value based on a [Decimal]
+  /// * Updates the numerical value based on a [FhirDecimal]
   /// * Keeps the unit
-  Quantity? copyWithValue(Decimal? newValue) {
+  Quantity? copyWithValue(FhirDecimal? newValue) {
     return (value != null)
         ? value!.copyWith(value: newValue)
         : Quantity(value: newValue);
@@ -269,11 +269,11 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
         ? value?.copyWith(value: null)
         : value == null
             ? Quantity(
-                value: Decimal(numberFormat.parse(textInput)),
+                value: FhirDecimal(numberFormat.parse(textInput)),
                 extension_: dataAbsentReasonExtension,
               )
             : value!.copyWith(
-                value: Decimal(numberFormat.parse(textInput)),
+                value: FhirDecimal(numberFormat.parse(textInput)),
                 extension_: dataAbsentReasonExtension,
               );
   }
@@ -287,8 +287,8 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
       return null;
     }
 
-    switch (qi.type) {
-      case QuestionnaireItemType.decimal:
+    switch (qi.type.value) {
+      case 'decimal':
         return (value!.value != null)
             ? QuestionnaireResponseAnswer(
                 valueDecimal: value!.value,
@@ -296,16 +296,16 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
                 item: items,
               )
             : null;
-      case QuestionnaireItemType.quantity:
+      case 'quantity':
         return QuestionnaireResponseAnswer(
           valueQuantity: value,
           extension_: value!.extension_,
           item: items,
         );
-      case QuestionnaireItemType.integer:
+      case 'integer':
         return (value!.value != null)
             ? QuestionnaireResponseAnswer(
-                valueInteger: Integer(value!.value!.value!.round()),
+                valueInteger: FhirInteger(value!.value!.value!.round()),
                 extension_: value!.extension_,
                 item: items,
               )
@@ -321,7 +321,7 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
   Quantity? _valueFromNumber(dynamic inputNumber) {
     final unitCoding = qi.computableUnit;
 
-    final quantityValue = Decimal(inputNumber);
+    final quantityValue = FhirDecimal(inputNumber);
 
     return Quantity(
       value: quantityValue,
@@ -329,8 +329,8 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
       system: unitCoding?.system,
       code: unitCoding?.code,
       extension_: (unitCoding != null &&
-              (qi.type == QuestionnaireItemType.decimal ||
-                  qi.type == QuestionnaireItemType.integer))
+              (qi.type == FhirCode('decimal') ||
+                  qi.type == FhirCode('integer')))
           ? [
               FhirExtension(
                 url: FhirUri(
@@ -361,7 +361,7 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
             ? Quantity(value: answer.valueDecimal)
             : (answer.valueInteger != null && answer.valueInteger!.isValid)
                 ? Quantity(
-                    value: Decimal(answer.valueInteger),
+                    value: FhirDecimal(answer.valueInteger),
                   )
                 : null);
   }
