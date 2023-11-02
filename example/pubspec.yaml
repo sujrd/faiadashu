@@ -14,11 +14,11 @@ dependencies:
   faiadashu_online:
     path: ../faiadashu_online
 
-  fhir: ^0.8.0
+  fhir: ^0.11.0
 #  fhir:
 #    path: /Users/tilo/Projects/fhir/fhir
 
-  fhir_auth: ^0.8.0
+  fhir_auth: ^0.11.0-dev.1
 #  fhir_auth:
 #    path: ../../fhir/fhir_auth
 
