@@ -127,7 +127,9 @@ class _QuestionnaireResponseFillerState
     _logger.trace('Enter build()');
 
     // Make sure to set this once only, or it may lead to flickering
-    builderFuture ??= widget._createQuestionnaireResponseModel(context: context);
+    if (builderFuture == null || _questionnaireResponseModel?.locale != Localizations.localeOf(context)) {
+      builderFuture = widget._createQuestionnaireResponseModel(context: context);
+    }
 
     return FutureBuilder<QuestionnaireResponseModel>(
       future: builderFuture,
