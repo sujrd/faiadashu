@@ -268,38 +268,38 @@ class QuestionItemModel extends ResponseItemModel {
   AnswerModel _createAnswerModel() {
     late AnswerModel answerModel;
 
-    switch (questionnaireItemModel.questionnaireItem.type.value) {
-      case 'choice':
-      case 'open-choice':
+    switch (questionnaireItemModel.questionnaireItem.type) {
+      case QuestionnaireItemType.choice:
+      case QuestionnaireItemType.openChoice:
         answerModel = CodingAnswerModel(this);
         break;
-      case 'quantity':
-      case 'decimal':
-      case 'integer':
+      case QuestionnaireItemType.quantity:
+      case QuestionnaireItemType.decimal:
+      case QuestionnaireItemType.integer:
         answerModel = NumericalAnswerModel(this);
         break;
-      case 'string':
-      case 'text':
-      case 'url':
+      case QuestionnaireItemType.string:
+      case QuestionnaireItemType.text:
+      case QuestionnaireItemType.url:
         answerModel = StringAnswerModel(this);
         break;
-      case 'date':
-      case 'dateTime':
-      case 'time':
+      case QuestionnaireItemType.date:
+      case QuestionnaireItemType.dateTime:
+      case QuestionnaireItemType.time:
         answerModel = DateTimeAnswerModel(this);
         break;
-      case 'boolean':
+      case QuestionnaireItemType.boolean:
         answerModel = BooleanAnswerModel(this);
         break;
-      case 'attachment':
+      case QuestionnaireItemType.attachment:
         answerModel = AttachmentAnswerModel(this);
         break;
-      case 'display':
+      case QuestionnaireItemType.display:
         throw UnsupportedError("Items of type 'display' do not have answers.");
-      case 'group':
+      case QuestionnaireItemType.group:
         throw UnsupportedError("Items of type 'group' do not have answers.");
-      case 'unknown':
-      case 'reference':
+      case QuestionnaireItemType.unknown:
+      case QuestionnaireItemType.reference:
       default:
         // Throwing an exception here would lead to breakage of filler.
         answerModel = UnsupportedAnswerModel(this);
@@ -321,7 +321,7 @@ class QuestionItemModel extends ResponseItemModel {
       // errors
       final initialValues = (questionnaireItem.initial ?? []).toList();
 
-      if ({'choice','open-choice'}.contains(questionnaireItem.type.value)) {
+      if ({QuestionnaireItemType.choice,QuestionnaireItemType.openChoice}.contains(questionnaireItem.type)) {
         // Add answerOptions marked as initialSelected to array of initialValues
         final initialSelected = questionnaireItem.answerOption
             ?.where((option) => option.initialSelected?.value == true && option.valueCoding != null)
@@ -332,29 +332,29 @@ class QuestionItemModel extends ResponseItemModel {
       if (initialValues.isNotEmpty) {
         final initialValue = initialValues.first;
 
-        switch (questionnaireItem.type.value) {
-          case 'integer':
+        switch (questionnaireItem.type) {
+          case QuestionnaireItemType.integer:
             firstAnswerModel
                 .populateFromExpression(initialValue.valueInteger?.value);
             break;
-          case 'decimal':
+          case QuestionnaireItemType.decimal:
             firstAnswerModel
                 .populateFromExpression(initialValue.valueDecimal?.value);
             break;
-          case 'string':
+          case QuestionnaireItemType.string:
             firstAnswerModel.populateFromExpression(initialValue.valueString);
             break;
-          case 'date':
+          case QuestionnaireItemType.date:
             firstAnswerModel.populateFromExpression(initialValue.valueDate);
             break;
-          case 'dateTime':
+          case QuestionnaireItemType.dateTime:
             firstAnswerModel.populateFromExpression(initialValue.valueDateTime);
             break;
-          case 'boolean':
+          case QuestionnaireItemType.boolean:
             firstAnswerModel.populateFromExpression(initialValue.valueBoolean);
             break;
-          case 'choice':
-          case 'open-choice':
+          case QuestionnaireItemType.choice:
+          case QuestionnaireItemType.openChoice:
             final initialCodings = initialValues
                 .where((qiv) => qiv.valueCoding != null)
                 .map<Coding>((qiv) => qiv.valueCoding!);

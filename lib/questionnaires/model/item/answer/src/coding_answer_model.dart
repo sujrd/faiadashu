@@ -156,7 +156,7 @@ class CodingAnswerModel extends AnswerModel<OptionsOrString, OptionsOrString> {
 
   bool get isCheckbox => qi.isItemControl('check-box');
 
-  bool get isOptionsOrString => qi.type == FhirCode('open-choice');
+  bool get isOptionsOrString => qi.type == QuestionnaireItemType.openChoice;
 
   String _nextOptionUid() => _answerOptions.length.toString();
 

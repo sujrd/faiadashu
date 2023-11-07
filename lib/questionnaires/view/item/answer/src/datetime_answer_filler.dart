@@ -44,11 +44,11 @@ class _DateTimeInputControl extends AnswerInputControl<DateTimeAnswerModel> {
     final initialDate = answerModel.value;
 
     final pickerType = ArgumentError.checkNotNull(
-      const {
-        'date': FhirDate,
-        'dateTime': FhirDateTime,
-        'time': FhirTime,
-      }[itemType.value],
+      {
+        QuestionnaireItemType.date: FhirDate,
+        QuestionnaireItemType.dateTime: FhirDateTime,
+        QuestionnaireItemType.time: FhirTime,
+      }[itemType],
     );
 
     return FhirDateTimePicker(

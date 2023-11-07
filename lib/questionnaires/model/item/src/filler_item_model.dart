@@ -277,18 +277,18 @@ abstract class FillerItemModel extends ResponseNode {
       }
 
       enableWhenTrigger.incrementAllConditionCount();
-      switch (qew.operator_?.value) {
-        case 'exists':
+      switch (qew.operator_) {
+        case QuestionnaireEnableWhenOperator.exists:
           _evaluateExistsOperator(qew, enableWhenTrigger);
           break;
-        case '=':
-        case '!=':
+        case QuestionnaireEnableWhenOperator.equals:
+        case QuestionnaireEnableWhenOperator.notEquals:
           _evaluateEqualityOperator(questionLinkId, qew, enableWhenTrigger);
           break;
-        case '<':
-        case '>':
-        case '>=':
-        case '<=':
+        case QuestionnaireEnableWhenOperator.lessThan:
+        case QuestionnaireEnableWhenOperator.greaterThan:
+        case QuestionnaireEnableWhenOperator.greaterThanOrEquals:
+        case QuestionnaireEnableWhenOperator.lessThanOrEquals:
           _evaluateComparisonOperator(questionLinkId, qew, enableWhenTrigger);
           break;
         default:
@@ -300,19 +300,19 @@ abstract class FillerItemModel extends ResponseNode {
     });
 
     // TODO: Optimization: 'any' could stop evaluation after first trigger.
-    switch (questionnaireItem.enableBehavior?.value) {
-      case 'any':
+    switch (questionnaireItem.enableBehavior) {
+      case QuestionnaireItemEnableBehavior.any:
       case null:
         if (!enableWhenTrigger.anyTriggered) {
           _nextGenerationDisableWithDescendants();
         }
         break;
-      case 'all':
+      case QuestionnaireItemEnableBehavior.all:
         if (!enableWhenTrigger.allTriggered) {
           _nextGenerationDisableWithDescendants();
         }
         break;
-      case 'unknown':
+      case QuestionnaireItemEnableBehavior.unknown:
         throw QuestionnaireFormatException(
           'enableWhen with unknown enableBehavior: ${questionnaireItem.enableBehavior}',
           questionnaireItem,
@@ -359,23 +359,23 @@ abstract class FillerItemModel extends ResponseNode {
           );
         }
 
-        switch (qew.operator_?.value) {
-          case '>':
+        switch (qew.operator_) {
+          case QuestionnaireEnableWhenOperator.greaterThan:
             if (answerValue > comparisonValue) {
               enableWhenTrigger.trigger();
             }
             break;
-          case '>=':
+          case QuestionnaireEnableWhenOperator.greaterThanOrEquals:
             if (answerValue >= comparisonValue) {
               enableWhenTrigger.trigger();
             }
             break;
-          case '<':
+          case QuestionnaireEnableWhenOperator.lessThan:
             if (answerValue < comparisonValue) {
               enableWhenTrigger.trigger();
             }
             break;
-          case '<=':
+          case QuestionnaireEnableWhenOperator.lessThanOrEquals:
             if (answerValue <= comparisonValue) {
               enableWhenTrigger.trigger();
             }
@@ -423,7 +423,7 @@ abstract class FillerItemModel extends ResponseNode {
 
       if (firstAnswer == null) {
         // null equals nothing
-        if (qew.operator_ == FhirCode('!=')) {
+        if (qew.operator_ == QuestionnaireEnableWhenOperator.notEquals) {
           enableWhenTrigger.trigger();
         }
       } else if (firstAnswer is CodingAnswerModel) {
@@ -431,14 +431,14 @@ abstract class FillerItemModel extends ResponseNode {
           _fimLogger.debug(
             'enableWhen: ${firstAnswer.value} == ${qew.answerCoding}',
           );
-          if (qew.operator_ == FhirCode('=')) {
+          if (qew.operator_ == QuestionnaireEnableWhenOperator.equals) {
             enableWhenTrigger.trigger();
           }
         } else {
           _fimLogger.debug(
             'enableWhen: ${firstAnswer.value} != ${qew.answerCoding}',
           );
-          if (qew.operator_ == FhirCode('!=')) {
+          if (qew.operator_ == QuestionnaireEnableWhenOperator.notEquals) {
             enableWhenTrigger.trigger();
           }
         }
@@ -542,7 +542,7 @@ abstract class FillerItemModel extends ResponseNode {
     DisplayVisibility resultVisibility = DisplayVisibility.shown;
 
     if (questionnaireResponseModel.responseStatus ==
-        FhirCode('completed')) {
+        QuestionnaireResponseStatus.completed) {
       resultVisibility =
           _maxVisibility(resultVisibility, DisplayVisibility.protected);
     }

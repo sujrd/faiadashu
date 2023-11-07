@@ -109,12 +109,12 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
     }
 
     // TODO: Evaluate max length
-    switch (qi.type.value) {
-      case 'integer':
+    switch (qi.type) {
+      case QuestionnaireItemType.integer:
         _maxDecimal = 0;
         break;
-      case 'decimal':
-      case 'quantity':
+      case QuestionnaireItemType.decimal:
+      case QuestionnaireItemType.quantity:
         // TODO: Evaluate special extensions for quantities
         _maxDecimal = qi.extension_
                 ?.extensionOrNull(
@@ -287,8 +287,8 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
       return null;
     }
 
-    switch (qi.type.value) {
-      case 'decimal':
+    switch (qi.type) {
+      case QuestionnaireItemType.decimal:
         return (value!.value != null)
             ? QuestionnaireResponseAnswer(
                 valueDecimal: value!.value,
@@ -296,13 +296,13 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
                 item: items,
               )
             : null;
-      case 'quantity':
+      case QuestionnaireItemType.quantity:
         return QuestionnaireResponseAnswer(
           valueQuantity: value,
           extension_: value!.extension_,
           item: items,
         );
-      case 'integer':
+      case QuestionnaireItemType.integer:
         return (value!.value != null)
             ? QuestionnaireResponseAnswer(
                 valueInteger: FhirInteger(value!.value!.value!.round()),
@@ -329,8 +329,8 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
       system: unitCoding?.system,
       code: unitCoding?.code,
       extension_: (unitCoding != null &&
-              (qi.type == FhirCode('decimal') ||
-                  qi.type == FhirCode('integer')))
+              (qi.type == QuestionnaireItemType.decimal ||
+                  qi.type == QuestionnaireItemType.integer))
           ? [
               FhirExtension(
                 url: FhirUri(

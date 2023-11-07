@@ -437,7 +437,7 @@ class QuestionnaireResponseModel {
   void _cacheQuestionnaireResponseForFhirPath() {
     _cachedQuestionnaireResponse ??=
         aggregator<QuestionnaireResponseAggregator>().aggregateResponseItems(
-          responseStatus: FhirCode('completed'),
+          responseStatus: QuestionnaireResponseStatus.completed,
           generateNarrative: false,
         );
   }
@@ -468,7 +468,7 @@ class QuestionnaireResponseModel {
   int get generation => _generation;
 
   final responseStatusNotifier = ValueNotifier<FhirCode>(
-    FhirCode('in-progress'),
+    QuestionnaireResponseStatus.inProgress,
   );
 
   FhirCode get responseStatus =>
@@ -610,7 +610,7 @@ class QuestionnaireResponseModel {
     );
 
     responseStatus =
-        questionnaireResponse.status ?? FhirCode('in-progress');
+        questionnaireResponse.status ?? QuestionnaireResponseStatus.inProgress;
   }
 
   void _updateCalculations() {

@@ -31,17 +31,17 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
       return null;
     }
 
-    if (itemType == FhirCode('date')) {
+    if (itemType == QuestionnaireItemType.date) {
       return QuestionnaireResponseAnswer(
         valueDate: FhirDate(value!.value),
         item: items,
       );
-    } else if (itemType == FhirCode('dateTime')) {
+    } else if (itemType == QuestionnaireItemType.dateTime) {
       return QuestionnaireResponseAnswer(
         valueDateTime: value,
         item: items,
       );
-    } else if (itemType == FhirCode('time')) {
+    } else if (itemType == QuestionnaireItemType.time) {
       return QuestionnaireResponseAnswer(
         valueTime: FhirTime(
           value!.value!.toIso8601String().substring('yyyy-MM-ddT'.length),

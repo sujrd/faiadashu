@@ -26,7 +26,7 @@ class QuestionnaireResponseAggregator
     FhirCode responseStatus,
     Map<String, dynamic> responseItemRegistry,
   ) {
-    if (responseStatus == FhirCode('completed') &&
+    if (responseStatus == QuestionnaireResponseStatus.completed &&
         !itemModel.isEnabled) {
       return null;
     }
@@ -97,7 +97,7 @@ class QuestionnaireResponseAggregator
     FhirCode responseStatus,
     Map<String, dynamic> responseItemRegistry,
   ) {
-    if (responseStatus == FhirCode('completed') &&
+    if (responseStatus == QuestionnaireResponseStatus.completed &&
         !itemModel.isEnabled) {
       return null;
     }

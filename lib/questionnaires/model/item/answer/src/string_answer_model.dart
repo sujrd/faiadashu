@@ -46,9 +46,9 @@ class StringAnswerModel extends AnswerModel<String, String> {
         ?.valueCode
         ?.value;
 
-    keyboard = (qi.type == FhirCode('text'))
+    keyboard = (qi.type == QuestionnaireItemType.text)
         ? StringAnswerKeyboard.multiline
-        : (qi.type == FhirCode('url'))
+        : (qi.type == QuestionnaireItemType.url)
             ? StringAnswerKeyboard.url
             : (keyboardExtension == 'email')
                 ? StringAnswerKeyboard.email
@@ -85,7 +85,7 @@ class StringAnswerModel extends AnswerModel<String, String> {
       return MinLengthError(nodeUid, maxLength!);
     }
 
-    if (qi.type == FhirCode('url')) {
+    if (qi.type == QuestionnaireItemType.url) {
       if (!_urlRegExp.hasMatch(inputValue)) {
         return UrlError(nodeUid);
       }
@@ -120,7 +120,7 @@ class StringAnswerModel extends AnswerModel<String, String> {
         : null;
 
     return (value != null && value.isNotEmpty)
-        ? (qi.type != FhirCode('url'))
+        ? (qi.type != QuestionnaireItemType.url)
             ? QuestionnaireResponseAnswer(
                 valueString: value,
                 extension_: dataAbsentReasonExtension,
