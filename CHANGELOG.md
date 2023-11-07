@@ -1,3 +1,41 @@
+# CHANGELOG
+
+## 0.11.0
+
+* **[Breaking]** Upgrade Flutter version to >=3.7.0
+  * Bump intl to `^0.18`
+
+* **[Breaking]** Refactor lookupFDashLocalizations
+  * Remove lookupFDashLocalizations usage from all layers (Model and View/Widget Layer)
+  * Remove parameter Locale from every widget in `faiadashu`
+
+* **[Breaking]** Update packages dependencies of `faiadashu`, `faiabench`, and `faiadashu_online`
+  * Upgrades `fhir`, `fhir_path`, `fhir_at_rest` and `fhir_auth` across the project
+
+### Faiadashu
+* Support for Attachment-type Questions
+* Allow customizing time/date picker entry modes via QuestionnaireTheme
+* Support unitOption extension
+* Improve `QuestionnaireStepper`
+* Fix answers of disabled items persist in QuestionnaireResponse after being disabled
+* Fix choice options flicker upon scrolling on web release builds in iOS browsers
+* Add more capabilities to customize layout/theming via `QuestionnaireTheme`
+* Allow accessing PageController in QuestionnaireStepperPage
+* Support minQuantity and maxQuantity extensions
+* Support questionnaire-unit extension
+* Fix dateTime timezone not properly populated
+* Introduce onLastPageChange in `QuestionnaireStepper`
+* Introduce OnBeforePageChanged in `QuestionnaireStepper`
+* Fix Fhirpath calculated expressions may not be updated after question items are enabled/disabled
+* Support initial value for choice and open-choice questionnaire
+* Fix widgets not properly updated when changing Locale
+* Fix question text not show if it contains special html characters
+* Fix maxDecimalPlaces extension not taken into account for values over 0
+* Fix "Null check operator used on a null value" error on numeric fields after deleting content and repainting field
+* Provide access to `QuestionnaireStepperPageViewController` from inner widgets
+* Allow choice option card color/elevation to be overridden via standard theming
+* Fix form flickers and info gets lost after changing response in certain cases
+
 ## 0.8.1
 **[Breaking]** This release is beginning to make use of features in Flutter 3.0.
 It does not work with Flutter 2.*x*.
