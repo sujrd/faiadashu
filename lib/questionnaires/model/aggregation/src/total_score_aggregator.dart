@@ -13,14 +13,14 @@ import 'package:fhir/r4.dart';
 /// Can deal with incomplete questionnaires.
 ///
 /// Will return 0 when no score field exists on the questionnaire.
-class TotalScoreAggregator extends Aggregator<Decimal> {
+class TotalScoreAggregator extends Aggregator<FhirDecimal> {
   static final _logger = Logger(TotalScoreAggregator);
 
   late final QuestionItemModel? totalScoreItem;
   TotalScoreAggregator(
       {required FDashLocalizations localizations, bool autoAggregate = true,})
       : super(
-          Decimal(0),
+          FhirDecimal(0),
           localizations: localizations,
           autoAggregate: autoAggregate,
         );
@@ -47,7 +47,7 @@ class TotalScoreAggregator extends Aggregator<Decimal> {
   }
 
   @override
-  Decimal? aggregate({bool notifyListeners = false}) {
+  FhirDecimal? aggregate({bool notifyListeners = false}) {
     final totalScoreItem = this.totalScoreItem;
     if (totalScoreItem == null) {
       return null;
@@ -62,7 +62,7 @@ class TotalScoreAggregator extends Aggregator<Decimal> {
             );
 
     _logger.debug('sum: $sum');
-    final result = Decimal(sum);
+    final result = FhirDecimal(sum);
     if (notifyListeners) {
       value = result;
     }

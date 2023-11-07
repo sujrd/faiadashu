@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:faiadashu/fhir_types/fhir_types.dart';
-import 'package:fhir/primitive_types/fhir_uri.dart';
+import 'package:fhir/primitive_types/uri.dart';
 import 'package:fhir/r4/basic_types/fhir_extension.dart';
 
 extension StringExtension on String {

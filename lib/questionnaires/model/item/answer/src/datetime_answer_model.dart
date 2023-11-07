@@ -4,12 +4,12 @@ import 'package:faiadashu/questionnaires/model/src/validation_errors/date_time_e
 import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart'
     show
-        Date,
+        FhirCode,
+        FhirDate,
         FhirDateTime,
-        QuestionnaireItemType,
+        FhirTime,
         QuestionnaireResponseAnswer,
-        QuestionnaireResponseItem,
-        Time;
+        QuestionnaireResponseItem;
 
 class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
   DateTimeAnswerModel(super.responseModel);
@@ -33,17 +33,17 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
 
     if (itemType == QuestionnaireItemType.date) {
       return QuestionnaireResponseAnswer(
-        valueDate: Date(value!.value),
+        valueDate: FhirDate(value!.value),
         item: items,
       );
-    } else if (itemType == QuestionnaireItemType.datetime) {
+    } else if (itemType == QuestionnaireItemType.dateTime) {
       return QuestionnaireResponseAnswer(
         valueDateTime: value,
         item: items,
       );
     } else if (itemType == QuestionnaireItemType.time) {
       return QuestionnaireResponseAnswer(
-        valueTime: Time(
+        valueTime: FhirTime(
           value!.value!.toIso8601String().substring('yyyy-MM-ddT'.length),
         ),
         item: items,
@@ -87,7 +87,7 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
         ((answer.valueDate != null)
             ? FhirDateTime(answer.valueDate)
             : (answer.valueTime != null)
-                // TODO: Find a better way to convert Time values to FhirDateTime
+                // TODO: Find a better way to convert FhirTime values to FhirDateTime
                 ? FhirDateTime('1970-01-01T${answer.valueTime}')
                 : null);
   }

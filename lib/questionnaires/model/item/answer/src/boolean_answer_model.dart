@@ -2,7 +2,7 @@ import 'package:faiadashu/questionnaires/model/model.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart';
 
-class BooleanAnswerModel extends AnswerModel<Boolean, Boolean> {
+class BooleanAnswerModel extends AnswerModel<FhirBoolean, FhirBoolean> {
   BooleanAnswerModel(super.responseModel);
 
   @override
@@ -17,19 +17,19 @@ class BooleanAnswerModel extends AnswerModel<Boolean, Boolean> {
   RenderingString get display => (value == null)
       ? RenderingString.nullText
       : RenderingString.fromText(
-          (value == Boolean(true)) ? '[X]' : '[ ]',
-          xhtmlText: (value == Boolean(true))
+          (value == FhirBoolean(true)) ? '[X]' : '[ ]',
+          xhtmlText: (value == FhirBoolean(true))
               ? '<b>[X]</b>'
               : '<span style="color:grey">[ ]</span>',
         );
 
   @override
-  ValidationError? validateInput(Boolean? inValue) {
+  ValidationError? validateInput(FhirBoolean? inValue) {
     return null;
   }
 
   @override
-  ValidationError? validateValue(Boolean? inputValue) {
+  ValidationError? validateValue(FhirBoolean? inputValue) {
     return null;
   }
 
@@ -47,13 +47,13 @@ class BooleanAnswerModel extends AnswerModel<Boolean, Boolean> {
       return;
     }
 
-    if (evaluationResult is Boolean) {
+    if (evaluationResult is FhirBoolean) {
       value = evaluationResult;
     } else if (evaluationResult is bool) {
-      value = Boolean(evaluationResult);
+      value = FhirBoolean(evaluationResult);
     } else {
       // Non-empty, non-booleans are true
-      value = Boolean(true);
+      value = FhirBoolean(true);
     }
   }
 

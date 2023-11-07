@@ -14,14 +14,14 @@ import 'package:fhir_path/fhir_path.dart';
 class QuestionItemModel extends ResponseItemModel {
   static final _qimLogger = Logger(QuestionItemModel);
 
-  Code? _dataAbsentReason;
+  FhirCode? _dataAbsentReason;
 
   /// Reason why this response is empty.
   ///
   /// see [DataAbsentReason]
-  Code? get dataAbsentReason => _dataAbsentReason;
+  FhirCode? get dataAbsentReason => _dataAbsentReason;
 
-  set dataAbsentReason(Code? newDataAbsentReason) {
+  set dataAbsentReason(FhirCode? newDataAbsentReason) {
     if (_dataAbsentReason != newDataAbsentReason) {
       _dataAbsentReason = newDataAbsentReason;
       nextGeneration(
@@ -147,7 +147,7 @@ class QuestionItemModel extends ResponseItemModel {
   /// Returns a [Decimal] value which can be added to a score.
   ///
   /// Returns null if not applicable (either question unanswered, or wrong type)
-  Decimal? get ordinalValue {
+  FhirDecimal? get ordinalValue {
     final answerModel = firstAnswerModel;
 
     return answerModel.isNotEmpty &&
@@ -266,11 +266,11 @@ class QuestionItemModel extends ResponseItemModel {
 
   /// Creates a new [AnswerModel] of the type for this question.
   AnswerModel _createAnswerModel() {
-    final AnswerModel? answerModel;
+    late AnswerModel answerModel;
 
     switch (questionnaireItemModel.questionnaireItem.type) {
       case QuestionnaireItemType.choice:
-      case QuestionnaireItemType.open_choice:
+      case QuestionnaireItemType.openChoice:
         answerModel = CodingAnswerModel(this);
         break;
       case QuestionnaireItemType.quantity:
@@ -284,7 +284,7 @@ class QuestionItemModel extends ResponseItemModel {
         answerModel = StringAnswerModel(this);
         break;
       case QuestionnaireItemType.date:
-      case QuestionnaireItemType.datetime:
+      case QuestionnaireItemType.dateTime:
       case QuestionnaireItemType.time:
         answerModel = DateTimeAnswerModel(this);
         break;
@@ -300,6 +300,7 @@ class QuestionItemModel extends ResponseItemModel {
         throw UnsupportedError("Items of type 'group' do not have answers.");
       case QuestionnaireItemType.unknown:
       case QuestionnaireItemType.reference:
+      default:
         // Throwing an exception here would lead to breakage of filler.
         answerModel = UnsupportedAnswerModel(this);
     }
@@ -320,7 +321,7 @@ class QuestionItemModel extends ResponseItemModel {
       // errors
       final initialValues = (questionnaireItem.initial ?? []).toList();
 
-      if ({QuestionnaireItemType.choice,QuestionnaireItemType.open_choice}.contains(questionnaireItem.type)) {
+      if ({QuestionnaireItemType.choice,QuestionnaireItemType.openChoice}.contains(questionnaireItem.type)) {
         // Add answerOptions marked as initialSelected to array of initialValues
         final initialSelected = questionnaireItem.answerOption
             ?.where((option) => option.initialSelected?.value == true && option.valueCoding != null)
@@ -346,14 +347,14 @@ class QuestionItemModel extends ResponseItemModel {
           case QuestionnaireItemType.date:
             firstAnswerModel.populateFromExpression(initialValue.valueDate);
             break;
-          case QuestionnaireItemType.datetime:
+          case QuestionnaireItemType.dateTime:
             firstAnswerModel.populateFromExpression(initialValue.valueDateTime);
             break;
           case QuestionnaireItemType.boolean:
             firstAnswerModel.populateFromExpression(initialValue.valueBoolean);
             break;
           case QuestionnaireItemType.choice:
-          case QuestionnaireItemType.open_choice:
+          case QuestionnaireItemType.openChoice:
             final initialCodings = initialValues
                 .where((qiv) => qiv.valueCoding != null)
                 .map<Coding>((qiv) => qiv.valueCoding!);

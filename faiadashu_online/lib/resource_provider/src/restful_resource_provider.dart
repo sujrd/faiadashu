@@ -9,7 +9,7 @@ class RestfulResourceProvider extends FhirResourceProvider {
   late final Resource? resource;
   final String uri;
   final R4ResourceType resourceType;
-  final Id id;
+  final String id;
   FhirClient client;
 
   RestfulResourceProvider(
@@ -30,7 +30,7 @@ class RestfulResourceProvider extends FhirResourceProvider {
     final request = FhirRequest.read(
       base: client.fhirUri.value!,
       type: resourceType,
-      id: id,
+      fhirId: id,
       client: client,
     );
     resource = await request.request();

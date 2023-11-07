@@ -130,7 +130,7 @@ class _HomePageState extends State<HomePage> {
 
   // Patient ID matches a patient on Meld Sandbox server.
   final sandboxPatient = Patient(
-    id: Id('smart-880378'),
+    fhirId: 'smart-880378',
     name: [
       HumanName(
         given: ['Amy', 'R'],
@@ -138,8 +138,8 @@ class _HomePageState extends State<HomePage> {
         use: HumanNameUse.official,
       )
     ],
-    birthDate: Date('1999-12-08'),
-    gender: PatientGender.female,
+    birthDate: FhirDate('1999-12-08'),
+    gender: FhirCode('female'),
   );
 
   late final LaunchContext launchContext;

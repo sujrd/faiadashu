@@ -91,9 +91,9 @@ class _FhirAttachmentPickerState extends State<FhirAttachmentPicker> {
 
     final attachment = Attachment(
       title: file.name,
-      contentType: Code(mimeType),
-      size: UnsignedInt(size),
-      data: Base64Binary(base64.encode(bytes)),
+      contentType: FhirCode(mimeType),
+      size: FhirUnsignedInt(size),
+      data: FhirBase64Binary(base64.encode(bytes)),
     );
 
     setState(() {
