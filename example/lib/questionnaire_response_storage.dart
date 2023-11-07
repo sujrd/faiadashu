@@ -29,14 +29,14 @@ class QuestionnaireResponseStorage {
       scopes: Scopes(
         clinicalScopes: [
           ClinicalScope(
-            Role.patient,
-            R4ResourceType.Patient,
-            Interaction.any,
+            role: Role.patient,
+            resourceType: R4ResourceType.Patient,
+            interaction: Interaction.any,
           ),
           ClinicalScope(
-            Role.patient,
-            R4ResourceType.QuestionnaireResponse,
-            Interaction.any,
+            role: Role.patient,
+            resourceType: R4ResourceType.QuestionnaireResponse,
+            interaction: Interaction.any,
           ),
         ],
         openid: true,

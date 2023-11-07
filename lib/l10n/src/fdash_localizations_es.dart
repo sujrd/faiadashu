@@ -5,7 +5,7 @@ import 'fdash_localizations.g.dart';
 
 /// The translations for Spanish Castilian (`es`).
 class FDashLocalizationsEs extends FDashLocalizations {
-  FDashLocalizationsEs([String locale = 'es']) : super(locale);
+  FDashLocalizationsEs([super.locale = 'es']);
 
   @override
   String get validatorRequiredItem => 'Esta pregunta debe ser completada.';
@@ -101,6 +101,16 @@ class FDashLocalizationsEs extends FDashLocalizations {
   @override
   String validatorSingleSelectionOrSingleOpenString(Object openLabel) {
     return 'Either select an option, or enter free text in \"$openLabel\".';
+  }
+
+  @override
+  String validatorMaxSize(String maxSize) {
+    return 'Select a file under $maxSize.';
+  }
+
+  @override
+  String validatorMimeTypes(String mimeTypes) {
+    return 'Select a file of the following types: $mimeTypes.';
   }
 
   @override

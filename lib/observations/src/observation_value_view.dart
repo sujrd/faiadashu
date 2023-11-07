@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -10,7 +8,6 @@ import 'package:intl/intl.dart';
 /// or components of valueQuantity.
 class ObservationValueView extends StatelessWidget {
   final Observation _observation;
-  final Locale? locale;
   final TextStyle? valueStyle;
   final TextStyle? unitStyle;
   final String componentSeparator;
@@ -20,7 +17,6 @@ class ObservationValueView extends StatelessWidget {
   const ObservationValueView(
     this._observation, {
     super.key,
-    this.locale,
     this.valueStyle,
     this.unitStyle,
     this.componentSeparator = ' | ',
@@ -33,7 +29,7 @@ class ObservationValueView extends StatelessWidget {
     final Widget valueWidget;
 
     final decimalFormat = NumberFormat.decimalPattern(
-      (locale ?? Localizations.localeOf(context)).toString(),
+      Localizations.localeOf(context).toString(),
     );
 
     if (_observation.valueQuantity != null) {
@@ -50,10 +46,9 @@ class ObservationValueView extends StatelessWidget {
         _observation.component!.isNotEmpty) {
       final componentText = StringBuffer();
       String? currentUnit;
-      final componentIterator =
-          HasNextIterator(_observation.component!.iterator);
-      do {
-        final ObservationComponent component = componentIterator.next();
+      final componentIterator = _observation.component!.iterator;
+      while (componentIterator.moveNext()) {
+        final ObservationComponent component = componentIterator.current;
         final unitString =
             ' ${component.valueQuantity?.unit ?? unknownUnitText}';
         // Avoid duplicate output of same unit:
@@ -71,7 +66,7 @@ class ObservationValueView extends StatelessWidget {
         } else {
           componentText.write('$componentSeparator$valueString');
         }
-      } while (componentIterator.hasNext);
+      }
       componentText.write(currentUnit);
       valueWidget = Text(
         componentText.toString(),
@@ -82,7 +77,7 @@ class ObservationValueView extends StatelessWidget {
         unknownValueText,
         style: valueStyle?.copyWith(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).errorColor,
+          color: Theme.of(context).colorScheme.error,
         ),
       );
     }

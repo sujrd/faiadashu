@@ -326,7 +326,33 @@
       ],
       "linkId": "100000",
       "type": "decimal",
-      "text": "Enter your weight in kg"
+      "text": "Enter your weight in kg (max 2 decimal places)"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+          "valueDecimal": 1
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+          "valueDecimal": 100
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces",
+          "valueInteger": 0
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+          "valueCoding": {
+            "code": "kg",
+            "display": "kg"
+          }
+        }
+      ],
+      "linkId": "100000-nodecimals",
+      "type": "decimal",
+      "text": "Enter your weight in kg (no decimals)"
     },
     {
       "extension": [

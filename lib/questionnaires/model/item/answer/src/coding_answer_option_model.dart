@@ -23,7 +23,7 @@ class CodingAnswerOptionModel {
 
   bool get hasMedia => itemMedia != null;
 
-  final Decimal? fhirOrdinalValue;
+  final FhirDecimal? fhirOrdinalValue;
   final RenderingString? optionPrefix;
   final bool isExclusive;
 
@@ -75,6 +75,7 @@ class CodingAnswerOptionModel {
       final plainText = coding.localizedDisplay(locale);
       optionText = RenderingString.fromText(
         plainText,
+        locale: locale,
         extensions: coding.displayElement?.extension_,
       );
       forDisplay = plainText;
@@ -152,9 +153,7 @@ class CodingAnswerOptionModel {
         final plainText =
             _createMultiColumn(coding, locale, questionnaireItemModel);
         forDisplay = _createForDisplay(coding, locale, questionnaireItemModel);
-        optionText = RenderingString.fromText(
-          plainText,
-        );
+        optionText = RenderingString.fromText(plainText);
       }
     } else {
       // The spec only allows valueCoding, but valueString occurs in the real world
@@ -169,6 +168,7 @@ class CodingAnswerOptionModel {
       forDisplay = plainText;
       optionText = RenderingString.fromText(
         plainText,
+        locale: locale,
         extensions: xhtmlExtensions,
       );
     }
@@ -226,11 +226,11 @@ class CodingAnswerOptionModel {
     return coding != null
         ? coding.copyWith(
             extension_: (codingExtensions.isNotEmpty) ? codingExtensions : null,
-            userSelected: Boolean(true),
+            userSelected: FhirBoolean(true),
           )
         : Coding(
             display: forDisplay,
-            userSelected: Boolean(true),
+            userSelected: FhirBoolean(true),
           );
   }
 
@@ -276,7 +276,7 @@ class CodingAnswerOptionModel {
           choiceColumnExt.extension_
               ?.extensionOrNull('forDisplay')
               ?.valueBoolean ==
-          Boolean(true),
+          FhirBoolean(true),
     );
 
     final forDisplayPath =

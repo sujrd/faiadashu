@@ -1,11 +1,11 @@
-import 'dart:ui';
-
 import 'package:collection/collection.dart';
+import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/logging/logging.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:faiadashu/resource_provider/resource_provider.dart';
 import 'package:fhir/r4.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 /// High-level model of a response to a questionnaire.
 class QuestionnaireResponseModel {
@@ -160,6 +160,7 @@ class QuestionnaireResponseModel {
     List<Aggregator>? aggregators,
     required FhirResourceProvider fhirResourceProvider,
     required LaunchContext launchContext,
+    required FDashLocalizations localizations,
     QuestionnaireModelDefaults questionnaireModelDefaults =
         const QuestionnaireModelDefaults(),
   }) async {
@@ -170,6 +171,7 @@ class QuestionnaireResponseModel {
     final questionnaireModel = await QuestionnaireModel.fromFhirResourceBundle(
       fhirResourceProvider: fhirResourceProvider,
       questionnaireModelDefaults: questionnaireModelDefaults,
+      locale: locale,
     );
 
     final questionnaireResponseModel = QuestionnaireResponseModel._(
@@ -177,9 +179,9 @@ class QuestionnaireResponseModel {
       questionnaireModel: questionnaireModel,
       aggregators: aggregators ??
           [
-            TotalScoreAggregator(),
-            NarrativeAggregator(),
-            QuestionnaireResponseAggregator(),
+            TotalScoreAggregator(localizations: localizations),
+            NarrativeAggregator(localizations: localizations),
+            QuestionnaireResponseAggregator(localizations: localizations),
           ],
       launchContext: launchContext,
     );
@@ -429,10 +431,22 @@ class QuestionnaireResponseModel {
 
   Map<String, dynamic>? _cachedQuestionnaireResponse;
 
-  /// INTERNAL ONLY - Returns a FHIR JSON fragment for a node with a given [uid].
-  Map<String, dynamic>? fhirResponseItemByUid(String uid) {
+  /// Generates a cached QuestionnaireResponse used for Fhirpath calculated expressions.
+  /// The response status is set to completed so that values from disabled questions are excluded
+  /// from computation.
+  void _cacheQuestionnaireResponseForFhirPath() {
     _cachedQuestionnaireResponse ??=
-        aggregator<QuestionnaireResponseAggregator>().aggregateResponseItems();
+        aggregator<QuestionnaireResponseAggregator>().aggregateResponseItems(
+          responseStatus: QuestionnaireResponseStatus.completed,
+          generateNarrative: false,
+        );
+  }
+
+  /// INTERNAL ONLY - Returns a FHIR JSON fragment for a node with a given [uid].
+  /// Note: This method is apparently meant to be called for Fhirpath expression evaluators only.
+  ///       Do not use in any other scenarios.
+  Map<String, dynamic>? fhirResponseItemByUid(String uid) {
+    _cacheQuestionnaireResponseForFhirPath();
 
     return _cachedQuestionnaireResponse?[uid] as Map<String, dynamic>?;
   }
@@ -444,11 +458,7 @@ class QuestionnaireResponseModel {
   ///
   /// The response matches the model as of the current generation.
   QuestionnaireResponse? createQuestionnaireResponseForFhirPath() {
-    _cachedQuestionnaireResponse ??=
-        aggregator<QuestionnaireResponseAggregator>().aggregateResponseItems(
-      responseStatus: QuestionnaireResponseStatus.completed,
-      generateNarrative: false,
-    );
+    _cacheQuestionnaireResponseForFhirPath();
 
     return _cachedQuestionnaireResponse?[QuestionnaireResponseAggregator
         .questionnaireResponseKey] as QuestionnaireResponse?;
@@ -457,19 +467,19 @@ class QuestionnaireResponseModel {
   /// Returns a number that indicates whether the model has changed.
   int get generation => _generation;
 
-  final responseStatusNotifier = ValueNotifier<QuestionnaireResponseStatus>(
-    QuestionnaireResponseStatus.in_progress,
+  final responseStatusNotifier = ValueNotifier<FhirCode>(
+    QuestionnaireResponseStatus.inProgress,
   );
 
-  QuestionnaireResponseStatus get responseStatus =>
+  FhirCode get responseStatus =>
       responseStatusNotifier.value;
 
-  set responseStatus(QuestionnaireResponseStatus newStatus) {
+  set responseStatus(FhirCode newStatus) {
     responseStatusNotifier.value = newStatus;
   }
 
-  Id? _id;
-  Id? get id => _id;
+  String? _id;
+  String? get id => _id;
 
   void _populateItems(
     ResponseNode? parentNode,
@@ -582,7 +592,7 @@ class QuestionnaireResponseModel {
       return;
     }
 
-    _id = questionnaireResponse.id;
+    _id = questionnaireResponse.fhirId;
 
     final questionnaireResponseItems = questionnaireResponse.item;
 
@@ -600,7 +610,7 @@ class QuestionnaireResponseModel {
     );
 
     responseStatus =
-        questionnaireResponse.status ?? QuestionnaireResponseStatus.in_progress;
+        questionnaireResponse.status ?? QuestionnaireResponseStatus.inProgress;
   }
 
   void _updateCalculations() {
@@ -769,7 +779,7 @@ class QuestionnaireResponseModel {
   }
 
   /// Items can change, and this should not be cached.
-  Iterable<FillerItemModel> orderedFillerItemModels() {
+  List<FillerItemModel> orderedFillerItemModels() {
     return _fillerItems;
   }
 
@@ -823,8 +833,9 @@ class QuestionnaireResponseModel {
   ///
   /// Will return the parent [QuestionItemModel] if uid corresponds to an answer.
   FillerItemModel? fillerItemModelByUid(String uid) {
-    final fillerItem =
-        orderedFillerItemModels().firstWhereOrNull((fim) => fim.nodeUid == uid);
+    final fillerItem = orderedFillerItemModels().firstWhereOrNull((fim) {
+      return fim.nodeUid == uid;
+    });
     if (fillerItem != null) {
       return fillerItem;
     }
@@ -844,27 +855,24 @@ class QuestionnaireResponseModel {
   /// * All filled fields are valid
   /// * All expression-based constraints are satisfied
   ///
-  /// Returns null, if everything is complete.
-  /// Returns a map (UID -> error text) with incomplete entries, if items are incomplete.
-  Map<String, String>? validate({
+  /// Returns an empty list if everything is complete; otherwise,
+  /// returns a list of [ValidationError], resulting from validation
+  /// for each [ResponseItemModel.validate].
+  List<ValidationError> validate({
     bool updateErrorText = true,
     bool notifyListeners = false,
   }) {
-    final invalidMap = <String, String>{};
+    final List<ValidationError> validationErrors = [];
 
     for (final itemModel in orderedResponseItemModels()) {
-      final errorTexts = itemModel.validate(
+      final errors = itemModel.validate(
         updateErrorText: updateErrorText,
         notifyListeners: notifyListeners,
       );
-      if (errorTexts != null) {
-        _logger.debug('$itemModel is invalid.');
-
-        invalidMap.addAll(errorTexts);
-      }
+      validationErrors.addAll(errors);
     }
 
-    return invalidMap.isNotEmpty ? invalidMap : null;
+    return validationErrors;
   }
 
   /// A map of UIDs -> error texts of invalid [ResponseNode]s.

@@ -10,11 +10,12 @@ import 'package:intl/intl.dart';
 /// The control is displayed as a text field that can be tapped to open
 /// a picker.
 class FhirDateTimePicker extends StatefulWidget {
-  final Locale? locale;
   final DateTime firstDate;
   final DateTime lastDate;
   final FhirDateTime? initialDateTime;
   final Type pickerType;
+  final DatePickerEntryMode datePickerEntryMode;
+  final TimePickerEntryMode timePickerEntryMode;
   final InputDecoration? decoration;
   final FocusNode? focusNode;
   final bool enabled;
@@ -25,13 +26,14 @@ class FhirDateTimePicker extends StatefulWidget {
     required this.firstDate,
     required this.lastDate,
     required this.pickerType,
+    this.datePickerEntryMode = DatePickerEntryMode.calendar,
+    this.timePickerEntryMode = TimePickerEntryMode.dial,
     this.decoration,
     this.onChanged,
-    this.locale,
     this.focusNode,
     this.enabled = true,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -43,6 +45,15 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
   FhirDateTime? _dateTimeValue;
   bool _fieldInitialized = false;
   final _clearFocusNode = FocusNode(skipTraversal: true);
+
+  // All 24h TimeOFDayFormats as specified in:
+  // https://api.flutter.dev/flutter/material/TimeOfDayFormat.html
+  static const timeOfDay24hFormats = {
+    TimeOfDayFormat.HH_colon_mm,
+    TimeOfDayFormat.HH_dot_mm,
+    TimeOfDayFormat.frenchCanadian,
+    TimeOfDayFormat.H_colon_mm,
+  };
 
   @override
   void initState() {
@@ -58,12 +69,22 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
     super.dispose();
   }
 
+  String _formatDateTime(FhirDateTime? value, Locale locale) {
+    final dateTime = value?.valueDateTime;
+    if (value == null || dateTime == null) return '';
+
+    return (widget.pickerType == FhirTime)
+        ? DateFormat.jm(locale.toString()).format(dateTime)
+        : value.format(locale, withTimeZone: widget.pickerType == FhirDateTime);
+  }
+
   Future<void> _showPicker(Locale locale) async {
     DateTime dateTime = DateTime(1970);
 
-    if (widget.pickerType != Time) {
+    if (widget.pickerType != FhirTime) {
       final date = await showDatePicker(
         initialDate: _dateTimeValue?.value ?? DateTime.now(),
+        initialEntryMode: widget.datePickerEntryMode,
         firstDate: widget.firstDate,
         lastDate: widget.lastDate,
         locale: locale,
@@ -76,16 +97,39 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
       dateTime = date.toLocal();
     }
 
-    if (widget.pickerType == FhirDateTime || widget.pickerType == Time) {
+    // To address use_build_context_synchronously as recommended, although this still triggers the linter
+    // https://dart.dev/tools/linter-rules/use_build_context_synchronously
+    // ignore: use_build_context_synchronously
+    if (!context.mounted) return;
+
+    if (widget.pickerType == FhirDateTime || widget.pickerType == FhirTime) {
       final time = await showTimePicker(
         initialTime:
             TimeOfDay.fromDateTime(_dateTimeValue?.value ?? DateTime.now()),
+        initialEntryMode: widget.timePickerEntryMode,
         context: context,
         builder: (context, child) {
           return Localizations.override(
             context: context,
             locale: locale,
-            child: child,
+            child: Builder(
+              // Get new BuildContext with overridden locale
+              builder: (context) {
+                // Get time of day format of current locale
+                final timeOfDayFormat =
+                    MaterialLocalizations.of(context).timeOfDayFormat();
+                return MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    // Workaround for time picker validation bug in `input` mode with locales specifying a 24h TimeOfDayFormat.
+                    // - https://github.com/sujrd/faiadashu/pull/32#issuecomment-1678639964
+                    // - https://github.com/flutter/flutter/issues/85527
+                    alwaysUse24HourFormat:
+                        timeOfDay24hFormats.contains(timeOfDayFormat),
+                  ),
+                  child: child!,
+                );
+              },
+            ),
           );
         },
       );
@@ -105,14 +149,12 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
 
     final fhirDateTime = FhirDateTime.fromDateTime(
       dateTime,
-      (widget.pickerType == Date)
+      (widget.pickerType == FhirDate)
           ? DateTimePrecision.YYYYMMDD
           : DateTimePrecision.FULL,
     );
     setState(() {
-      _dateTimeFieldController.text = (widget.pickerType == Time)
-          ? DateFormat.jm(locale.toString()).format(dateTime)
-          : fhirDateTime.format(locale);
+      _dateTimeFieldController.text = _formatDateTime(fhirDateTime, locale);
     });
     _dateTimeValue = fhirDateTime;
     widget.onChanged?.call(fhirDateTime);
@@ -120,11 +162,11 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = widget.locale ?? Localizations.localeOf(context);
+    final locale = Localizations.localeOf(context);
 
     // There is no Locale in initState.
     if (!_fieldInitialized) {
-      _dateTimeFieldController.text = _dateTimeValue?.format(locale) ?? '';
+      _dateTimeFieldController.text = _formatDateTime(_dateTimeValue, locale);
       _fieldInitialized = true;
     }
 
@@ -136,7 +178,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
           enabled: widget.enabled,
           textAlignVertical: TextAlignVertical.center,
           decoration: widget.decoration?.copyWith(
-            prefixIcon: (widget.pickerType == Time)
+            prefixIcon: (widget.pickerType == FhirTime)
                 ? const Icon(Icons.access_time)
                 : const Icon(Icons.calendar_today_outlined),
           ),

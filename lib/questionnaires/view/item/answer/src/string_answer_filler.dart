@@ -1,3 +1,4 @@
+import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
@@ -47,19 +48,15 @@ class _StringAnswerInputControl extends AnswerInputControl<StringAnswerModel> {
   final TextEditingController editingController;
 
   const _StringAnswerInputControl(
-    StringAnswerModel answerModel, {
+    super.answerModel, {
     required this.editingController,
-    FocusNode? focusNode,
-    Key? key,
-  }) : super(
-          answerModel,
-          focusNode: focusNode,
-          key: key,
-        );
+    super.focusNode,
+  });
 
   @override
   Widget build(BuildContext context) {
     final answerModel = this.answerModel;
+    final locale = FDashLocalizations.of(context);
 
     // FIXME: What should be the repaint mechanism for calculated items?
     // (it is getting repainted currently, but further optimization might break that)
@@ -85,46 +82,39 @@ class _StringAnswerInputControl extends AnswerInputControl<StringAnswerModel> {
       StringAnswerKeyboard.multiline: TextInputType.multiline,
     }[answerModel.keyboard]!;
 
-    final theme = QuestionnaireTheme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.only(top: 8, bottom: 8),
-      child: SizedBox(
-        height: theme.textFieldHeight,
-        child: TextFormField(
-          focusNode: focusNode,
-          enabled: answerModel.isControlEnabled,
-          keyboardType: keyboardType,
-          controller: editingController,
-          maxLines: (qi.type == QuestionnaireItemType.text)
-              ? QuestionnaireTheme.of(context).maxLinesForTextItem
-              : 1,
-          decoration: InputDecoration(
-            errorText: answerModel.displayErrorText,
-            errorStyle: (itemModel
-                    .isCalculated) // Force display of error text on calculated item
-                ? TextStyle(
-                    color: Theme.of(context).errorColor,
-                  )
-                : null,
-            hintText: answerModel.entryFormat,
-            prefixIcon: itemModel.isCalculated
-                ? Icon(
-                    Icons.calculate,
-                    color: (answerModel.displayErrorText != null)
-                        ? Theme.of(context).errorColor
-                        : null,
-                  )
-                : null,
-          ),
-          validator: (inputValue) => answerModel.validateInput(inputValue),
-          autovalidateMode: AutovalidateMode.always,
-          onChanged: (content) {
-            answerModel.value = content;
-          },
-          maxLength: answerModel.maxLength,
-        ),
+    return TextFormField(
+      focusNode: focusNode,
+      enabled: answerModel.isControlEnabled,
+      keyboardType: keyboardType,
+      controller: editingController,
+      maxLines: (qi.type == QuestionnaireItemType.text)
+          ? QuestionnaireTheme.of(context).maxLinesForTextItem
+          : 1,
+      decoration: InputDecoration(
+        errorText: answerModel.displayErrorText(locale),
+        errorStyle: (itemModel
+                .isCalculated) // Force display of error text on calculated item
+            ? TextStyle(
+                color: Theme.of(context).colorScheme.error,
+              )
+            : null,
+        hintText: answerModel.entryFormat,
+        prefixIcon: itemModel.isCalculated
+            ? Icon(
+                Icons.calculate,
+                color: (answerModel.displayErrorText(locale) != null)
+                    ? Theme.of(context).colorScheme.error
+                    : null,
+              )
+            : null,
       ),
+      validator: (inputValue) =>
+          answerModel.validateInput(inputValue)?.getMessage(locale),
+      autovalidateMode: AutovalidateMode.always,
+      onChanged: (content) {
+        answerModel.value = content;
+      },
+      maxLength: answerModel.maxLength,
     );
   }
 }

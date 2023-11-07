@@ -1,8 +1,11 @@
 import 'package:faiadashu/coding/coding.dart';
 import 'package:faiadashu/fhir_types/fhir_types.dart';
-import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/max_value_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/min_value_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/nan_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart';
 import 'package:intl/intl.dart';
 
@@ -126,22 +129,10 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
     }
 
     // Build a number format based on item and SDC properties.
-    final maxIntegerDigits = (_maxValue != double.maxFinite)
-        ? '############'.substring(0, _maxValue.toInt().toString().length)
-        : '############';
-    final maxFractionDigits =
-        (_maxDecimal != 0) ? '.0#####'.substring(0, _maxDecimal + 1) : '';
-
-    _numberPattern = '$maxIntegerDigits$maxFractionDigits';
-
-    _logger.debug(
-      'input format for ${questionnaireItemModel.linkId}: "$_numberPattern"',
+    _numberFormat = NumberFormat.decimalPatternDigits(
+      locale: locale.toLanguageTag(), // TODO: toString or toLanguageTag?
+      decimalDigits: _maxDecimal,
     );
-
-    _numberFormat = NumberFormat(
-      _numberPattern,
-      locale.toLanguageTag(),
-    ); // TODO: toString or toLanguageTag?
 
     _units = <String, Coding>{};
     final unitsUri = qi.extension_
@@ -159,6 +150,24 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
         context: qi.linkId,
       );
     }
+
+    qi.extension_
+        ?.whereExtensionIs(
+            'http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption',)
+        ?.forEach((extension) {
+      final coding = extension.valueCoding;
+      if (coding == null) return;
+      _units[keyForUnitChoice(coding)] = coding;
+    });
+
+    // Using updated usage for questionnaire-unit in R5 (http://hl7.org/fhir/extensions/StructureDefinition-questionnaire-unit.html)
+    final questionnaireUnit = qi.extension_
+        ?.extensionOrNull(
+            'http://hl7.org/fhir/StructureDefinition/questionnaire-unit',)
+        ?.valueCoding;
+    if (questionnaireUnit != null && questionnaireUnit.display != null) {
+      _units[keyForUnitChoice(questionnaireUnit)] = questionnaireUnit;
+    }
   }
 
   @override
@@ -169,7 +178,7 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
       : RenderingString.nullText;
 
   @override
-  String? validateInput(String? inputValue) {
+  ValidationError? validateInput(String? inputValue) {
     if (inputValue == null || inputValue.isEmpty) {
       return null;
     }
@@ -179,8 +188,8 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
     } catch (_) {
       // Ignore FormatException, number remains nan.
     }
-    if (number == double.nan) {
-      return lookupFDashLocalizations(locale).validatorNan;
+    if (number.isNaN) {
+      return NanError(nodeUid);
     }
 
     final quantity = _valueFromNumber(number);
@@ -189,7 +198,7 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
   }
 
   @override
-  String? validateValue(Quantity? inputValue) {
+  ValidationError? validateValue(Quantity? inputValue) {
     if (inputValue == null) {
       return null;
     }
@@ -201,12 +210,10 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
     }
 
     if (number > _maxValue) {
-      return lookupFDashLocalizations(locale)
-          .validatorMaxValue(Decimal(_maxValue).format(locale));
+      return MaxValueError(nodeUid, FhirDecimal(_maxValue).format(locale));
     }
     if (number < _minValue) {
-      return lookupFDashLocalizations(locale)
-          .validatorMinValue(Decimal(_minValue).format(locale));
+      return MinValueError(nodeUid, FhirDecimal(_minValue).format(locale));
     }
 
     return null;
@@ -234,9 +241,9 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
 
   /// Returns a modified copy of the current [value].
   ///
-  /// * Updates the numerical value based on a [Decimal]
+  /// * Updates the numerical value based on a [FhirDecimal]
   /// * Keeps the unit
-  Quantity? copyWithValue(Decimal? newValue) {
+  Quantity? copyWithValue(FhirDecimal? newValue) {
     return (value != null)
         ? value!.copyWith(value: newValue)
         : Quantity(value: newValue);
@@ -247,8 +254,9 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
   /// * Updates the numerical value based on text input
   /// * Keeps the unit
   Quantity? copyWithTextInput(String textInput) {
-    final valid = validateInput(textInput) == null;
-    final dataAbsentReasonExtension = !valid
+    final valid = validateInput(textInput);
+
+    final dataAbsentReasonExtension = valid != null
         ? [
             FhirExtension(
               url: dataAbsentReasonExtensionUrl,
@@ -261,11 +269,11 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
         ? value?.copyWith(value: null)
         : value == null
             ? Quantity(
-                value: Decimal(numberFormat.parse(textInput)),
+                value: FhirDecimal(numberFormat.parse(textInput)),
                 extension_: dataAbsentReasonExtension,
               )
             : value!.copyWith(
-                value: Decimal(numberFormat.parse(textInput)),
+                value: FhirDecimal(numberFormat.parse(textInput)),
                 extension_: dataAbsentReasonExtension,
               );
   }
@@ -297,7 +305,7 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
       case QuestionnaireItemType.integer:
         return (value!.value != null)
             ? QuestionnaireResponseAnswer(
-                valueInteger: Integer(value!.value!.value!.round()),
+                valueInteger: FhirInteger(value!.value!.value!.round()),
                 extension_: value!.extension_,
                 item: items,
               )
@@ -313,7 +321,7 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
   Quantity? _valueFromNumber(dynamic inputNumber) {
     final unitCoding = qi.computableUnit;
 
-    final quantityValue = Decimal(inputNumber);
+    final quantityValue = FhirDecimal(inputNumber);
 
     return Quantity(
       value: quantityValue,
@@ -353,7 +361,7 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
             ? Quantity(value: answer.valueDecimal)
             : (answer.valueInteger != null && answer.valueInteger!.isValid)
                 ? Quantity(
-                    value: Decimal(answer.valueInteger),
+                    value: FhirDecimal(answer.valueInteger),
                   )
                 : null);
   }

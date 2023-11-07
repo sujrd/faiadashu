@@ -1,4 +1,5 @@
 import 'package:faiadashu/questionnaires/model/model.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart';
 
 /// A pseudo-model for a questionnaire item of an unsupported type.
@@ -16,12 +17,12 @@ class UnsupportedAnswerModel extends AnswerModel<Object, Object> {
   RenderingString get display => RenderingString.nullText;
 
   @override
-  String? validateInput(Object? inValue) {
+  ValidationError? validateInput(Object? inValue) {
     return null;
   }
 
   @override
-  String? validateValue(Object? inputValue) {
+  ValidationError? validateValue(Object? inputValue) {
     return null;
   }
 

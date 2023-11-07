@@ -15,6 +15,7 @@ export 'src/questionnaire_scroller.dart';
 export 'src/questionnaire_scroller_page.dart';
 export 'src/questionnaire_stepper.dart';
 export 'src/questionnaire_stepper_page.dart';
+export 'src/questionnaire_stepper_page_view.dart';
 export 'src/questionnaire_theme.dart';
 export 'src/theming.dart';
 export 'src/xhtml.dart';

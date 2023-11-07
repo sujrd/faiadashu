@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
 import 'package:fhir/r4.dart';
@@ -12,12 +13,17 @@ import 'package:fhir/r4.dart';
 /// Can deal with incomplete questionnaires.
 ///
 /// Will return 0 when no score field exists on the questionnaire.
-class TotalScoreAggregator extends Aggregator<Decimal> {
+class TotalScoreAggregator extends Aggregator<FhirDecimal> {
   static final _logger = Logger(TotalScoreAggregator);
 
   late final QuestionItemModel? totalScoreItem;
-  TotalScoreAggregator({bool autoAggregate = true})
-      : super(Decimal(0), autoAggregate: autoAggregate);
+  TotalScoreAggregator(
+      {required FDashLocalizations localizations, bool autoAggregate = true,})
+      : super(
+          FhirDecimal(0),
+          localizations: localizations,
+          autoAggregate: autoAggregate,
+        );
 
   @override
   void init(QuestionnaireResponseModel questionnaireResponseModel) {
@@ -41,7 +47,7 @@ class TotalScoreAggregator extends Aggregator<Decimal> {
   }
 
   @override
-  Decimal? aggregate({bool notifyListeners = false}) {
+  FhirDecimal? aggregate({bool notifyListeners = false}) {
     final totalScoreItem = this.totalScoreItem;
     if (totalScoreItem == null) {
       return null;
@@ -56,7 +62,7 @@ class TotalScoreAggregator extends Aggregator<Decimal> {
             );
 
     _logger.debug('sum: $sum');
-    final result = Decimal(sum);
+    final result = FhirDecimal(sum);
     if (notifyListeners) {
       value = result;
     }

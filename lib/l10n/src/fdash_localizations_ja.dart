@@ -5,7 +5,7 @@ import 'fdash_localizations.g.dart';
 
 /// The translations for Japanese (`ja`).
 class FDashLocalizationsJa extends FDashLocalizations {
-  FDashLocalizationsJa([String locale = 'ja']) : super(locale);
+  FDashLocalizationsJa([super.locale = 'ja']);
 
   @override
   String get validatorRequiredItem => 'この質問は完了する必要があります。';
@@ -104,6 +104,16 @@ class FDashLocalizationsJa extends FDashLocalizations {
   @override
   String validatorSingleSelectionOrSingleOpenString(Object openLabel) {
     return 'Either select an option, or enter free text in \"$openLabel\".';
+  }
+
+  @override
+  String validatorMaxSize(String maxSize) {
+    return 'Select a file under $maxSize.';
+  }
+
+  @override
+  String validatorMimeTypes(String mimeTypes) {
+    return 'Select a file of the following types: $mimeTypes.';
   }
 
   @override

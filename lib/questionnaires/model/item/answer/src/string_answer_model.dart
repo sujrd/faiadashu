@@ -1,7 +1,11 @@
 import 'package:faiadashu/coding/coding.dart';
 import 'package:faiadashu/fhir_types/fhir_types.dart';
-import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/entry_format_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/min_length_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/regex_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/url_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart';
 
 enum StringAnswerKeyboard { plain, email, phone, number, multiline, url }
@@ -61,38 +65,37 @@ class StringAnswerModel extends AnswerModel<String, String> {
       : RenderingString.nullText;
 
   @override
-  String? validateInput(String? inValue) {
+  ValidationError? validateInput(String? inValue) {
     final checkValue = inValue?.trim();
 
     return validateValue(checkValue);
   }
 
   @override
-  String? validateValue(String? inputValue) {
+  ValidationError? validateValue(String? inputValue) {
     if (inputValue == null || inputValue.isEmpty) {
       return null;
     }
 
     if (inputValue.length < minLength) {
-      return lookupFDashLocalizations(locale).validatorMinLength(minLength);
+      return MinLengthError(nodeUid, minLength);
     }
 
     if (maxLength != null && inputValue.length > maxLength!) {
-      return lookupFDashLocalizations(locale).validatorMaxLength(maxLength!);
+      return MinLengthError(nodeUid, maxLength!);
     }
 
     if (qi.type == QuestionnaireItemType.url) {
       if (!_urlRegExp.hasMatch(inputValue)) {
-        return lookupFDashLocalizations(locale).validatorUrl;
+        return UrlError(nodeUid);
       }
     }
 
     if (regExp != null) {
       if (!regExp!.hasMatch(inputValue)) {
         return (entryFormat != null)
-            ? lookupFDashLocalizations(locale)
-                .validatorEntryFormat(entryFormat!)
-            : lookupFDashLocalizations(locale).validatorRegExp;
+            ? EntryFormatError(nodeUid, entryFormat!)
+            : RegexError(nodeUid);
       }
     }
 
@@ -106,6 +109,7 @@ class StringAnswerModel extends AnswerModel<String, String> {
     final value = this.value?.trim();
 
     final valid = validateInput(value) == null;
+
     final dataAbsentReasonExtension = !valid
         ? [
             FhirExtension(

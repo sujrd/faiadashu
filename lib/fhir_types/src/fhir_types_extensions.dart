@@ -1,11 +1,12 @@
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
+import 'package:faiadashu/extensions/string_extension.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:fhir/r4.dart';
 import 'package:intl/intl.dart';
 
-extension FDashTimeExtension on Time {
+extension FDashTimeExtension on FhirTime {
   String format(Locale locale, {String defaultText = ''}) {
     final localeCode = locale.toString();
     if (!isValid) {
@@ -17,7 +18,7 @@ extension FDashTimeExtension on Time {
   }
 }
 
-extension FDashDateExtension on Date {
+extension FDashDateExtension on FhirDate {
   String format(Locale locale, {String defaultText = ''}) {
     final localeCode = locale.toString();
     final DateFormat dateFormat;
@@ -40,7 +41,7 @@ extension FDashDateExtension on Date {
 }
 
 extension FDashDateTimeExtension on FhirDateTime {
-  String format(Locale locale, {String defaultText = ''}) {
+  String format(Locale locale, {String defaultText = '', bool withTimeZone = false}) {
     final localeCode = locale.toString();
     final DateFormat dateFormat;
     final japanese = locale.languageCode == 'ja';
@@ -69,12 +70,19 @@ extension FDashDateTimeExtension on FhirDateTime {
         break;
     }
 
-    return dateFormat.format(value!);
+    // Dart only supports UTC or local times, even if the value is parsed from a
+    // datetime string with time zone info.
+    final localDateTime = value!.toLocal();
+    final formattedValue = dateFormat.format(localDateTime);
+
+    return withTimeZone
+      ? '$formattedValue (${localDateTime.timeZoneName})'
+      : formattedValue;
   }
 }
 
-extension FDashDecimalExtension on Decimal {
-  static final _logger = Logger(Decimal);
+extension FDashDecimalExtension on FhirDecimal {
+  static final _logger = Logger(FhirDecimal);
 
   String format(Locale locale) {
     if (!isValid) {
@@ -146,28 +154,7 @@ extension FDashCodingExtension on Coding {
   /// Localized access to display value.
   /// TODO: Currently only matches by language.
   String localizedDisplay(Locale locale) {
-    // TODO: Carve this out to be used in other places (titles).
-    final translationExtension = displayElement?.extension_?.firstWhereOrNull(
-      (transExt) =>
-          transExt.url ==
-              FhirUri('http://hl7.org/fhir/StructureDefinition/translation') &&
-          transExt.extension_?.firstWhereOrNull(
-                (ext) =>
-                    (ext.url == FhirUri('lang')) &&
-                    (ext.valueCode?.value == locale.languageCode),
-              ) !=
-              null,
-    );
-
-    if (translationExtension != null) {
-      final contentString = translationExtension.extension_
-          ?.extensionOrNull('content')
-          ?.valueString;
-
-      return ArgumentError.checkNotNull(contentString);
-    }
-
-    return display ?? code?.value ?? toString();
+    return display?.translate(displayElement?.extension_, locale) ?? code?.value ?? toString();
   }
 }
 
@@ -191,9 +178,9 @@ extension FDashCodeableConceptExtension on CodeableConcept {
 
   bool containsCoding(String? system, String code) {
     return coding?.firstWhereOrNull(
-          (_coding) =>
-              (_coding.code?.toString() == code) &&
-              (_coding.system?.toString() == system),
+          (coding) =>
+              (coding.code?.toString() == code) &&
+              (coding.system?.toString() == system),
         ) !=
         null;
   }
@@ -204,11 +191,11 @@ extension FDashPatientExtension on Patient {
   ///
   /// Only returns a reference when id is present.
   Reference? get reference {
-    if (id == null) {
+    if (fhirId == null) {
       return null;
     }
 
-    return Reference(type: FhirUri('Patient'), reference: 'Patient/$id');
+    return Reference(type: FhirUri('Patient'), reference: 'Patient/$fhirId');
   }
 }
 
@@ -280,6 +267,30 @@ extension FDashListFhirExtensionExtension on List<FhirExtension> {
       });
     } else if (key is FhirUri) {
       return firstWhereOrNull((ext) {
+        return ext.url == key;
+      });
+    } else {
+      throw ArgumentError.value(
+        key,
+        'key',
+        'Only String and FhirUri are supported as key.',
+      );
+    }
+  }
+
+  /// Returns all extensions with the given URI, or null if key is null.
+  /// TODO: Refactor some logic extensionOrNull
+  Iterable<FhirExtension>? whereExtensionIs(Object? key) {
+    if (key == null) {
+      return null;
+    }
+
+    if (key is String) {
+      return where((ext) {
+        return ext.url == FhirUri(key);
+      });
+    } else if (key is FhirUri) {
+      return where((ext) {
         return ext.url == key;
       });
     } else {

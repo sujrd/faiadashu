@@ -5,7 +5,7 @@ import 'fdash_localizations.g.dart';
 
 /// The translations for Arabic (`ar`).
 class FDashLocalizationsAr extends FDashLocalizations {
-  FDashLocalizationsAr([String locale = 'ar']) : super(locale);
+  FDashLocalizationsAr([super.locale = 'ar']);
 
   @override
   String get validatorRequiredItem => 'هذا السؤال يحتاج إلى أن يكتمل.';
@@ -100,6 +100,16 @@ class FDashLocalizationsAr extends FDashLocalizations {
   @override
   String validatorSingleSelectionOrSingleOpenString(Object openLabel) {
     return 'Either select an option, or enter free text in \"$openLabel\".';
+  }
+
+  @override
+  String validatorMaxSize(String maxSize) {
+    return 'Select a file under $maxSize.';
+  }
+
+  @override
+  String validatorMimeTypes(String mimeTypes) {
+    return 'Select a file of the following types: $mimeTypes.';
   }
 
   @override

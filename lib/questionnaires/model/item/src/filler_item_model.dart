@@ -281,14 +281,14 @@ abstract class FillerItemModel extends ResponseNode {
         case QuestionnaireEnableWhenOperator.exists:
           _evaluateExistsOperator(qew, enableWhenTrigger);
           break;
-        case QuestionnaireEnableWhenOperator.eq:
-        case QuestionnaireEnableWhenOperator.ne:
+        case QuestionnaireEnableWhenOperator.equals:
+        case QuestionnaireEnableWhenOperator.notEquals:
           _evaluateEqualityOperator(questionLinkId, qew, enableWhenTrigger);
           break;
-        case QuestionnaireEnableWhenOperator.lt:
-        case QuestionnaireEnableWhenOperator.gt:
-        case QuestionnaireEnableWhenOperator.ge:
-        case QuestionnaireEnableWhenOperator.le:
+        case QuestionnaireEnableWhenOperator.lessThan:
+        case QuestionnaireEnableWhenOperator.greaterThan:
+        case QuestionnaireEnableWhenOperator.greaterThanOrEquals:
+        case QuestionnaireEnableWhenOperator.lessThanOrEquals:
           _evaluateComparisonOperator(questionLinkId, qew, enableWhenTrigger);
           break;
         default:
@@ -360,23 +360,23 @@ abstract class FillerItemModel extends ResponseNode {
         }
 
         switch (qew.operator_) {
-          case QuestionnaireEnableWhenOperator.gt:
+          case QuestionnaireEnableWhenOperator.greaterThan:
             if (answerValue > comparisonValue) {
               enableWhenTrigger.trigger();
             }
             break;
-          case QuestionnaireEnableWhenOperator.ge:
+          case QuestionnaireEnableWhenOperator.greaterThanOrEquals:
             if (answerValue >= comparisonValue) {
               enableWhenTrigger.trigger();
             }
             break;
-          case QuestionnaireEnableWhenOperator.lt:
+          case QuestionnaireEnableWhenOperator.lessThan:
             if (answerValue < comparisonValue) {
               enableWhenTrigger.trigger();
             }
             break;
-          case QuestionnaireEnableWhenOperator.le:
-            if (answerValue >= comparisonValue) {
+          case QuestionnaireEnableWhenOperator.lessThanOrEquals:
+            if (answerValue <= comparisonValue) {
               enableWhenTrigger.trigger();
             }
             break;
@@ -423,7 +423,7 @@ abstract class FillerItemModel extends ResponseNode {
 
       if (firstAnswer == null) {
         // null equals nothing
-        if (qew.operator_ == QuestionnaireEnableWhenOperator.ne) {
+        if (qew.operator_ == QuestionnaireEnableWhenOperator.notEquals) {
           enableWhenTrigger.trigger();
         }
       } else if (firstAnswer is CodingAnswerModel) {
@@ -431,14 +431,14 @@ abstract class FillerItemModel extends ResponseNode {
           _fimLogger.debug(
             'enableWhen: ${firstAnswer.value} == ${qew.answerCoding}',
           );
-          if (qew.operator_ == QuestionnaireEnableWhenOperator.eq) {
+          if (qew.operator_ == QuestionnaireEnableWhenOperator.equals) {
             enableWhenTrigger.trigger();
           }
         } else {
           _fimLogger.debug(
             'enableWhen: ${firstAnswer.value} != ${qew.answerCoding}',
           );
-          if (qew.operator_ == QuestionnaireEnableWhenOperator.ne) {
+          if (qew.operator_ == QuestionnaireEnableWhenOperator.notEquals) {
             enableWhenTrigger.trigger();
           }
         }

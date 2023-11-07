@@ -1,6 +1,5 @@
-import 'dart:core';
-
 import 'package:collection/collection.dart';
+import 'package:faiadashu/extensions/string_extension.dart';
 import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart';
@@ -95,9 +94,9 @@ class QuestionnaireItemModel with Diagnosticable {
   /// This will not return `true` for repeating `choice` or `open-choice` items,
   /// as these are multiple choice, rather than truly repeating.
   bool get isRepeating =>
-      questionnaireItem.repeats == Boolean(true) && !isCodingType;
+      questionnaireItem.repeats == FhirBoolean(true) && !isCodingType;
 
-  bool get isRequired => questionnaireItem.required_ == Boolean(true);
+  bool get isRequired => questionnaireItem.required_ == FhirBoolean(true);
 
   bool get hasConstraint => constraintExpression != null;
 
@@ -136,7 +135,7 @@ class QuestionnaireItemModel with Diagnosticable {
     // as there are also input fields (e.g. pain score) with unit {score}.
     return (questionnaireItem.type == QuestionnaireItemType.quantity ||
             questionnaireItem.type == QuestionnaireItemType.decimal) &&
-        ((questionnaireItem.readOnly == Boolean(true) &&
+        ((questionnaireItem.readOnly == FhirBoolean(true) &&
                 questionnaireItem.computableUnit?.display == '{score}') ||
             questionnaireItem.extension_
                     ?.firstWhereOrNull(
@@ -153,7 +152,7 @@ class QuestionnaireItemModel with Diagnosticable {
   static const String calculatedExpressionExtensionUrl =
       'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression';
 
-  Expression? get calculatedExpression {
+  FhirExpression? get calculatedExpression {
     return questionnaireItem.extension_
         ?.firstWhereOrNull(
           (ext) =>
@@ -188,7 +187,7 @@ class QuestionnaireItemModel with Diagnosticable {
 
   bool get isCodingType {
     return questionnaireItem.type == QuestionnaireItemType.choice ||
-        questionnaireItem.type == QuestionnaireItemType.open_choice;
+        questionnaireItem.type == QuestionnaireItemType.openChoice;
   }
 
   /// Is this item not changeable by end-users?
@@ -197,14 +196,15 @@ class QuestionnaireItemModel with Diagnosticable {
   /// This does not consider the completion status of the questionnaire.
   bool get isReadOnly {
     return isStatic ||
-        questionnaireItem.readOnly == Boolean(true) ||
+        questionnaireItem.readOnly == FhirBoolean(true) ||
         isHidden ||
         isCalculated;
   }
 
   /// Is this item hidden?
   bool get isHidden {
-    return (questionnaireItem.extension_
+    return (parent?.isHidden == true) ||
+        (questionnaireItem.extension_
                 ?.extensionOrNull(
                   'http://hl7.org/fhir/StructureDefinition/questionnaire-hidden',
                 )
@@ -267,11 +267,13 @@ class QuestionnaireItemModel with Diagnosticable {
 
   /// The name of a section, the text of a question or text content for a display item.
   RenderingString? get text {
-    final plainText = questionnaireItem.text;
+    final plainText = questionnaireItem.text?.translate(
+        questionnaireItem.textElement?.extension_, questionnaireModel.locale,);
 
     return (plainText != null)
         ? RenderingString.fromText(
             plainText,
+            locale: questionnaireModel.locale,
             extensions: questionnaireItem.textElement?.extension_,
           )
         : null;
@@ -289,6 +291,7 @@ class QuestionnaireItemModel with Diagnosticable {
     return (plainPrefix != null)
         ? RenderingString.fromText(
             plainPrefix,
+            locale: questionnaireModel.locale,
             extensions: questionnaireItem.prefixElement?.extension_,
           )
         : null;
@@ -316,7 +319,7 @@ class QuestionnaireItemModel with Diagnosticable {
       );
 
   /// Returns the `usageMode` for the item, or the default.
-  Code get usageMode {
+  FhirCode get usageMode {
     return questionnaireItem.extension_?.usageMode ??
         questionnaireModel.questionnaireModelDefaults.usageMode;
   }

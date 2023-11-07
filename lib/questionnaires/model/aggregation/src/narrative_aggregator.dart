@@ -18,8 +18,12 @@ class NarrativeAggregator extends Aggregator<Narrative> {
     status: NarrativeStatus.empty,
   );
 
-  NarrativeAggregator()
-      : super(NarrativeAggregator.emptyNarrative, autoAggregate: false);
+  NarrativeAggregator({required FDashLocalizations localizations})
+      : super(
+          NarrativeAggregator.emptyNarrative,
+          localizations: localizations,
+          autoAggregate: false,
+        );
 
   @override
   void init(QuestionnaireResponseModel questionnaireResponseModel) {
@@ -121,7 +125,7 @@ class NarrativeAggregator extends Aggregator<Narrative> {
 
     if (invalid) {
       div.write(
-        '<span style="color:red">${lookupFDashLocalizations(locale).dataAbsentReasonAsTextOutput} ',
+        '<span style="color:red">${localizations.dataAbsentReasonAsTextOutput} ',
       );
     }
 
@@ -129,7 +133,7 @@ class NarrativeAggregator extends Aggregator<Narrative> {
       div.write('<p>***</p>');
     } else if (dataAbsentReason == dataAbsentReasonAskedButDeclinedCode) {
       div.write(
-        '<p><i><span style="color:red">X </span>${lookupFDashLocalizations(locale).dataAbsentReasonAskedDeclinedOutput}</i></p>',
+        '<p><i><span style="color:red">X </span>${localizations.dataAbsentReasonAskedDeclinedOutput}</i></p>',
       );
     } else {
       final filledAnswers = itemModel.answeredAnswerModels;
@@ -207,7 +211,10 @@ class NarrativeAggregator extends Aggregator<Narrative> {
     }
     // Manually invoke the update, because the order matters and enableWhen calcs need to come after answer value updates.
     questionnaireResponseModel.updateEnabledItems(
-      notifyListeners: false,
+      // Setting `notifyListeners` to false may result in incorrect computed values for calculated expressions in some cases.
+      // Thus far the issues with endless refresh and stack overflow reported in the comment below cannot be reproduced.
+      // TODO: Clean this up after conducting significant testing.
+      // notifyListeners: false,
     ); // Setting this to true might result in endless refresh and stack overflow
     _narrative = _generateNarrative(questionnaireResponseModel);
     _generation = questionnaireResponseModel.generation;

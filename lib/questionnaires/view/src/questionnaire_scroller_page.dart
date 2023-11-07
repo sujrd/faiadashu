@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 ///
 /// Fills up the entire page, provides default navigation, help button.
 class QuestionnaireScrollerPage extends StatelessWidget {
-  final Locale? locale;
   final FhirResourceProvider fhirResourceProvider;
   final LaunchContext launchContext;
   final Widget? floatingActionButton;
@@ -16,7 +15,6 @@ class QuestionnaireScrollerPage extends StatelessWidget {
   final QuestionnaireModelDefaults questionnaireModelDefaults;
 
   const QuestionnaireScrollerPage({
-    this.locale,
     required this.fhirResourceProvider,
     required this.launchContext,
     this.floatingActionButton,
@@ -24,13 +22,12 @@ class QuestionnaireScrollerPage extends StatelessWidget {
     this.aggregators,
     this.onLinkTap,
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return QuestionnaireScroller(
-      locale: locale,
       scaffoldBuilder: DefaultQuestionnairePageScaffoldBuilder(
         // Progress can only be shown instead of a FAB
         floatingActionButton: floatingActionButton ??

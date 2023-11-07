@@ -1,3 +1,4 @@
+import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ class BooleanAnswerFiller extends QuestionnaireAnswerFiller {
   State<StatefulWidget> createState() => _BooleanItemState();
 }
 
-class _BooleanItemState extends QuestionnaireAnswerFillerState<Boolean,
+class _BooleanItemState extends QuestionnaireAnswerFillerState<FhirBoolean,
     BooleanAnswerFiller, BooleanAnswerModel> {
   _BooleanItemState();
 
@@ -30,48 +31,45 @@ class _BooleanItemState extends QuestionnaireAnswerFillerState<Boolean,
 
 class _BooleanInputControl extends AnswerInputControl<BooleanAnswerModel> {
   const _BooleanInputControl(
-    BooleanAnswerModel answerModel, {
-    FocusNode? focusNode,
-  }) : super(
-          answerModel,
-          focusNode: focusNode,
-        );
+    super.answerModel, {
+    super.focusNode,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(
-          height: 8,
-        ),
         Checkbox(
           focusNode: focusNode,
           value: (answerModel.isTriState)
               ? answerModel.value?.value
               : (answerModel.value?.value != null),
-          activeColor: (answerModel.displayErrorText != null)
-              ? Theme.of(context).errorColor
-              : null,
+          activeColor:
+              (answerModel.displayErrorText(FDashLocalizations.of(context)) !=
+                      null)
+                  ? Theme.of(context).colorScheme.error
+                  : null,
           tristate: answerModel.isTriState,
           onChanged: (answerModel.isControlEnabled)
               ? (newValue) {
                   focusNode?.requestFocus();
                   answerModel.value = answerModel.isTriState
-                      ? ((newValue != null) ? Boolean(newValue) : null)
+                      ? ((newValue != null) ? FhirBoolean(newValue) : null)
                       : (newValue ?? false)
-                          ? Boolean(true)
+                          ? FhirBoolean(true)
                           : null;
                 }
               : null,
         ),
-        if (answerModel.displayErrorText != null)
+        if (answerModel.displayErrorText(FDashLocalizations.of(context)) !=
+            null)
           Text(
-            answerModel.displayErrorText!,
+            answerModel.displayErrorText(FDashLocalizations.of(context))!,
             style: Theme.of(context)
                 .textTheme
-                .caption!
-                .copyWith(color: Theme.of(context).errorColor),
+                .bodySmall!
+                .copyWith(color: Theme.of(context).colorScheme.error),
           ),
       ],
     );

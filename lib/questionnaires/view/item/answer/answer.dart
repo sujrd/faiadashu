@@ -1,4 +1,5 @@
 export 'src/answer_input_control.dart';
+export 'src/attachment_answer_filler.dart';
 export 'src/boolean_answer_filler.dart';
 export 'src/broken_answer_filler.dart';
 export 'src/coding_answer_filler.dart';

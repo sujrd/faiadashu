@@ -66,6 +66,22 @@
             "openLabel": {}
         }
     },
+    "validatorMaxSize": "Select a file under {maxSize}.",
+    "@validatorMaxSize": {
+        "placeholders": {
+            "maxSize": {
+                "type": "String"
+            }
+        }
+    },
+    "validatorMimeTypes": "Select a file of the following types: {mimeTypes}.",
+    "@validatorMimeType": {
+        "placeholders": {
+            "mimeTypes": {
+                "type": "String"
+            }
+        }
+    },
     "dataAbsentReasonAskedDeclinedInputLabel": "I choose not to answer.",
     "dataAbsentReasonAskedDeclinedOutput": "Declined to answer",
     "dataAbsentReasonAsTextOutput": "[AS TEXT]",

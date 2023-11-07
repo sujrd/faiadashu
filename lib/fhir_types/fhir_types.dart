@@ -1,3 +1,4 @@
+export 'src/attachment_picker.dart';
 export 'src/base64_image.dart';
 export 'src/codeable_concept_text.dart';
 export 'src/date_time_picker.dart';
