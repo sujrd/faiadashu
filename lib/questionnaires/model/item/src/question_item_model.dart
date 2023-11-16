@@ -216,7 +216,7 @@ class QuestionItemModel extends ResponseItemModel {
     return returnValue;
   }
 
-  /// Is user interaction allowed?
+  @override
   bool isUserInteractionAllowed = false;
 
   @override
