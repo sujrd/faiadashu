@@ -216,13 +216,8 @@ class QuestionItemModel extends ResponseItemModel {
     return returnValue;
   }
 
-  @override
-  bool get isDialogShown {
-    final returnValue = answerModels.every((am) => am.isDialogShown);
-    _qimLogger.debug('isDialogShown $nodeUid: $returnValue');
-
-    return returnValue;
-  }
+  /// Is user interaction allowed?
+  bool isUserInteractionAllowed = false;
 
   @override
   bool get isPopulated {

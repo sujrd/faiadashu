@@ -7,6 +7,8 @@ abstract class AnswerInputControl<A extends AnswerModel>
   final A answerModel;
   final FocusNode? focusNode;
 
+  QuestionItemModel get qim => answerModel.responseItemModel;
+
   QuestionnaireItem get qi =>
       answerModel.questionnaireItemModel.questionnaireItem;
   Locale get locale =>

@@ -14,9 +14,6 @@ class DisplayItemModel extends FillerItemModel {
   bool get isUnanswered => false;
 
   @override
-  bool get isDialogShown => false;
-
-  @override
   bool get isInvalid => false;
 
   @override

@@ -73,7 +73,7 @@ class _DateTimeInputControl extends AnswerInputControl<DateTimeAnswerModel> {
               )
             : null,
       ),
-      onDialogShown: (isDialogShown) => answerModel.isDialogShown = isDialogShown,
+      onDialogShown: (isDialogShown) => answerModel.questionItemModel.isUserInteractionAllowed = !isDialogShown,
       onChanged: (fhirDatetime) => answerModel.value = fhirDatetime,
     );
   }

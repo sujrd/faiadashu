@@ -35,6 +35,8 @@ abstract class AnswerModel<I, V> extends ResponseNode {
     }
   }
 
+  QuestionItemModel get questionItemModel => responseItemModel;
+
   QuestionnaireItemModel get questionnaireItemModel =>
       responseItemModel.questionnaireItemModel;
 
@@ -123,9 +125,6 @@ abstract class AnswerModel<I, V> extends ResponseNode {
 
   /// Returns whether this question is unanswered.
   bool get isEmpty;
-
-  /// Is there a dialog shown on screen?
-  bool isDialogShown = false;
 
   ValidationError? _validationError;
 
