@@ -3,7 +3,7 @@ import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_
 
 class MaxValueError extends ValidationError {
   final String maxValue;
-  MaxValueError(String nodeUid, this.maxValue) : super(nodeUid);
+  MaxValueError(super.nodeUid, this.maxValue);
 
   @override
   String? getMessage(FDashLocalizations localizations) {

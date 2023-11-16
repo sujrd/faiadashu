@@ -3,7 +3,7 @@ import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_
 
 class MaxOccursError extends ValidationError {
   final int maxOccurs;
-  MaxOccursError(String nodeUid, this.maxOccurs) : super(nodeUid);
+  MaxOccursError(super.nodeUid, this.maxOccurs);
 
   @override
   String? getMessage(FDashLocalizations localizations) {

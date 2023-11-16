@@ -12,13 +12,13 @@ class AttachmentAnswerModel extends AnswerModel<Attachment, Attachment> {
   AttachmentAnswerModel(super.responseModel)
       : maxSize = responseModel.questionnaireItem.extension_
                 ?.extensionOrNull(
-                    'http://hl7.org/fhir/StructureDefinition/maxSize')
+                    'http://hl7.org/fhir/StructureDefinition/maxSize',)
                 ?.valueDecimal
                 ?.value ??
             0,
         mimeTypes = responseModel.questionnaireItem.extension_
                 ?.whereExtensionIs(
-                    'http://hl7.org/fhir/StructureDefinition/mimeType')
+                    'http://hl7.org/fhir/StructureDefinition/mimeType',)
                 ?.map((ext) => ext.valueCode?.value ?? '')
                 .where((mimeType) => mimeType != '')
                 .toList() ??

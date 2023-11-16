@@ -34,8 +34,8 @@ class FhirDateTimePicker extends StatefulWidget {
     this.onChanged,
     this.focusNode,
     this.enabled = true,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -75,7 +75,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
     final dateTime = value?.valueDateTime;
     if (value == null || dateTime == null) return '';
 
-    return (widget.pickerType == Time)
+    return (widget.pickerType == FhirTime)
         ? DateFormat.jm(locale.toString()).format(dateTime)
         : value.format(locale, withTimeZone: widget.pickerType == FhirDateTime);
   }
@@ -85,7 +85,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
 
     DateTime dateTime = DateTime(1970);
 
-    if (widget.pickerType != Time) {
+    if (widget.pickerType != FhirTime) {
       final date = await showDatePicker(
         initialDate: _dateTimeValue?.value ?? DateTime.now(),
         initialEntryMode: widget.datePickerEntryMode,
@@ -103,7 +103,12 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
       dateTime = date.toLocal();
     }
 
-    if (widget.pickerType == FhirDateTime || widget.pickerType == Time) {
+    // To address use_build_context_synchronously as recommended, although this still triggers the linter
+    // https://dart.dev/tools/linter-rules/use_build_context_synchronously
+    // ignore: use_build_context_synchronously
+    if (!context.mounted) return;
+
+    if (widget.pickerType == FhirDateTime || widget.pickerType == FhirTime) {
       final time = await showTimePicker(
         initialTime:
             TimeOfDay.fromDateTime(_dateTimeValue?.value ?? DateTime.now()),
@@ -152,7 +157,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
 
     final fhirDateTime = FhirDateTime.fromDateTime(
       dateTime,
-      (widget.pickerType == Date)
+      (widget.pickerType == FhirDate)
           ? DateTimePrecision.YYYYMMDD
           : DateTimePrecision.FULL,
     );
@@ -182,7 +187,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
           enabled: widget.enabled,
           textAlignVertical: TextAlignVertical.center,
           decoration: widget.decoration?.copyWith(
-            prefixIcon: (widget.pickerType == Time)
+            prefixIcon: (widget.pickerType == FhirTime)
                 ? const Icon(Icons.access_time)
                 : const Icon(Icons.calendar_today_outlined),
           ),

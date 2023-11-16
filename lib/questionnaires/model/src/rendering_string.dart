@@ -33,7 +33,7 @@ class RenderingString with Diagnosticable {
   final String? renderingXhtml;
 
   /// The unaltered rendering-markdown extension
-  final Markdown? renderingMarkdown;
+  final FhirMarkdown? renderingMarkdown;
 
   /// Construct an [RenderingString] from the provided attributes.
   ///
@@ -99,7 +99,7 @@ class RenderingString with Diagnosticable {
                   )
                 : (renderingStyle != null)
                     ? '<span style="$renderingStyle">$escapedPlainText</span>'
-                    : text;
+                    : escapedPlainText;
 
     return RenderingString._(
       plainText,

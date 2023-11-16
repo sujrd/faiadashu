@@ -27,8 +27,8 @@ class FhirAttachmentPicker extends StatefulWidget {
     this.focusNode,
     this.allowedMimeTypes,
     this.enabled = true,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -91,9 +91,9 @@ class _FhirAttachmentPickerState extends State<FhirAttachmentPicker> {
 
     final attachment = Attachment(
       title: file.name,
-      contentType: Code(mimeType),
-      size: UnsignedInt(size),
-      data: Base64Binary(base64.encode(bytes)),
+      contentType: FhirCode(mimeType),
+      size: FhirUnsignedInt(size),
+      data: FhirBase64Binary(base64.encode(bytes)),
     );
 
     setState(() {

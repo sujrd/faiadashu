@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 /// A view for filler items of type "group".
 class GroupItem extends ResponseItemFiller {
   GroupItem(
-    QuestionnaireFillerData questionnaireFiller,
-    ResponseItemModel responseItemModel, {
-    Key? key,
-  }) : super(questionnaireFiller, responseItemModel, key: key);
+    super.questionnaireFiller,
+    super.responseItemModel, {
+    super.key,
+  });
 
   @override
   State<StatefulWidget> createState() => _GroupItemState();

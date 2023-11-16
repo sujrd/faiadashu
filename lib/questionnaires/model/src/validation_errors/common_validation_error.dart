@@ -3,7 +3,7 @@ import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_
 
 class CommonValidationError extends ValidationError {
   final String? message;
-  const CommonValidationError(String nodeUid, this.message) : super(nodeUid);
+  const CommonValidationError(super.nodeUid, this.message);
 
   @override
   String? getMessage(FDashLocalizations localizations) {

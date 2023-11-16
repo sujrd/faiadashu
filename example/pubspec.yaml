@@ -2,8 +2,8 @@ name: faiadashu_example
 description: Gallery app for Faiadashu™
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
-  flutter: '>=3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.7.0'
 
 dependencies:
   collection: ^1.16.0
@@ -14,11 +14,11 @@ dependencies:
   faiadashu_online:
     path: ../faiadashu_online
 
-  fhir: ^0.8.0
+  fhir: ^0.11.0
 #  fhir:
 #    path: /Users/tilo/Projects/fhir/fhir
 
-  fhir_auth: ^0.8.0
+  fhir_auth: ^0.11.0-dev.1
 #  fhir_auth:
 #    path: ../../fhir/fhir_auth
 
@@ -35,10 +35,10 @@ dependencies:
 
   logging: ^1.0.2
 
-  simple_html_css: ^3.0.1+1
+  simple_html_css: ^4.0.0
 
 dev_dependencies:
-  lint: ^1.8.2
+  lint: ^2.0.0
 
 
 flutter:

@@ -4,9 +4,9 @@ import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_
 class SingleSelectionOrOpenStringError extends ValidationError {
   final String? openLabel;
   SingleSelectionOrOpenStringError(
-    String nodeUid,
+    super.nodeUid,
     this.openLabel,
-  ) : super(nodeUid);
+  );
 
   @override
   String? getMessage(FDashLocalizations localizations) {

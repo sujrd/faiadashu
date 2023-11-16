@@ -41,7 +41,13 @@ Usable in many places (title, text, option) as permitted by the specification.
 ###### rendering-styleSensitive
 Silently ignored, as rendering will always preserve full styling.
 
-#### User Assistance 
+#### Localization
+
+###### translation
+
+Question, group and display item text can be translated using the FHIR translation mechanism.
+
+#### User Assistance
 ###### help
 Display items with itemControl `help` are associated with the proper question and display a help dialog.
 
@@ -78,7 +84,7 @@ Support for all behaviors: `any`, `all`
 Limited support for operators:
 * `=`, `!=` only on `choice`
 * `exists` on all types
-* `<`, `<=`, `>`, `>=` only on `integer`, `decimal`, `quantity`  
+* `<`, `<=`, `>`, `>=` only on `integer`, `decimal`, `quantity`
 * All other operators: **unsupported** (always return true, as to not prevent filling of the questionnaire.)
 
 > `enableWhenExpression` can be used for more complex evaluations.
@@ -130,20 +136,20 @@ Support for:
 * `bool`
 * `date`
 * `datetime`
-* `choice` (incl. support for `repeats` - multiple `initial.valueCoding`). 
+* `choice` (incl. support for `repeats` - multiple `initial.valueCoding`).
 * `open-choice`: same as `choice`, plus supports a single open text.
 
 > Only supports a single value per question.
 
 ###### required
-Supported 
+Supported
 * Renders an asterisk (*) after the label
 * Evaluated as a constraint on check for completeness
 
 Not supported: Dynamic calculation of `required`.
 
 ###### repeats
-Supported. Renders a multi-selection for items of type `choice`. Not supported for `open-choice`. 
+Supported. Renders a multi-selection for items of type `choice`. Not supported for `open-choice`.
 Renders UI elements to add/remove repeating answers for all other item types.
 
 The label of the UI element uses the `shortText` as a description for a single item.
@@ -160,7 +166,7 @@ Text is displayed immediately above the containing question item (typically as a
 An image to display as a visual accompaniment to the question being asked.
 > * Only small (< 200 kB) image formats are recommended.
 
-Reference: 
+Reference:
 [sdc-questionnaire-itemMedia](http://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-itemMedia.html)
 
 ---
@@ -173,7 +179,7 @@ Numerical inputs share many commonalities. Individual item types may offer addit
 - questionnaire-itemControl: slider (see below for details)
 - sliderStepValue
 - calculatedExpression
-- unit: as per the spec, this is only a computational unit, and not used for display
+- unit: as per the [R5 spec](http://hl7.org/fhir/extensions/StructureDefinition-questionnaire-unit.html), this is used both for conversion unit from integers/decimals into quantities, and also for `display` if present in the coding.
 
 #### Slider control
 When an item control of type "slider" is being used, then a maxValue should be provided. Otherwise, a default value (typically: 100)
@@ -193,6 +199,9 @@ Comprehensive support.
 #### Extensions
 - maxDecimalPlaces
 - unitValueSet
+- unitOption
+- minQuantity
+- maxQuantity
 
 ---
 ### decimal
@@ -227,14 +236,14 @@ Comprehensive support. Date/Time picker with localized format.
 ### time
 Comprehensive support. Time picker with localized format.
 
-### string, text 
+### string, text
 Comprehensive support. Keyboard type can be hinted.
 
 #### Extensions
-- minLength  
+- minLength
 - maxLength
-- regex  
-- questionnaire-itemControl: text-box 
+- regex
+- questionnaire-itemControl: text-box
 - sdc-questionnaire-keyboard: email, phone, number
 
 ---
@@ -272,10 +281,10 @@ See: http://build.fhir.org/questionnaire.html#valuesets
 - maxOccurs
 - choiceColumn: Supports paths `code` and `display`. Support `forDisplay`. No support for column widths.
 
-> `itemAnswerMedia` should be favoured over `rendering-xhtml` to add images to answer options. 
+> `itemAnswerMedia` should be favoured over `rendering-xhtml` to add images to answer options.
 
 ---
-### open-choice 
+### open-choice
 Same as `choice` with the following differences:
 - repeats is not supported
 - a single text input field is presented below the selections
@@ -290,7 +299,17 @@ The label for the "open" choice. Default is "Other"
 Supported (accepts http, https, ftp, and sftp)
 
 ---
-### attachment, reference
+### attachment
+Comprehensive support. File picker that allows selecting files in the device's file system.
+
+File content is encoded as base64 data attachments in the question response.
+
+#### Extensions
+- maxSize
+- mimeType
+
+---
+### reference
 Not supported
 
 ---
@@ -370,12 +389,12 @@ Will be set to the current time.
 A narrative will be auto-generated. Its status will be `generated`. Empty narratives will be omitted entirely.
 
 ### Subject
-A reference to the subject will be added if a subject with an `id` is present. 
+A reference to the subject will be added if a subject with an `id` is present.
 
 > The SDK can be requested to place the entire `Patient` into the `contained` section of the QuestionnaireResponse.
 >
-> This is helpful in certain data exchange scenarios, but is **_not_** in line with FHIR policies!  
- 
+> This is helpful in certain data exchange scenarios, but is **_not_** in line with FHIR policies!
+
 
 ### Answers
 All detail from the questions in the questionnaire carries over into the Response.

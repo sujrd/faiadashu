@@ -10,43 +10,35 @@ class QuestionnaireStepper extends StatefulWidget {
   final LaunchContext launchContext;
   final QuestionnairePageScaffoldBuilder scaffoldBuilder;
   final QuestionnaireModelDefaults questionnaireModelDefaults;
-  final QuestionnaireStepperPageViewController? controller;
+  final QuestionnaireStepperPageViewData? data;
 
   final void Function(QuestionnaireResponseModel?)?
       onQuestionnaireResponseChanged;
-  final void Function(int)? onPageChanged;
-  final Future<BeforePageChangedData> Function(
-    FillerItemModel,
-    FillerItemModel?,
-  )? onBeforePageChanged;
-  final void Function(FillerItemModel?)? onVisibleItemUpdated;
 
   const QuestionnaireStepper({
+    super.key,
     required this.scaffoldBuilder,
     required this.fhirResourceProvider,
     required this.launchContext,
+    this.data,
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
     this.onQuestionnaireResponseChanged,
-    this.onPageChanged,
-    this.onBeforePageChanged,
-    this.onVisibleItemUpdated,
-    this.controller,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => QuestionnaireStepperState();
 }
 
 class QuestionnaireStepperState extends State<QuestionnaireStepper> {
+  late QuestionnaireStepperPageViewController _controller;
   QuestionnaireResponseModel? _questionnaireResponseModel;
-  QuestionnaireStepperPageViewController? _controller;
   bool _isLoaded = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller ?? QuestionnaireStepperPageViewController();
+    _controller =
+        widget.data?.controller ?? QuestionnaireStepperPageViewController();
   }
 
   /// Notifies listeners when there are changes in the questionnaire response.
@@ -68,28 +60,28 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
             children: [
               Expanded(
                 child: QuestionnaireStepperPageView(
-                  controller: _controller,
-                  onPageChanged: widget.onPageChanged,
-                  onBeforePageChanged: widget.onBeforePageChanged,
-                  onVisibleItemUpdated: widget.onVisibleItemUpdated,
+                  data: widget.data ??
+                      QuestionnaireStepperPageViewData(
+                        controller: _controller,
+                      ),
                 ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  if (widget.controller == null)
+                  if (widget.data?.controller == null)
                     IconButton(
                       icon: const Icon(Icons.arrow_back),
-                      onPressed: () => widget.controller?.previousPage(),
+                      onPressed: () => _controller.previousPage(),
                     ),
                   Expanded(
                     child: Column(
                       children: [
                         if (QuestionnaireTheme.of(context).showScore)
-                          ValueListenableBuilder<Decimal>(
+                          ValueListenableBuilder<FhirDecimal>(
                             builder: (
                               BuildContext context,
-                              Decimal value,
+                              FhirDecimal value,
                               Widget? child,
                             ) {
                               final scoreString =
@@ -101,7 +93,7 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                                   FDashLocalizations.of(context)
                                       .aggregationScore(scoreString),
                                   key: ValueKey<String>(scoreString),
-                                  style: Theme.of(context).textTheme.headline4,
+                                  style: Theme.of(context).textTheme.headlineMedium,
                                 ),
                               );
                             },
@@ -114,10 +106,10 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                       ],
                     ),
                   ),
-                  if (widget.controller == null)
+                  if (widget.data?.controller == null)
                     IconButton(
                       icon: const Icon(Icons.arrow_forward),
-                      onPressed: () => widget.controller?.nextPage(),
+                      onPressed: () => _controller.nextPage(),
                     ),
                 ],
               ),

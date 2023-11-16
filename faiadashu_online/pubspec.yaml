@@ -5,24 +5,24 @@ description: Faiadashu Online - Functionalities for faiadashu that connect to FH
 # pub.dev using `pub publish`. This is preferred for private packages.
 publish_to: none
 
-version: 0.8.0
+version: 0.11.0
 homepage: https://tiloc.github.io/faiadashu/
 repository: https://github.com/tiloc/faiadashu
 issue_tracker: https://github.com/tiloc/faiadashu/issues
 
 environment:
-  sdk: '>=2.16.0 <3.0.0'
-  flutter: '>=2.10.0'
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.7.0'
 
 dependencies:
   faiadashu:
     path: ..
 
-  fhir: ^0.8.0
+  fhir: ^0.11.0
 
-  fhir_at_rest: ^0.8.3
+  fhir_at_rest: ^0.11.0
 
-  fhir_auth: ^0.8.0
+  fhir_auth: ^0.11.0-dev.1
 #  fhir_auth:
 #    path: ../../fhir/fhir_auth
 
@@ -36,7 +36,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  lint: ^1.8.2
+  lint: ^2.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

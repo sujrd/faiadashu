@@ -14,14 +14,14 @@ import 'package:fhir_path/fhir_path.dart';
 class QuestionItemModel extends ResponseItemModel {
   static final _qimLogger = Logger(QuestionItemModel);
 
-  Code? _dataAbsentReason;
+  FhirCode? _dataAbsentReason;
 
   /// Reason why this response is empty.
   ///
   /// see [DataAbsentReason]
-  Code? get dataAbsentReason => _dataAbsentReason;
+  FhirCode? get dataAbsentReason => _dataAbsentReason;
 
-  set dataAbsentReason(Code? newDataAbsentReason) {
+  set dataAbsentReason(FhirCode? newDataAbsentReason) {
     if (_dataAbsentReason != newDataAbsentReason) {
       _dataAbsentReason = newDataAbsentReason;
       nextGeneration(
@@ -147,7 +147,7 @@ class QuestionItemModel extends ResponseItemModel {
   /// Returns a [Decimal] value which can be added to a score.
   ///
   /// Returns null if not applicable (either question unanswered, or wrong type)
-  Decimal? get ordinalValue {
+  FhirDecimal? get ordinalValue {
     final answerModel = firstAnswerModel;
 
     return answerModel.isNotEmpty &&
@@ -178,7 +178,7 @@ class QuestionItemModel extends ResponseItemModel {
     // Non-existent answer models can be invalid, e.g. if minOccurs is not met.
     _ensureAnswerModel();
 
-    List<ValidationError> errors = super.validate(
+    final errors = super.validate(
       updateErrorText: updateErrorText,
       notifyListeners: notifyListeners,
     );
@@ -274,11 +274,11 @@ class QuestionItemModel extends ResponseItemModel {
 
   /// Creates a new [AnswerModel] of the type for this question.
   AnswerModel _createAnswerModel() {
-    final AnswerModel? answerModel;
+    late AnswerModel answerModel;
 
     switch (questionnaireItemModel.questionnaireItem.type) {
       case QuestionnaireItemType.choice:
-      case QuestionnaireItemType.open_choice:
+      case QuestionnaireItemType.openChoice:
         answerModel = CodingAnswerModel(this);
         break;
       case QuestionnaireItemType.quantity:
@@ -292,7 +292,7 @@ class QuestionItemModel extends ResponseItemModel {
         answerModel = StringAnswerModel(this);
         break;
       case QuestionnaireItemType.date:
-      case QuestionnaireItemType.datetime:
+      case QuestionnaireItemType.dateTime:
       case QuestionnaireItemType.time:
         answerModel = DateTimeAnswerModel(this);
         break;
@@ -308,6 +308,7 @@ class QuestionItemModel extends ResponseItemModel {
         throw UnsupportedError("Items of type 'group' do not have answers.");
       case QuestionnaireItemType.unknown:
       case QuestionnaireItemType.reference:
+      default:
         // Throwing an exception here would lead to breakage of filler.
         answerModel = UnsupportedAnswerModel(this);
     }
@@ -324,9 +325,19 @@ class QuestionItemModel extends ResponseItemModel {
       firstAnswerModel.populateFromExpression(initialEvaluationResult);
     } else {
       // initial.value[x]
-      final initialValues = questionnaireItem.initial;
+      // toList is to handle "Unhandled Exception: Unsupported operation: Cannot add to an unmodifiable list"
+      // errors
+      final initialValues = (questionnaireItem.initial ?? []).toList();
 
-      if (initialValues != null) {
+      if ({QuestionnaireItemType.choice,QuestionnaireItemType.openChoice}.contains(questionnaireItem.type)) {
+        // Add answerOptions marked as initialSelected to array of initialValues
+        final initialSelected = questionnaireItem.answerOption
+            ?.where((option) => option.initialSelected?.value == true && option.valueCoding != null)
+            .map((option) => QuestionnaireInitial(valueCoding: option.valueCoding));
+        initialValues.addAll(initialSelected ?? []);
+      }
+
+      if (initialValues.isNotEmpty) {
         final initialValue = initialValues.first;
 
         switch (questionnaireItem.type) {
@@ -344,14 +355,14 @@ class QuestionItemModel extends ResponseItemModel {
           case QuestionnaireItemType.date:
             firstAnswerModel.populateFromExpression(initialValue.valueDate);
             break;
-          case QuestionnaireItemType.datetime:
+          case QuestionnaireItemType.dateTime:
             firstAnswerModel.populateFromExpression(initialValue.valueDateTime);
             break;
           case QuestionnaireItemType.boolean:
             firstAnswerModel.populateFromExpression(initialValue.valueBoolean);
             break;
           case QuestionnaireItemType.choice:
-          case QuestionnaireItemType.open_choice:
+          case QuestionnaireItemType.openChoice:
             final initialCodings = initialValues
                 .where((qiv) => qiv.valueCoding != null)
                 .map<Coding>((qiv) => qiv.valueCoding!);

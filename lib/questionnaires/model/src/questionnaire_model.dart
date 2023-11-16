@@ -268,7 +268,7 @@ class QuestionnaireModel {
             final codeSystem =
                 getResource(valueSetInclude.system.toString()) as CodeSystem;
             _logger.debug(
-              'Processing included CodeSystem ${codeSystem.url.toString()}',
+              'Processing included CodeSystem ${codeSystem.url}',
             );
             if (codeSystem.concept != null) {
               for (final concept in codeSystem.concept!) {
@@ -320,7 +320,7 @@ class QuestionnaireModel {
         : elementId; // Strip leading #
 
     for (final resource in questionnaire.contained!) {
-      if (key == resource.id?.toString()) {
+      if (key == resource.fhirId) {
         return resource;
       }
 
@@ -330,7 +330,7 @@ class QuestionnaireModel {
           continue;
         }
         for (final entry in entries) {
-          if (key == entry.resource?.id?.toString()) {
+          if (key == entry.resource?.fhirId) {
             return entry.resource;
           }
         }

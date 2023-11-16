@@ -156,7 +156,7 @@ class CodingAnswerModel extends AnswerModel<OptionsOrString, OptionsOrString> {
 
   bool get isCheckbox => qi.isItemControl('check-box');
 
-  bool get isOptionsOrString => qi.type == QuestionnaireItemType.open_choice;
+  bool get isOptionsOrString => qi.type == QuestionnaireItemType.openChoice;
 
   String _nextOptionUid() => _answerOptions.length.toString();
 
@@ -234,7 +234,7 @@ class CodingAnswerModel extends AnswerModel<OptionsOrString, OptionsOrString> {
 
   String? get _openLabel => qi.extension_
       ?.extensionOrNull(
-          'http://hl7.org/fhir/uv/sdc/StructureDefinition/questionnaire-sdc-openLabel')
+          'http://hl7.org/fhir/uv/sdc/StructureDefinition/questionnaire-sdc-openLabel',)
       ?.valueString;
 
   Iterable<RenderingString> toDisplay({bool includeMedia = true}) {

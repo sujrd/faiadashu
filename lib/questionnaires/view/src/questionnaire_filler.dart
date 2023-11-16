@@ -33,10 +33,10 @@ class QuestionnaireResponseFiller extends StatefulWidget {
           fhirResourceProvider: fhirResourceProvider,
           launchContext: launchContext,
           questionnaireModelDefaults: questionnaireModelDefaults,
-          localizations: FDashLocalizations.of(context));
+          localizations: FDashLocalizations.of(context),);
 
   const QuestionnaireResponseFiller({
-    Key? key,
+    super.key,
     required this.builder,
     required this.fhirResourceProvider,
     required this.launchContext,
@@ -45,7 +45,7 @@ class QuestionnaireResponseFiller extends StatefulWidget {
     this.onLinkTap,
     this.questionnaireTheme = const QuestionnaireThemeData(),
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
-  }) : super(key: key);
+  });
 
   static QuestionnaireFillerData of(BuildContext context) {
     final result =
@@ -65,6 +65,7 @@ class _QuestionnaireResponseFillerState
     extends State<QuestionnaireResponseFiller> {
   static final _logger = Logger(_QuestionnaireResponseFillerState);
 
+  Future<QuestionnaireResponseModel>? builderFuture;
   QuestionnaireResponseModel? _questionnaireResponseModel;
   VoidCallback? _handleQuestionnaireResponseModelChangeListenerFunction;
   // ignore: use_late_for_private_fields_and_variables
@@ -125,8 +126,13 @@ class _QuestionnaireResponseFillerState
   Widget build(BuildContext context) {
     _logger.trace('Enter build()');
 
+    // Make sure to set this once only, or it may lead to flickering
+    if (builderFuture == null || _questionnaireResponseModel?.locale != Localizations.localeOf(context)) {
+      builderFuture = widget._createQuestionnaireResponseModel(context: context);
+    }
+
     return FutureBuilder<QuestionnaireResponseModel>(
-      future: widget._createQuestionnaireResponseModel(context: context),
+      future: builderFuture,
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.active:
@@ -202,7 +208,6 @@ class QuestionnaireFillerData extends InheritedWidget {
 
   QuestionnaireFillerData._(
     this.questionnaireResponseModel, {
-    Key? key,
     this.onDataAvailable,
     this.onLinkTap,
     required this.questionnaireTheme,
@@ -213,7 +218,7 @@ class QuestionnaireFillerData extends InheritedWidget {
           questionnaireResponseModel.orderedFillerItemModels().length,
           null,
         ),
-        super(key: key, child: Builder(builder: builder)) {
+        super(child: Builder(builder: builder)) {
     _logger.trace('constructor _');
     onDataAvailable?.call(questionnaireResponseModel);
   }

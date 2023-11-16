@@ -3,7 +3,7 @@ import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_
 
 class MimeTypesError extends ValidationError {
   final List<String> mimeTypes;
-  MimeTypesError(String nodeUid, this.mimeTypes) : super(nodeUid);
+  MimeTypesError(super.nodeUid, this.mimeTypes);
 
   @override
   String? getMessage(FDashLocalizations localizations) {

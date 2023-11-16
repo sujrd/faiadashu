@@ -33,12 +33,9 @@ class _AttachmentAnswerState extends QuestionnaireAnswerFillerState<Attachment,
 class _AttachmentInputControl
     extends AnswerInputControl<AttachmentAnswerModel> {
   const _AttachmentInputControl(
-    AttachmentAnswerModel answerModel, {
-    FocusNode? focusNode,
-  }) : super(
-          answerModel,
-          focusNode: focusNode,
-        );
+    super.answerModel, {
+    super.focusNode,
+  });
 
   @override
   Widget build(BuildContext context) {

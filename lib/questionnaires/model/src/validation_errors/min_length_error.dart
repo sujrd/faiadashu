@@ -3,7 +3,7 @@ import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_
 
 class MinLengthError extends ValidationError {
   final int minLength;
-  MinLengthError(String nodeUid, this.minLength) : super(nodeUid);
+  MinLengthError(super.nodeUid, this.minLength);
 
   @override
   String? getMessage(FDashLocalizations localizations) {

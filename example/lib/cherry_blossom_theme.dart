@@ -71,13 +71,13 @@ class CherryBlossomScaffoldBuilder extends QuestionnairePageScaffoldBuilder {
           focusedErrorBorder: OutlineInputBorder(
             borderSide: BorderSide(
               width: 2.0,
-              color: ThemeData.light().errorColor,
+              color: ThemeData.light().colorScheme.error,
             ),
           ),
           errorBorder: OutlineInputBorder(
             borderSide: BorderSide(
               width: 2.0,
-              color: ThemeData.light().errorColor.withOpacity(0.12),
+              color: ThemeData.light().colorScheme.error.withOpacity(0.12),
             ),
           ),
           focusedBorder: const OutlineInputBorder(
@@ -101,7 +101,7 @@ class CherryBlossomScaffoldBuilder extends QuestionnairePageScaffoldBuilder {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(
                   '🦄🌸🦄🌸🦄🌸🦄',
-                  style: Theme.of(context).textTheme.headline4,
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ),
               Expanded(

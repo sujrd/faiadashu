@@ -16,9 +16,9 @@ class QuestionnaireLaunchTile extends StatefulWidget {
   final FhirResourceProvider fhirResourceProvider;
   final LaunchContext launchContext;
   final void Function(String questionnairePath,
-      QuestionnaireResponse? questionnaireResponse) saveResponseFunction;
+      QuestionnaireResponse? questionnaireResponse,) saveResponseFunction;
   final void Function(BuildContext context, String questionnairePath,
-      QuestionnaireResponse? questionnaireResponse)? uploadResponseFunction;
+      QuestionnaireResponse? questionnaireResponse,)? uploadResponseFunction;
   final QuestionnaireResponse? Function(String questionnairePath)
       restoreResponseFunction;
 
@@ -35,8 +35,8 @@ class QuestionnaireLaunchTile extends StatefulWidget {
     this.uploadResponseFunction,
     required this.restoreResponseFunction,
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -93,13 +93,13 @@ class _QuestionnaireLaunchTileState extends State<QuestionnaireLaunchTile> {
           var countString = '';
           if (snapshot.hasData) {
             // FIXME: Sometimes these stats are not being shown. Handle snapshot error.
-            final _questionnaireResponseModel = snapshot.data!;
-            final _numberCompleted =
-                _questionnaireResponseModel.count((rim) => rim.isAnswered);
-            final _totalNumber =
-                _questionnaireResponseModel.count((rim) => rim.isAnswerable);
-            countString = 'Completed: $_numberCompleted / $_totalNumber '
-                '(${_percentPattern.format(_numberCompleted / _totalNumber)})';
+            final questionnaireResponseModel = snapshot.data!;
+            final numberCompleted =
+                questionnaireResponseModel.count((rim) => rim.isAnswered);
+            final totalNumber =
+                questionnaireResponseModel.count((rim) => rim.isAnswerable);
+            countString = 'Completed: $numberCompleted / $totalNumber '
+                '(${_percentPattern.format(numberCompleted / totalNumber)})';
           }
 
           return (widget.subtitle != null)

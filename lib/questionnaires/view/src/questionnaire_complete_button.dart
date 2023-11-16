@@ -1,7 +1,6 @@
 import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart'
-    show QuestionnaireResponseFiller;
-import 'package:fhir/r4/r4.dart' show QuestionnaireResponseStatus;
+    show QuestionnaireResponseFiller, QuestionnaireResponseStatus;
 import 'package:flutter/material.dart';
 
 /// A button to complete a questionnaire.
@@ -11,8 +10,7 @@ import 'package:flutter/material.dart';
 class QuestionnaireCompleteButton extends StatefulWidget {
   final VoidCallback? onCompleted;
 
-  const QuestionnaireCompleteButton({this.onCompleted, Key? key})
-      : super(key: key);
+  const QuestionnaireCompleteButton({this.onCompleted, super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -47,7 +45,7 @@ class _QuestionnaireCompleteButtonState
 
         final newResponseStatus =
             (currentResponseStatus == QuestionnaireResponseStatus.completed)
-                ? QuestionnaireResponseStatus.in_progress
+                ? QuestionnaireResponseStatus.inProgress
                 : QuestionnaireResponseStatus.completed;
 
         setState(() {

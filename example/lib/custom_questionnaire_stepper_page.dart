@@ -57,64 +57,68 @@ class _CustomQuestionnaireStepperPageState
   }
 
   void _onPageChanged(int index) {
+    // ignore: avoid_print
     print('Page index is changed: $index');
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Container(
+      child: ColoredBox(
         color: Colors.white,
         child: Column(
           children: [
             Expanded(
               child: QuestionnaireStepper(
-                  scaffoldBuilder: DefaultQuestionnairePageScaffoldBuilder(
-                      persistentFooterButtons: [
-                        PopupMenuButton<Locale>(
-                          icon: const Icon(Icons.language),
-                          onSelected: (Locale locale) {
-                            LocaleInheritedWidget.of(context)
-                                .updateLocale(locale);
-                          },
-                          itemBuilder: (BuildContext context) =>
-                              <PopupMenuEntry<Locale>>[
-                            const PopupMenuItem<Locale>(
-                              value: Locale('en'),
-                              child: Text('English'),
-                            ),
-                            const PopupMenuItem<Locale>(
-                              value: Locale('ar'),
-                              child: Text('عَرَبِيّ'),
-                            ),
-                            const PopupMenuItem<Locale>(
-                              value: Locale('de'),
-                              child: Text('Deutsch'),
-                            ),
-                            const PopupMenuItem<Locale>(
-                              value: Locale('es'),
-                              child: Text('Español'),
-                            ),
-                            const PopupMenuItem<Locale>(
-                              value: Locale('ja'),
-                              child: Text('日本語'),
-                            ),
-                          ],
+                scaffoldBuilder: DefaultQuestionnairePageScaffoldBuilder(
+                  persistentFooterButtons: [
+                    PopupMenuButton<Locale>(
+                      icon: const Icon(Icons.language),
+                      onSelected: (Locale locale) {
+                        LocaleInheritedWidget.of(context).updateLocale(locale);
+                      },
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<Locale>>[
+                        const PopupMenuItem<Locale>(
+                          value: Locale('en'),
+                          child: Text('English'),
                         ),
-                      ]),
-                  fhirResourceProvider: widget.fhirResourceProvider,
-                  launchContext: widget.launchContext,
+                        const PopupMenuItem<Locale>(
+                          value: Locale('ar'),
+                          child: Text('عَرَبِيّ'),
+                        ),
+                        const PopupMenuItem<Locale>(
+                          value: Locale('de'),
+                          child: Text('Deutsch'),
+                        ),
+                        const PopupMenuItem<Locale>(
+                          value: Locale('es'),
+                          child: Text('Español'),
+                        ),
+                        const PopupMenuItem<Locale>(
+                          value: Locale('ja'),
+                          child: Text('日本語'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                fhirResourceProvider: widget.fhirResourceProvider,
+                launchContext: widget.launchContext,
+                data: QuestionnaireStepperPageViewData(
                   controller: _controller,
-                  onQuestionnaireResponseChanged: (questionnaireResponseModel) {
-                    _questionnaireResponseModel = questionnaireResponseModel;
-                  },
                   onPageChanged: _onPageChanged,
                   onBeforePageChanged: (currentItemModel, nextItemModel) async {
                     return BeforePageChangedData(canProceed: true);
                   },
                   onVisibleItemUpdated: (item) {
                     _fillerItemFiller = item;
-                  }),
+                  },
+                ),
+                onQuestionnaireResponseChanged: (questionnaireResponseModel) {
+                  _questionnaireResponseModel = questionnaireResponseModel;
+                },
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

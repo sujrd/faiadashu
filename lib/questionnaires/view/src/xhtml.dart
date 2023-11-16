@@ -1,9 +1,9 @@
 import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
+import 'package:faiadashu/utils/to_text_span.dart';
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_html_css/simple_html_css.dart';
 
 // OPTIMIZE: Can this wrapper around a child be avoided?
 
@@ -123,11 +123,11 @@ class Xhtml extends StatelessWidget {
           key: key,
           maxLines: maxLines,
           overflow: TextOverflow.ellipsis,
-          text: HTML.toTextSpan(
+          text: toTextSpan(
             context,
             xhtml,
             defaultTextStyle:
-                defaultTextStyle ?? Theme.of(context).textTheme.bodyText2,
+                defaultTextStyle ?? Theme.of(context).textTheme.bodyMedium,
           ),
         ),
       );
