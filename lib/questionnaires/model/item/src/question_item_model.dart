@@ -217,7 +217,7 @@ class QuestionItemModel extends ResponseItemModel {
   }
 
   @override
-  bool isUserInteractionAllowed = false;
+  bool isUserInteractionAllowed = true;
 
   @override
   bool get isPopulated {
