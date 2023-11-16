@@ -34,4 +34,11 @@ class GroupItemModel extends ResponseItemModel {
         .orderedResponseItemModelsWithParent(parent: this)
         .any((rim) => rim.isPopulated);
   }
+
+  @override
+  bool get isUserInteractionAllowed {
+    return questionnaireResponseModel
+        .orderedResponseItemModelsWithParent(parent: this)
+        .any((rim) => rim.isUserInteractionAllowed);
+  }
 }
