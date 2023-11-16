@@ -20,5 +20,5 @@ class DisplayItemModel extends FillerItemModel {
   bool get isPopulated => false;
 
   @override
-  bool get isUserInteractionAllowed => false;
+  bool get isUserInteractionAllowed => true;
 }
