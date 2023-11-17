@@ -87,7 +87,8 @@ class _QuestionnaireScrollerViewState extends State<QuestionnaireScrollerView> {
           padding: const EdgeInsets.all(8.0),
           minCacheExtent: 200,
         ),
-        if (_showBottomButton)
+        if (_showBottomButton &&
+            QuestionnaireTheme.of(context).showBottomButton)
           QuestionnaireTheme.of(context).bottomButton(
             context,
             _buttonOpacity,
