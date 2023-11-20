@@ -570,10 +570,10 @@ packages:
     dependency: transitive
     description:
       name: scrollable_positioned_list
-      sha256: f998e48b93314f29e27d31448c8f095d342e6680a020ed0b97524ccb85edf672
+      sha256: "1b54d5f1329a1e263269abc9e2543d90806131aa14fe7c6062a8054d57249287"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.2"
+    version: "0.3.8"
   simple_html_css:
     dependency: "direct main"
     description:
