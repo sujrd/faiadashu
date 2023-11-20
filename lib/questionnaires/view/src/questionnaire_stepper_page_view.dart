@@ -184,7 +184,7 @@ class QuestionnaireStepperPageViewController {
       return;
     }
 
-    if (_state?.isUserInteractionAllowed() ?? false) {
+    if (_state?.isUserInteractionAllowed() == false) {
       return;
     }
 
