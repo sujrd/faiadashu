@@ -36,8 +36,8 @@ class QuestionnaireTheme extends InheritedWidget {
 class QuestionnaireThemeData {
   static final _logger = Logger(QuestionnaireThemeData);
 
-  /// Returns whether a
-  final bool showBottomButton;
+  /// Returns whether a scroll down button is shown
+  final bool showScrollDownButton;
 
   /// Returns whether user will be offered option to skip question.
   final bool canSkipQuestions;
@@ -161,9 +161,9 @@ class QuestionnaireThemeData {
   final Widget Function(
     BuildContext context,
     double buttonOpacity,
-    VoidCallback hideButton,
+    VoidCallback onEndAnimation,
     VoidCallback scrollToBottom,
-  ) bottomButton;
+  ) scrollDownButton;
 
   /// Builds layouts for QuestionnaireStepper pages.
   /// If there are no more pages to show, this method must return `null`.
@@ -176,7 +176,7 @@ class QuestionnaireThemeData {
 
   const QuestionnaireThemeData({
     this.canSkipQuestions = false,
-    this.showBottomButton = false,
+    this.showScrollDownButton = true,
     this.showProgress = true,
     this.showScore = true,
     this.autoCompleteThreshold = defaultAutoCompleteThreshold,
@@ -196,7 +196,7 @@ class QuestionnaireThemeData {
     this.stepperQuestionnaireItemFiller =
         _defaultStepperQuestionnaireItemFiller,
     this.stepperPageItemBuilder = _defaultStepperPageItemBuilder,
-    this.bottomButton = _defaultBottomButton,
+    this.scrollDownButton = _defaultScrollDownButton,
   });
 
   /// Returns a [QuestionnaireItemFiller] for a given [QuestionnaireResponseFiller].
@@ -463,10 +463,10 @@ class QuestionnaireThemeData {
     );
   }
 
-  static Widget _defaultBottomButton(
+  static Widget _defaultScrollDownButton(
     BuildContext context,
     double buttonOpacity,
-    VoidCallback hideButton,
+    VoidCallback onEndAnimation,
     VoidCallback scrollToBottom,
   ) {
     return Positioned(
@@ -477,7 +477,7 @@ class QuestionnaireThemeData {
         child: AnimatedOpacity(
           opacity: buttonOpacity,
           duration: const Duration(milliseconds: 250),
-          onEnd: hideButton,
+          onEnd: onEndAnimation,
           child: FloatingActionButton(
             mini: true,
             onPressed: scrollToBottom,

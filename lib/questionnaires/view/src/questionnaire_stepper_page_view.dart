@@ -20,8 +20,10 @@ class QuestionnaireStepperPageView extends StatefulWidget {
   static QuestionnaireStepperPageViewData of(BuildContext context) {
     final result = context.dependOnInheritedWidgetOfExactType<
         _QuestionnaireStepperPageViewInheritedWidget>();
-    assert(result != null,
-        'No QuestionnaireStepperInheritedWidget found in context',);
+    assert(
+      result != null,
+      'No QuestionnaireStepperInheritedWidget found in context',
+    );
     return result!.data;
   }
 
@@ -33,6 +35,7 @@ class QuestionnaireStepperPageView extends StatefulWidget {
 class _QuestionnaireStepperPageViewState
     extends State<QuestionnaireStepperPageView> {
   final PageController _pageController = PageController();
+  bool _isPageSwiping = false;
   bool _hasRequestsRunning = false;
   QuestionnaireItemFiller? _currentQuestionnaireItemFiller;
 
@@ -40,6 +43,7 @@ class _QuestionnaireStepperPageViewState
   void initState() {
     super.initState();
     widget.data.controller._attach(this);
+    _pageController.addListener(_scrollListener);
   }
 
   /// Determines if we can proceed to the next page.
@@ -93,6 +97,12 @@ class _QuestionnaireStepperPageViewState
     widget.data.onPageChanged?.call(index);
   }
 
+  void _scrollListener() {
+    setState(() {
+      _isPageSwiping = _pageController.page?.round() != _pageController.page;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return _QuestionnaireStepperPageViewInheritedWidget(
@@ -114,9 +124,12 @@ class _QuestionnaireStepperPageViewState
           _updateVisibleItem(index);
           if (data == null) return null;
 
-          return QuestionnaireTheme.of(context).stepperPageItemBuilder(
-            context,
-            data,
+          return _ScrollableArea(
+            showScrollDownButton: !_isPageSwiping,
+            child: QuestionnaireTheme.of(context).stepperPageItemBuilder(
+              context,
+              data,
+            ),
           );
         },
         physics: widget.data.physics,
@@ -127,6 +140,8 @@ class _QuestionnaireStepperPageViewState
   @override
   void dispose() {
     widget.data.controller._detach();
+    _pageController.removeListener(_scrollListener);
+    _pageController.dispose();
     super.dispose();
   }
 }
@@ -255,5 +270,93 @@ class QuestionnaireStepperPageViewData {
     this.onVisibleItemUpdated,
   }) {
     this.controller = controller ?? QuestionnaireStepperPageViewController();
+  }
+}
+
+class _ScrollableArea extends StatefulWidget {
+  final Widget child;
+  final bool showScrollDownButton;
+
+  const _ScrollableArea({
+    required this.child,
+    this.showScrollDownButton = true,
+  });
+
+  @override
+  State<StatefulWidget> createState() => _ScrollableAreaState();
+}
+
+class _ScrollableAreaState extends State<_ScrollableArea> {
+  late ScrollController _scrollController;
+  bool _showScrollDownButton = true;
+  bool _hasMoreContent = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkScroll());
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _checkScroll() {
+    final hasMoreContent = _scrollController.position.maxScrollExtent > 0;
+    if (hasMoreContent != _hasMoreContent) {
+      setState(() {
+        _hasMoreContent = hasMoreContent;
+      });
+    }
+  }
+
+  void _scrollListener() {
+    setState(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent) {
+        _hasMoreContent = false;
+        _showScrollDownButton = true;
+      } else {
+        _hasMoreContent = true;
+      }
+    });
+  }
+
+  void _onAnimationEnded() {
+    setState(() {
+      _showScrollDownButton = widget.showScrollDownButton && _hasMoreContent;
+    });
+  }
+
+  void _scrollToBottomItem() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOutCubic,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          controller: _scrollController,
+          child: widget.child,
+        ),
+        if (_showScrollDownButton &&
+            QuestionnaireTheme.of(context).showScrollDownButton)
+          QuestionnaireTheme.of(context).scrollDownButton(
+            context,
+            widget.showScrollDownButton && _hasMoreContent ? 1 : 0,
+            _onAnimationEnded,
+            _scrollToBottomItem,
+          ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 }
