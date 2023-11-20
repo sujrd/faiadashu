@@ -42,8 +42,8 @@ class _QuestionnaireStepperPageViewState
     widget.data.controller._attach(this);
   }
 
-  bool? isUserInteractionAllowed() {
-    return _currentQuestionnaireItemFiller?.fillerItemModel.isUserInteractionAllowed;
+  bool isUserInteractionAllowed() {
+    return _currentQuestionnaireItemFiller?.fillerItemModel.isUserInteractionAllowed ?? true;
   }
 
   /// Determines if we can proceed to the next page.
