@@ -23,7 +23,7 @@ class _QuestionnaireScrollerViewState extends State<QuestionnaireScrollerView> {
   final _scrollOffsetController = ScrollOffsetController();
 
   double _buttonOpacity = 0.0;
-  bool _showBottomButton = false;
+  bool _showScrollDownButton = false;
 
   @override
   void initState() {
@@ -52,7 +52,7 @@ class _QuestionnaireScrollerViewState extends State<QuestionnaireScrollerView> {
     if (_buttonOpacity != newValue) {
       setState(() {
         _buttonOpacity = newValue;
-        _showBottomButton = true;
+        _showScrollDownButton = true;
       });
     }
   }
@@ -65,9 +65,9 @@ class _QuestionnaireScrollerViewState extends State<QuestionnaireScrollerView> {
     );
   }
 
-  void _hideBottomButton() {
+  void _onAnimationEnded() {
     setState(() {
-      _showBottomButton = false;
+      _showScrollDownButton = false;
     });
   }
 
@@ -87,12 +87,12 @@ class _QuestionnaireScrollerViewState extends State<QuestionnaireScrollerView> {
           padding: const EdgeInsets.all(8.0),
           minCacheExtent: 200,
         ),
-        if (_showBottomButton &&
-            QuestionnaireTheme.of(context).showBottomButton)
-          QuestionnaireTheme.of(context).bottomButton(
+        if (_showScrollDownButton &&
+            QuestionnaireTheme.of(context).showScrollDownButton)
+          QuestionnaireTheme.of(context).scrollDownButton(
             context,
             _buttonOpacity,
-            _hideBottomButton,
+            _onAnimationEnded,
             _scrollToBottomItem,
           ),
       ],
