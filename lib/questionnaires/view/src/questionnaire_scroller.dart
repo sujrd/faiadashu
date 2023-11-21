@@ -227,6 +227,8 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
             // FIXME: What is this listening for???
             _questionnaireResponseModel?.valueChangeNotifier
                 .addListener(_handleChangedQuestionnaireResponse);
+            _questionnaireResponseModel?.responseStatusNotifier
+                .addListener(_handleChangedQuestionnaireResponse);
           }
 
           // Listen for new invalid items and then scroll to the first one.
