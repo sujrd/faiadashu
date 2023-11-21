@@ -6,10 +6,12 @@ import 'package:fhir/r4.dart'
 import 'package:flutter/material.dart';
 
 class DateTimeAnswerFiller extends QuestionnaireAnswerFiller {
+
   DateTimeAnswerFiller(
     super.answerModel, {
     super.key,
   });
+
   @override
   State<StatefulWidget> createState() => _DateTimeAnswerState();
 }
@@ -32,6 +34,7 @@ class _DateTimeAnswerState extends QuestionnaireAnswerFillerState<FhirDateTime,
 }
 
 class _DateTimeInputControl extends AnswerInputControl<DateTimeAnswerModel> {
+  
   const _DateTimeInputControl(
     super.answerModel, {
     super.focusNode,
@@ -70,6 +73,7 @@ class _DateTimeInputControl extends AnswerInputControl<DateTimeAnswerModel> {
               )
             : null,
       ),
+      onDialogShown: (isDialogShown) => answerModel.questionItemModel.isUserInteractionAllowed = !isDialogShown,
       onChanged: (fhirDatetime) => answerModel.value = fhirDatetime,
     );
   }

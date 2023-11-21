@@ -42,6 +42,10 @@ class _QuestionnaireStepperPageViewState
     widget.data.controller._attach(this);
   }
 
+  bool isUserInteractionAllowed() {
+    return _currentQuestionnaireItemFiller?.fillerItemModel.isUserInteractionAllowed ?? true;
+  }
+
   /// Determines if we can proceed to the next page.
   Future<BeforePageChangedData> _onBeforePageChanged() async {
     _hasRequestsRunning = true;
@@ -159,6 +163,11 @@ class QuestionnaireStepperPageViewController {
     if (_state?._hasRequestsRunning ?? false) {
       return;
     }
+
+    if (_state?.isUserInteractionAllowed() == false) {
+      return;
+    }
+
     final data = await _state?._onBeforePageChanged();
     if (data?.canProceed ?? true) {
       _state?._pageController.nextPage(
@@ -174,6 +183,11 @@ class QuestionnaireStepperPageViewController {
     if (_state?._hasRequestsRunning ?? false) {
       return;
     }
+
+    if (_state?.isUserInteractionAllowed() == false) {
+      return;
+    }
+
     _state?._pageController.previousPage(
       curve: curve ?? Curves.easeIn,
       duration: duration ?? const Duration(milliseconds: 250),

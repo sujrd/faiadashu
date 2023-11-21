@@ -217,6 +217,9 @@ class QuestionItemModel extends ResponseItemModel {
   }
 
   @override
+  bool isUserInteractionAllowed = true;
+
+  @override
   bool get isPopulated {
     return answerModels.any((am) => am.isNotEmpty);
   }

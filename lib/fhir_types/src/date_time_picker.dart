@@ -19,6 +19,7 @@ class FhirDateTimePicker extends StatefulWidget {
   final InputDecoration? decoration;
   final FocusNode? focusNode;
   final bool enabled;
+  final void Function(bool)? onDialogShown;
   final void Function(FhirDateTime?)? onChanged;
 
   const FhirDateTimePicker({
@@ -29,6 +30,7 @@ class FhirDateTimePicker extends StatefulWidget {
     this.datePickerEntryMode = DatePickerEntryMode.calendar,
     this.timePickerEntryMode = TimePickerEntryMode.dial,
     this.decoration,
+    this.onDialogShown,
     this.onChanged,
     this.focusNode,
     this.enabled = true,
@@ -79,6 +81,8 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
   }
 
   Future<void> _showPicker(Locale locale) async {
+    widget.onDialogShown?.call(true);
+
     DateTime dateTime = DateTime(1970);
 
     if (widget.pickerType != FhirTime) {
@@ -92,6 +96,8 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
       );
 
       if (date == null) {
+        widget.onDialogShown?.call(false);
+
         return; // Cancelled, don't touch anything
       }
       dateTime = date.toLocal();
@@ -135,6 +141,8 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
       );
 
       if (time == null) {
+        widget.onDialogShown?.call(false);
+
         return; // Cancelled, don't touch anything
       }
 
@@ -157,6 +165,7 @@ class _FhirDateTimePickerState extends State<FhirDateTimePicker> {
       _dateTimeFieldController.text = _formatDateTime(fhirDateTime, locale);
     });
     _dateTimeValue = fhirDateTime;
+    widget.onDialogShown?.call(false);
     widget.onChanged?.call(fhirDateTime);
   }
 
