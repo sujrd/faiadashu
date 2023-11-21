@@ -240,6 +240,10 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
               return;
             }
 
+            if (invalidNodes.keys.isEmpty) {
+              return;
+            }
+
             final firstInvalidUid = invalidNodes.keys.first;
             final firstInvalidItem = questionnaireResponseModel
                 .fillerItemModelByUid(firstInvalidUid);
