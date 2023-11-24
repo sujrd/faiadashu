@@ -35,6 +35,8 @@ abstract class AnswerModel<I, V> extends ResponseNode {
     }
   }
 
+  QuestionItemModel get questionItemModel => responseItemModel;
+
   QuestionnaireItemModel get questionnaireItemModel =>
       responseItemModel.questionnaireItemModel;
 

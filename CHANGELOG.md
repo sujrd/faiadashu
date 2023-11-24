@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.11.1
+
+### Faiadashu
+* Fix onQuestionnaireResponseChanged not triggered when changing questionnaire response status
+* Add onDismiss callback to date time picker
+
 ## 0.11.0
 
 * **[Breaking]** Upgrade Flutter version to >=3.7.0
