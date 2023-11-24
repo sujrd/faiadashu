@@ -132,6 +132,8 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
             // FIXME: What is this listening for???
             _questionnaireResponseModel?.valueChangeNotifier
                 .addListener(_handleChangedQuestionnaireResponse);
+            _questionnaireResponseModel?.responseStatusNotifier
+                .addListener(_handleChangedQuestionnaireResponse);
           }
         }
       },
