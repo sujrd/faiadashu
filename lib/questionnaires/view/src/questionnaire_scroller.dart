@@ -48,9 +48,7 @@ class QuestionnaireScroller extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() {
-    return _QuestionnaireScrollerState();
-  }
+  State<QuestionnaireScroller> createState() => _QuestionnaireScrollerState();
 }
 
 class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
@@ -157,9 +155,6 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
       questionnaireModelDefaults: widget.questionnaireModelDefaults,
       builder: (BuildContext context) {
         _belowFillerContext = context;
-        final questionnaireFiller = QuestionnaireResponseFiller.of(context);
-
-        final totalLength = questionnaireFiller.fillerItemModels.length;
 
         _logger.trace(
           'Scroll position: ${_itemPositionsListener.itemPositions.value}',
@@ -167,20 +162,16 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
 
         return widget.scaffoldBuilder.build(
           context,
-          setStateCallback: (fn) {
-            setState(fn);
-          },
+          setStateCallback: (fn) => setState(fn),
           child: LayoutBuilder(
             builder: (context, constraints) {
               const edgeInsets = 8.0;
               const twice = 2;
 
-              return ScrollablePositionedList.builder(
+              return QuestionnaireScrollerView(
                 itemScrollController: _listScrollController,
                 itemPositionsListener: _itemPositionsListener,
-                itemCount: totalLength,
-                padding: const EdgeInsets.all(edgeInsets),
-                minCacheExtent: 200, // Allow tabbing to prev/next items
+                // Allow tabbing to prev/next items
                 itemBuilder: (BuildContext context, int i) {
                   return Row(
                     children: [

@@ -36,6 +36,9 @@ class QuestionnaireTheme extends InheritedWidget {
 class QuestionnaireThemeData {
   static final _logger = Logger(QuestionnaireThemeData);
 
+  /// Returns whether a scroll down button is shown
+  final bool showScrollDownButton;
+
   /// Returns whether user will be offered option to skip question.
   final bool canSkipQuestions;
 
@@ -155,6 +158,13 @@ class QuestionnaireThemeData {
     int pageIndex,
   ) stepperQuestionnaireItemFiller;
 
+  final Widget Function(
+    BuildContext context,
+    double buttonOpacity,
+    VoidCallback onEndAnimation,
+    VoidCallback scrollToBottom,
+  ) scrollDownButton;
+
   /// Builds layouts for QuestionnaireStepper pages.
   /// If there are no more pages to show, this method must return `null`.
   ///
@@ -166,6 +176,7 @@ class QuestionnaireThemeData {
 
   const QuestionnaireThemeData({
     this.canSkipQuestions = false,
+    this.showScrollDownButton = true,
     this.showProgress = true,
     this.showScore = true,
     this.autoCompleteThreshold = defaultAutoCompleteThreshold,
@@ -185,6 +196,7 @@ class QuestionnaireThemeData {
     this.stepperQuestionnaireItemFiller =
         _defaultStepperQuestionnaireItemFiller,
     this.stepperPageItemBuilder = _defaultStepperPageItemBuilder,
+    this.scrollDownButton = _defaultScrollDownButton,
   });
 
   /// Returns a [QuestionnaireItemFiller] for a given [QuestionnaireResponseFiller].
@@ -448,6 +460,31 @@ class QuestionnaireThemeData {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: itemFiller,
+    );
+  }
+
+  static Widget _defaultScrollDownButton(
+    BuildContext context,
+    double buttonOpacity,
+    VoidCallback onEndAnimation,
+    VoidCallback scrollToBottom,
+  ) {
+    return Positioned(
+      bottom: 10.0,
+      left: 0.0,
+      right: 0.0,
+      child: Center(
+        child: AnimatedOpacity(
+          opacity: buttonOpacity,
+          duration: const Duration(milliseconds: 250),
+          onEnd: onEndAnimation,
+          child: FloatingActionButton(
+            mini: true,
+            onPressed: scrollToBottom,
+            child: const Icon(Icons.arrow_downward),
+          ),
+        ),
+      ),
     );
   }
 }
