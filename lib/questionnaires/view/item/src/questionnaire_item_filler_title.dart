@@ -8,15 +8,15 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
   final Widget? leading;
   final Widget? help;
   final Widget? media;
+  final QuestionnaireItemModel questionnaireItemModel;
   final String htmlTitleText;
-  final String semanticsLabel;
 
   const QuestionnaireItemFillerTitle._({
+    required this.questionnaireItemModel,
     required this.htmlTitleText,
     this.leading,
     this.help,
     this.media,
-    required this.semanticsLabel,
     super.key,
   });
 
@@ -39,11 +39,11 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
       final htmlTitleText = questionnaireTheme.fillerItemHtmlTitleRenderer(fillerItem: fillerItem);
 
       return QuestionnaireItemFillerTitle._(
+        questionnaireItemModel: questionnaireItemModel,
         htmlTitleText: htmlTitleText,
         leading: leading,
         help: help,
         media: media,
-        semanticsLabel: text.plainText,
         key: key,
       );
     }
@@ -51,52 +51,48 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final leading = this.leading;
-    final help = this.help;
-    final media = this.media;
+    final questionnaireTheme = QuestionnaireTheme.of(context);
+    final hasInlinedMedia = questionnaireTheme.inlineItemMedia && media != null;
+    final leadingWidget = leading;
 
-    return Container(
-      alignment: AlignmentDirectional.centerStart,
-      child: Row(
-        children: [
-          Expanded(
-            child: Text.rich(
-              TextSpan(
-                children: <InlineSpan>[
-                  if (leading != null)
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: leading,
-                    )
-                  else if (media != null)
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: SizedBox(
-                        // This is here to keep the original behavior when media
-                        // was included within leading widget
-                        height: 24.0,
-                        child: media,
-                      ),
-                    ),
-                  if (leading != null || media != null)
-                    const WidgetSpan(
-                      child: SizedBox(
-                        width: 16.0,
-                      ),
-                    ),
-                  toTextSpan(
-                    context,
-                    htmlTitleText,
-                    defaultTextStyle: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
+    return questionnaireTheme.fillerItemTitleLayoutBuilder(
+      context,
+      questionnaireItemModel: questionnaireItemModel,
+      contentWidget: Text.rich(
+        TextSpan(
+          children: <InlineSpan>[
+            if (leadingWidget != null)
+              WidgetSpan(
+                alignment: PlaceholderAlignment.middle,
+                child: leadingWidget,
+              )
+            else if (hasInlinedMedia)
+              WidgetSpan(
+                alignment: PlaceholderAlignment.middle,
+                child: SizedBox(
+                  // This is here to keep the original behavior when media
+                  // was included within leading widget
+                  height: 24.0,
+                  child: media,
+                ),
               ),
-              semanticsLabel: semanticsLabel,
+            if (leadingWidget != null || hasInlinedMedia)
+              const WidgetSpan(
+                child: SizedBox(
+                  width: 16.0,
+                ),
+              ),
+            toTextSpan(
+              context,
+              htmlTitleText,
+              defaultTextStyle: Theme.of(context).textTheme.bodyMedium,
             ),
-          ),
-          if (help != null) help,
-        ],
+          ],
+        ),
+        semanticsLabel: questionnaireItemModel.text?.plainText,
       ),
+      mediaWidget: !questionnaireTheme.inlineItemMedia ? media : null,
+      helpWidget: help,
     );
   }
 
