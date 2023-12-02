@@ -134,6 +134,13 @@ class QuestionnaireThemeData {
     String? errorText,
   }) codingControlLayoutBuilder;
 
+  /// Allows controlling the rendering of option labels/titles of choice-type items (coding).
+  ///
+  /// [optionModel] is the corresponding model associated with the option being rendered.
+  final RenderingString Function({
+    required CodingAnswerOptionModel optionModel,
+  }) codingControlOptionTitleRenderer;
+
   /// Builds layouts for QuestionnaireScroller items.
   ///
   /// [responseFiller] contains the state data for the current [QuestionnaireResponseFiller].
@@ -181,6 +188,7 @@ class QuestionnaireThemeData {
     this.groupItemLayoutBuilder = _defaultGroupItemLayoutBuilder,
     this.displayItemLayoutBuilder = _defaultDisplayItemLayoutBuilder,
     this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
+    this.codingControlOptionTitleRenderer = _defaultCodingControlOptionTitleRenderer,
     this.scrollerItemBuilder = _defaultScrollerItemBuilder,
     this.stepperQuestionnaireItemFiller =
         _defaultStepperQuestionnaireItemFiller,
@@ -421,6 +429,18 @@ class QuestionnaireThemeData {
           ),
       ],
     );
+  }
+
+  static RenderingString _defaultCodingControlOptionTitleRenderer({
+    required CodingAnswerOptionModel optionModel,
+  }) {
+    final optionPrefix = optionModel.optionPrefix;
+    final optionText = optionModel.optionText;
+
+    return <RenderingString>[
+      if (optionPrefix != null) optionPrefix,
+      optionText,
+    ].concatenateXhtml(' ', '&nbsp;');
   }
 
   static Widget? _defaultScrollerItemBuilder(
