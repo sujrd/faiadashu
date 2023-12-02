@@ -33,26 +33,7 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
           _QuestionnaireItemFillerTitleLeading.fromFillerItem(fillerItem);
       final help = _createHelp(questionnaireItemModel);
 
-      final requiredTag = (questionnaireItemModel.isRequired) ? '*' : '';
-
-      final openStyleTag = questionnaireItemModel.isGroup
-          ? '<h2>'
-          : questionnaireItemModel.isQuestion
-              ? '<b>'
-              : '<p>';
-
-      final closeStyleTag = questionnaireItemModel.isGroup
-          ? '</h2>'
-          : questionnaireItemModel.isQuestion
-              ? '</b>'
-              : '</p>';
-
-      final prefixText = fillerItem.prefix;
-      final title = text.xhtmlText;
-
-      final htmlTitleText = (prefixText != null)
-          ? '$openStyleTag${prefixText.xhtmlText}&nbsp;$title$requiredTag$closeStyleTag'
-          : '$openStyleTag$title$requiredTag$closeStyleTag';
+      final htmlTitleText = questionnaireTheme.fillerItemHtmlTitleRenderer(fillerItem: fillerItem);
 
       return QuestionnaireItemFillerTitle._(
         htmlTitleText: htmlTitleText,

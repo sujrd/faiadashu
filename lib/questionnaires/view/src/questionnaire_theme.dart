@@ -171,6 +171,14 @@ class QuestionnaireThemeData {
     QuestionnaireItemFiller itemFiller,
   ) stepperPageItemBuilder;
 
+  /// Allows customizing the rendering of titles in questionnaire items (questions, groups, displays).
+  /// The returned value should be an HTML string. Please make sure content is HTML-escaped properly.
+  ///
+  /// [fillerItem] is the corresponding model associated with the questionnaire item being rendered.
+  final String Function({
+    required FillerItemModel fillerItem,
+  }) fillerItemHtmlTitleRenderer;
+
   const QuestionnaireThemeData({
     this.canSkipQuestions = false,
     this.showProgress = true,
@@ -193,6 +201,7 @@ class QuestionnaireThemeData {
     this.stepperQuestionnaireItemFiller =
         _defaultStepperQuestionnaireItemFiller,
     this.stepperPageItemBuilder = _defaultStepperPageItemBuilder,
+    this.fillerItemHtmlTitleRenderer = _defaultFillerItemHtmlTitleRenderer,
   });
 
   /// Returns a [QuestionnaireItemFiller] for a given [QuestionnaireResponseFiller].
@@ -469,5 +478,32 @@ class QuestionnaireThemeData {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: itemFiller,
     );
+  }
+
+  static String _defaultFillerItemHtmlTitleRenderer({
+    required FillerItemModel fillerItem,
+  }) {
+    final questionnaireItemModel = fillerItem.questionnaireItemModel;
+
+    final requiredTag = (questionnaireItemModel.isRequired) ? '*' : '';
+
+    final openStyleTag = questionnaireItemModel.isGroup
+        ? '<h2>'
+        : questionnaireItemModel.isQuestion
+            ? '<b>'
+            : '<p>';
+
+    final closeStyleTag = questionnaireItemModel.isGroup
+        ? '</h2>'
+        : questionnaireItemModel.isQuestion
+            ? '</b>'
+            : '</p>';
+
+    final prefixText = fillerItem.prefix;
+    final title = questionnaireItemModel.text?.xhtmlText ?? '';
+
+    return (prefixText != null)
+        ? '$openStyleTag${prefixText.xhtmlText}&nbsp;$title$requiredTag$closeStyleTag'
+        : '$openStyleTag$title$requiredTag$closeStyleTag';
   }
 }
