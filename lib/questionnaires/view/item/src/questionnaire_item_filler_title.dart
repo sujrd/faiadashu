@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 class QuestionnaireItemFillerTitle extends StatelessWidget {
   final Widget? leading;
   final Widget? help;
+  final Widget? media;
   final String htmlTitleText;
   final String semanticsLabel;
 
@@ -14,6 +15,7 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
     required this.htmlTitleText,
     this.leading,
     this.help,
+    this.media,
     required this.semanticsLabel,
     super.key,
   });
@@ -32,6 +34,7 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
       final leading =
           _QuestionnaireItemFillerTitleLeading.fromFillerItem(fillerItem);
       final help = _createHelp(questionnaireItemModel);
+      final media = ItemMediaImage.fromItemMedia(questionnaireItemModel.itemMedia);
 
       final htmlTitleText = questionnaireTheme.fillerItemHtmlTitleRenderer(fillerItem: fillerItem);
 
@@ -39,6 +42,7 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
         htmlTitleText: htmlTitleText,
         leading: leading,
         help: help,
+        media: media,
         semanticsLabel: text.plainText,
         key: key,
       );
@@ -49,6 +53,7 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final leading = this.leading;
     final help = this.help;
+    final media = this.media;
 
     return Container(
       alignment: AlignmentDirectional.centerStart,
@@ -62,8 +67,18 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
                     WidgetSpan(
                       alignment: PlaceholderAlignment.middle,
                       child: leading,
+                    )
+                  else if (media != null)
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: SizedBox(
+                        // This is here to keep the original behavior when media
+                        // was included within leading widget
+                        height: 24.0,
+                        child: media,
+                      ),
                     ),
-                  if (leading != null)
+                  if (leading != null || media != null)
                     const WidgetSpan(
                       child: SizedBox(
                         width: 16.0,
@@ -203,26 +218,15 @@ class _QuestionnaireItemFillerTitleLeading extends StatelessWidget {
         ?.code
         ?.value;
 
-    if (displayCategory != null) {
-      final leadingWidget = (displayCategory == 'instructions')
-          ? const Icon(Icons.info)
-          : (displayCategory == 'security')
-              ? const Icon(Icons.lock)
-              : const Icon(Icons.help_center_outlined); // Error / unclear
+    if (displayCategory == null) return null;
 
-      return _QuestionnaireItemFillerTitleLeading._(leadingWidget);
-    } else {
-      // TODO: Should itemImage be inlined? Should its size be constrained?
-      final itemImageWidget = ItemMediaImage.fromItemMedia(
-        fillerItemModel.questionnaireItemModel.itemMedia,
-        height: 24.0,
-      );
-      if (itemImageWidget == null) {
-        return null;
-      }
+    final leadingWidget = (displayCategory == 'instructions')
+        ? const Icon(Icons.info)
+        : (displayCategory == 'security')
+            ? const Icon(Icons.lock)
+            : const Icon(Icons.help_center_outlined); // Error / unclear
 
-      return _QuestionnaireItemFillerTitleLeading._(itemImageWidget);
-    }
+    return _QuestionnaireItemFillerTitleLeading._(leadingWidget);
   }
 
   @override
