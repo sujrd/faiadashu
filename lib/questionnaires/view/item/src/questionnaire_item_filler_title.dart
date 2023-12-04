@@ -7,14 +7,16 @@ import 'package:flutter/material.dart';
 class QuestionnaireItemFillerTitle extends StatelessWidget {
   final Widget? leading;
   final Widget? help;
+  final Widget? media;
+  final QuestionnaireItemModel questionnaireItemModel;
   final String htmlTitleText;
-  final String semanticsLabel;
 
   const QuestionnaireItemFillerTitle._({
+    required this.questionnaireItemModel,
     required this.htmlTitleText,
     this.leading,
     this.help,
-    required this.semanticsLabel,
+    this.media,
     super.key,
   });
 
@@ -32,33 +34,16 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
       final leading =
           _QuestionnaireItemFillerTitleLeading.fromFillerItem(fillerItem);
       final help = _createHelp(questionnaireItemModel);
+      final media = ItemMediaImage.fromItemMedia(questionnaireItemModel.itemMedia);
 
-      final requiredTag = (questionnaireItemModel.isRequired) ? '*' : '';
-
-      final openStyleTag = questionnaireItemModel.isGroup
-          ? '<h2>'
-          : questionnaireItemModel.isQuestion
-              ? '<b>'
-              : '<p>';
-
-      final closeStyleTag = questionnaireItemModel.isGroup
-          ? '</h2>'
-          : questionnaireItemModel.isQuestion
-              ? '</b>'
-              : '</p>';
-
-      final prefixText = fillerItem.prefix;
-      final title = text.xhtmlText;
-
-      final htmlTitleText = (prefixText != null)
-          ? '$openStyleTag${prefixText.xhtmlText}&nbsp;$title$requiredTag$closeStyleTag'
-          : '$openStyleTag$title$requiredTag$closeStyleTag';
+      final htmlTitleText = questionnaireTheme.fillerItemHtmlTitleRenderer(fillerItem: fillerItem);
 
       return QuestionnaireItemFillerTitle._(
+        questionnaireItemModel: questionnaireItemModel,
         htmlTitleText: htmlTitleText,
         leading: leading,
         help: help,
-        semanticsLabel: text.plainText,
+        media: media,
         key: key,
       );
     }
@@ -66,41 +51,48 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final leading = this.leading;
-    final help = this.help;
+    final questionnaireTheme = QuestionnaireTheme.of(context);
+    final hasInlinedMedia = questionnaireTheme.inlineItemMedia && media != null;
+    final leadingWidget = leading;
 
-    return Container(
-      alignment: AlignmentDirectional.centerStart,
-      child: Row(
-        children: [
-          Expanded(
-            child: Text.rich(
-              TextSpan(
-                children: <InlineSpan>[
-                  if (leading != null)
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: leading,
-                    ),
-                  if (leading != null)
-                    const WidgetSpan(
-                      child: SizedBox(
-                        width: 16.0,
-                      ),
-                    ),
-                  toTextSpan(
-                    context,
-                    htmlTitleText,
-                    defaultTextStyle: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
+    return questionnaireTheme.fillerItemTitleLayoutBuilder(
+      context,
+      questionnaireItemModel: questionnaireItemModel,
+      contentWidget: Text.rich(
+        TextSpan(
+          children: <InlineSpan>[
+            if (leadingWidget != null)
+              WidgetSpan(
+                alignment: PlaceholderAlignment.middle,
+                child: leadingWidget,
+              )
+            else if (hasInlinedMedia)
+              WidgetSpan(
+                alignment: PlaceholderAlignment.middle,
+                child: SizedBox(
+                  // This is here to keep the original behavior when media
+                  // was included within leading widget
+                  height: 24.0,
+                  child: media,
+                ),
               ),
-              semanticsLabel: semanticsLabel,
+            if (leadingWidget != null || hasInlinedMedia)
+              const WidgetSpan(
+                child: SizedBox(
+                  width: 16.0,
+                ),
+              ),
+            toTextSpan(
+              context,
+              htmlTitleText,
+              defaultTextStyle: Theme.of(context).textTheme.bodyMedium,
             ),
-          ),
-          if (help != null) help,
-        ],
+          ],
+        ),
+        semanticsLabel: questionnaireItemModel.text?.plainText,
       ),
+      mediaWidget: !questionnaireTheme.inlineItemMedia ? media : null,
+      helpWidget: help,
     );
   }
 
@@ -222,26 +214,15 @@ class _QuestionnaireItemFillerTitleLeading extends StatelessWidget {
         ?.code
         ?.value;
 
-    if (displayCategory != null) {
-      final leadingWidget = (displayCategory == 'instructions')
-          ? const Icon(Icons.info)
-          : (displayCategory == 'security')
-              ? const Icon(Icons.lock)
-              : const Icon(Icons.help_center_outlined); // Error / unclear
+    if (displayCategory == null) return null;
 
-      return _QuestionnaireItemFillerTitleLeading._(leadingWidget);
-    } else {
-      // TODO: Should itemImage be inlined? Should its size be constrained?
-      final itemImageWidget = ItemMediaImage.fromItemMedia(
-        fillerItemModel.questionnaireItemModel.itemMedia,
-        height: 24.0,
-      );
-      if (itemImageWidget == null) {
-        return null;
-      }
+    final leadingWidget = (displayCategory == 'instructions')
+        ? const Icon(Icons.info)
+        : (displayCategory == 'security')
+            ? const Icon(Icons.lock)
+            : const Icon(Icons.help_center_outlined); // Error / unclear
 
-      return _QuestionnaireItemFillerTitleLeading._(itemImageWidget);
-    }
+    return _QuestionnaireItemFillerTitleLeading._(leadingWidget);
   }
 
   @override

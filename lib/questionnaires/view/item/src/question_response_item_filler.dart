@@ -125,7 +125,10 @@ class QuestionResponseItemFillerState
               context,
               widget.responseItemModel as QuestionItemModel,
               _answerFillerWidget(),
-              titleWidget: titleWidget,
+              titleWidget: QuestionnaireItemFillerTitle.fromFillerItem(
+                fillerItem: widget.fillerItemModel,
+                questionnaireTheme: QuestionnaireTheme.of(context),
+              ),
               promptTextWidget: _promptTextWidget(context),
               questionSkipperWidget: _questionSkipperWidget(),
             ),

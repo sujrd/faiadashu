@@ -24,14 +24,18 @@ class _DisplayItemState extends QuestionnaireItemFillerState<DisplayItem> {
       'build ${widget.fillerItemModel}',
     );
 
-    final titleWidget = this.titleWidget;
+    final questionnaireTheme = QuestionnaireTheme.of(context);
+    final titleWidget = QuestionnaireItemFillerTitle.fromFillerItem(
+      fillerItem: widget.fillerItemModel,
+      questionnaireTheme: questionnaireTheme,
+    );
 
     return AnimatedBuilder(
       animation: widget.fillerItemModel,
       builder: (context, _) {
         return widget.fillerItemModel.displayVisibility !=
                 DisplayVisibility.hidden
-            ? QuestionnaireTheme.of(context).displayItemLayoutBuilder(
+            ? questionnaireTheme.displayItemLayoutBuilder(
                 context,
                 widget.fillerItemModel as DisplayItemModel,
                 titleWidget: titleWidget,
