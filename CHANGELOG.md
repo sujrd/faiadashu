@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.11.2
+
+### Faiadashu
+
+* Add additional theming/customization
+
 ## 0.11.1
 
 ### Faiadashu
