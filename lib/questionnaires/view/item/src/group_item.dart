@@ -26,7 +26,11 @@ class _GroupItemState extends ResponseItemFillerState<GroupItem> {
       'build group ${widget.responseItemModel}',
     );
 
-    final titleWidget = this.titleWidget;
+    final questionnaireTheme = QuestionnaireTheme.of(context);
+    final titleWidget = QuestionnaireItemFillerTitle.fromFillerItem(
+      fillerItem: widget.fillerItemModel,
+      questionnaireTheme: questionnaireTheme,
+    );
 
     return AnimatedBuilder(
       animation: widget.responseItemModel,
@@ -37,7 +41,7 @@ class _GroupItemState extends ResponseItemFillerState<GroupItem> {
 
         return widget.responseItemModel.displayVisibility !=
                 DisplayVisibility.hidden
-            ? QuestionnaireTheme.of(context).groupItemLayoutBuilder(
+            ? questionnaireTheme.groupItemLayoutBuilder(
                 context,
                 widget.responseItemModel as GroupItemModel,
                 titleWidget: titleWidget,

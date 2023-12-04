@@ -143,13 +143,10 @@ class _StyledOptionState extends State<_StyledOption> {
       // continue if widget generation failed for any reason...
     }
 
-    final optionPrefix = optionModel.optionPrefix;
-    final optionText = optionModel.optionText;
+    final optionTitle = QuestionnaireTheme.of(context).codingControlOptionTitleRenderer(
+      optionModel: optionModel,
+    );
 
-    final optionTitle = <RenderingString>[
-      if (optionPrefix != null) optionPrefix,
-      optionText,
-    ].concatenateXhtml(' ', '&nbsp;');
     final styledOptionTitle = Xhtml.fromRenderingString(
       context,
       optionTitle,
