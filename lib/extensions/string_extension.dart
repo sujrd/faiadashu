@@ -14,7 +14,9 @@ extension StringExtension on String {
           transExt.extension_?.firstWhereOrNull(
                 (ext) =>
                     (ext.url == FhirUri('lang')) &&
-                    (ext.valueCode?.value == locale?.languageCode),
+                    ((ext.valueCode?.value == locale?.languageCode) ||
+                        (ext.valueCode?.value ==
+                            "${locale?.languageCode}-${locale?.countryCode}")),
               ) !=
               null,
     );
