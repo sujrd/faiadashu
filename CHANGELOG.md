@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.11.3
+
+### Faiadashu
+
+* Add support Locale.countryCode
+
 ## 0.11.2
 
 ### Faiadashu
