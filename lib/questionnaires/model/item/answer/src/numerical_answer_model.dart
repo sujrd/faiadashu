@@ -22,6 +22,9 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
   late final double? _sliderStepValue;
   late final int? _sliderDivisions;
 
+  late final Map<String, double> _minQuantity;
+  late final Map<String, double> _maxQuantity;
+
   RenderingString? _upperSliderLabel;
   RenderingString? _lowerSliderLabel;
 
@@ -79,13 +82,18 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
   }
 
   NumericalAnswerModel(super.responseModel) {
+    _initializeRanges();
+    _initializeFormatting();
+    _initializeUnits();
+  }
+
+  void _initializeRanges() {
     _isSliding =
         questionnaireItemModel.questionnaireItem.isItemControl('slider');
 
     final minValueExtension = qi.extension_
         ?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/minValue');
-    final maxValueExtension = questionnaireItemModel
-        .questionnaireItem.extension_
+    final maxValueExtension = qi.extension_
         ?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/maxValue');
     _minValue = minValueExtension?.valueDecimal?.value ??
         minValueExtension?.valueInteger?.value?.toDouble() ??
@@ -94,6 +102,27 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
         maxValueExtension?.valueInteger?.value?.toDouble() ??
         (_isSliding ? modelDefaults.sliderMaxValue : double.maxFinite);
 
+    // Get any min/maxQuantity extensions and index them by measurement unit.
+    // If multiple units are used, contrary to spec, separate extensions need to be defined for each unit.
+    _minQuantity = <String, double>{};
+    qi.extension_
+        ?.whereExtensionIs('http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-minQuantity')
+        ?.forEach((extension) {
+          final code = extension.valueQuantity?.code?.value;
+          final value = extension.valueQuantity?.value?.value;
+          if (code != null && value != null) _minQuantity[code] = value;
+        });
+
+    _maxQuantity = <String, double>{};
+    qi.extension_
+        ?.whereExtensionIs('http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-maxQuantity')
+        ?.forEach((extension) {
+          final code = extension.valueQuantity?.code?.value;
+          final value = extension.valueQuantity?.value?.value;
+          if (code != null && value != null) _maxQuantity[code] = value;
+        });
+
+    // TODO: How should min/max quantities be handled for sliders?
     if (_isSliding) {
       final sliderStepValueExtension = qi.extension_?.extensionOrNull(
         'http://hl7.org/fhir/StructureDefinition/questionnaire-sliderStepValue',
@@ -107,8 +136,9 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
       _upperSliderLabel = questionnaireItemModel.upperTextItem?.text;
       _lowerSliderLabel = questionnaireItemModel.lowerTextItem?.text;
     }
+  }
 
-    // TODO: Evaluate max length
+  void _initializeFormatting() {
     switch (qi.type) {
       case QuestionnaireItemType.integer:
         _maxDecimal = 0;
@@ -133,12 +163,13 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
       locale: locale.toLanguageTag(), // TODO: toString or toLanguageTag?
       decimalDigits: _maxDecimal,
     );
+  }
 
+  void _initializeUnits() {
     _units = <String, Coding>{};
+
     final unitsUri = qi.extension_
-        ?.extensionOrNull(
-          'http://hl7.org/fhir/StructureDefinition/questionnaire-unitValueSet',
-        )
+        ?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/questionnaire-unitValueSet')
         ?.valueCanonical
         .toString();
     if (unitsUri != null) {
@@ -209,11 +240,15 @@ class NumericalAnswerModel extends AnswerModel<String, Quantity> {
       return null;
     }
 
-    if (number > _maxValue) {
-      return MaxValueError(nodeUid, FhirDecimal(_maxValue).format(locale));
+    final unitCode = inputValue.code?.value;
+    final maxValue = _maxQuantity[unitCode] ?? _maxValue;
+    final minValue = _minQuantity[unitCode] ?? _minValue;
+
+    if (number > maxValue) {
+      return MaxValueError(nodeUid, FhirDecimal(maxValue).format(locale));
     }
-    if (number < _minValue) {
-      return MinValueError(nodeUid, FhirDecimal(_minValue).format(locale));
+    if (number < minValue) {
+      return MinValueError(nodeUid, FhirDecimal(minValue).format(locale));
     }
 
     return null;
