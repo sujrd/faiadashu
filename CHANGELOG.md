@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.11.4
+
+### Faiadashu
+
+* Support min/max quantity support
+
 ## 0.11.3
 
 ### Faiadashu
