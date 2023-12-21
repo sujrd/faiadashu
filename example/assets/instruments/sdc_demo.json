@@ -648,12 +648,117 @@
             {
               "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
               "valueString": "MM/DD/YYYY"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+              "valueDate": "1960-01-01"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+              "_valueDate": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/cqf-expression",
+                    "valueExpression": {
+                      "language": "text/fhirpath",
+                      "expression": "today()"
+                    }
+                  }
+                ]
+              }
             }
           ],
           "linkId": "4.2.b.5",
-          "text": "Enter your birthdate (MM/DD/YYYY)",
+          "text": "Enter your birthdate (MM/DD/YYYY) (Only for people born 1960~today)",
           "type": "date",
           "answerValueSet": "http://hl7.org/fhir/ValueSet/administrative-gender"
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+              "valueString": "MM/DD/YYYY HH:mm:ss"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+              "valueDateTime": "1980-01-01T00:00:00"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+              "valueDateTime": "2030-01-01T00:00:00"
+            }
+          ],
+          "linkId": "4.2.b.5-1",
+          "text": "Enter your birth date and time (MM/DD/YYYY HH:mm:ss) (For people born 1980~2030)",
+          "type": "dateTime"
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+              "valueString": "MM/DD/YYYY HH:mm:ss"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+              "_valueDateTime": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/cqf-expression",
+                    "valueExpression": {
+                      "language": "text/fhirpath",
+                      "expression": "now() - 20 years"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+              "_valueDateTime": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/cqf-expression",
+                    "valueExpression": {
+                      "language": "text/fhirpath",
+                      "expression": "now()"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "linkId": "4.2.b.5-2",
+          "text": "Enter your birth date and time (MM/DD/YYYY HH:mm:ss) (For people born within the last 20 years)",
+          "type": "dateTime"
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+              "valueString": "HH:mm:ss"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+              "valueTime": "04:00:00"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+              "_valueTime": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/cqf-expression",
+                    "valueExpression": {
+                      "language": "text/fhirpath",
+                      "expression": "timeOfDay()"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "linkId": "4.2.b.5-3",
+          "text": "Enter your birth time (HH:mm:ss) (4AM to current time only)",
+          "type": "time"
         },
         {
           "extension": [
