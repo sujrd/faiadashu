@@ -4,15 +4,36 @@ import 'package:faiadashu/questionnaires/model/src/validation_errors/date_time_e
 import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart'
     show
-        FhirCode,
         FhirDate,
         FhirDateTime,
+        FhirExtension,
         FhirTime,
         QuestionnaireResponseAnswer,
         QuestionnaireResponseItem;
 
 class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
-  DateTimeAnswerModel(super.responseModel);
+  late final FhirExtension? _minValueExtension;
+  late final FhirExtension? _maxValueExtension;
+
+  DateTimeAnswerModel(super.responseModel) {
+    _minValueExtension = qi.extension_
+        ?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/minValue');
+    _maxValueExtension = qi.extension_
+        ?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/maxValue');
+  }
+
+  FhirDateTime? _getDateTimeValue(FhirExtension? extension) {
+    // NOTE: Model should probably be populated based on QuestionnaireItemType
+    if (extension == null) return null;
+
+    return extension.valueDateTime ??
+      ((extension.valueDate != null)
+        ? FhirDateTime(extension.valueDate)
+        : (extension.valueTime != null)
+            // TODO: Find a better way to convert FhirTime values to FhirDateTime
+            ? FhirDateTime('1970-01-01T${extension.valueTime}')
+            : null);
+  }
 
   @override
   RenderingString get display => (value != null)
@@ -60,9 +81,15 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
 
   @override
   ValidationError? validateValue(FhirDateTime? inValue) {
-    if (!(inValue == null || inValue.isValid)) {
-      return DateTimeError(nodeUid);
-    }
+    if (inValue == null) return null;
+    if (!inValue.isValid) return DateTimeError(nodeUid);
+
+    final minValue = _getDateTimeValue(_minValueExtension);
+    final maxValue = _getDateTimeValue(_maxValueExtension);
+
+    if (minValue != null && inValue < minValue) return DateTimeError(nodeUid);
+    if (maxValue != null && inValue > maxValue) return DateTimeError(nodeUid);
+
     return null;
   }
 
