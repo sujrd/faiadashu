@@ -22,17 +22,49 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
         ?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/maxValue');
   }
 
+  FhirDateTime? _toDateTime(dynamic value) {
+    if (value == null) return null;
+
+    // TODO: Find a better way to convert FhirTime values to FhirDateTime
+    return value is FhirTime
+      ? FhirDateTime('1970-01-01T$value')
+      : FhirDateTime(value);
+  }
+
+  FhirDateTime? _calculateDateTimeValue(List<FhirExtension>? extensions) {
+    final cqfExpressionExtension = extensions?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/cqf-expression');
+    final expression = cqfExpressionExtension?.valueExpression;
+
+    if (expression == null) return null;
+
+    // TODO: Should evaluators be cached?
+    final evaluator = FhirExpressionEvaluator.fromExpression(
+      null,
+      expression,
+      [...questionItemModel.itemWithPredecessorsExpressionEvaluators],
+      jsonBuilder: () =>
+          questionnaireResponseModel.fhirResponseItemByUid(nodeUid),
+    );
+
+    final rawEvaluationResult = evaluator.evaluate();
+    if (!(rawEvaluationResult is List && rawEvaluationResult.isNotEmpty)) return null;
+
+    return _toDateTime(rawEvaluationResult.first);
+  }
+
   FhirDateTime? _getDateTimeValue(FhirExtension? extension) {
     // NOTE: Model should probably be populated based on QuestionnaireItemType
     if (extension == null) return null;
 
-    return extension.valueDateTime ??
-      ((extension.valueDate != null)
-        ? FhirDateTime(extension.valueDate)
-        : (extension.valueTime != null)
-            // TODO: Find a better way to convert FhirTime values to FhirDateTime
-            ? FhirDateTime('1970-01-01T${extension.valueTime}')
-            : null);
+    final calculatedValue =
+      _calculateDateTimeValue(extension.valueDateTimeElement?.extension_) ??
+      _calculateDateTimeValue(extension.valueDateElement?.extension_) ??
+      _calculateDateTimeValue(extension.valueTimeElement?.extension_);
+
+    return calculatedValue ??
+      extension.valueDateTime ??
+      _toDateTime(extension.valueDate) ??
+      _toDateTime(extension.valueTime);
   }
 
   @override
@@ -111,11 +143,7 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
   void populate(QuestionnaireResponseAnswer answer) {
     // NOTE: Model should probably be populated based on QuestionnaireItemType
     value = answer.valueDateTime ??
-        ((answer.valueDate != null)
-            ? FhirDateTime(answer.valueDate)
-            : (answer.valueTime != null)
-                // TODO: Find a better way to convert FhirTime values to FhirDateTime
-                ? FhirDateTime('1970-01-01T${answer.valueTime}')
-                : null);
+      _toDateTime(answer.valueDate) ??
+      _toDateTime(answer.valueTime);
   }
 }
