@@ -1,6 +1,8 @@
 import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/date_time_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/max_value_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/min_value_error.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart'
     show
@@ -31,7 +33,7 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
       : FhirDateTime(value);
   }
 
-  FhirDateTime? _calculateDateTimeValue(List<FhirExtension>? extensions) {
+  dynamic _calculateDateTimeValue(List<FhirExtension>? extensions) {
     final cqfExpressionExtension = extensions?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/cqf-expression');
     final expression = cqfExpressionExtension?.valueExpression;
 
@@ -49,10 +51,10 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
     final rawEvaluationResult = evaluator.evaluate();
     if (!(rawEvaluationResult is List && rawEvaluationResult.isNotEmpty)) return null;
 
-    return _toDateTime(rawEvaluationResult.first);
+    return rawEvaluationResult.first;
   }
 
-  FhirDateTime? _getDateTimeValue(FhirExtension? extension) {
+  dynamic _getDateTimeValue(FhirExtension? extension) {
     // NOTE: Model should probably be populated based on QuestionnaireItemType
     if (extension == null) return null;
 
@@ -63,8 +65,16 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
 
     return calculatedValue ??
       extension.valueDateTime ??
-      _toDateTime(extension.valueDate) ??
-      _toDateTime(extension.valueTime);
+      extension.valueDate ??
+      extension.valueTime;
+  }
+
+  String _formatValue(dynamic value) {
+    if (value is FhirTime) return value.format(locale);
+    if (value is FhirDate) return value.format(locale);
+    if (value is FhirDateTime) return value.format(locale);
+
+    return value.toString();
   }
 
   @override
@@ -118,9 +128,11 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
 
     final minValue = _getDateTimeValue(_minValueExtension);
     final maxValue = _getDateTimeValue(_maxValueExtension);
+    final minDateTime = _toDateTime(minValue);
+    final maxDateTime = _toDateTime(maxValue);
 
-    if (minValue != null && inValue < minValue) return DateTimeError(nodeUid);
-    if (maxValue != null && inValue > maxValue) return DateTimeError(nodeUid);
+    if (minDateTime != null && inValue < minDateTime) return MinValueError(nodeUid, _formatValue(minValue));
+    if (maxDateTime != null && inValue > maxDateTime) return MaxValueError(nodeUid, _formatValue(maxValue));
 
     return null;
   }

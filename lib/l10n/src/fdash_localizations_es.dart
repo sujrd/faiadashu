@@ -46,12 +46,12 @@ class FDashLocalizationsEs extends FDashLocalizations {
 
   @override
   String validatorMinValue(String minValue) {
-    return 'Introduzca un número de $minValue o superior.';
+    return 'Introduzca un valor de $minValue o superior.';
   }
 
   @override
   String validatorMaxValue(String maxValue) {
-    return 'Introduzca un número hasta $maxValue.';
+    return 'Introduzca un valor hasta $maxValue.';
   }
 
   @override
