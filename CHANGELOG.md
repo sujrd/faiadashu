@@ -10,7 +10,7 @@
 
 ### Faiadashu
 
-* Support min/max quantity support
+* Add min/max quantity support
 
 ## 0.11.3
 
