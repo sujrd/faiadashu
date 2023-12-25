@@ -1,10 +1,16 @@
 # CHANGELOG
 
+## 0.11.5
+
+### Faiadashu
+
+* Add date range validations
+
 ## 0.11.4
 
 ### Faiadashu
 
-* Support min/max quantity support
+* Add min/max quantity support
 
 ## 0.11.3
 
