@@ -2,7 +2,7 @@ import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/l10n/l10n.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart'
-    show FhirDate, FhirDateTime, QuestionnaireItemType, FhirTime;
+    show FhirDate, FhirDateTime, FhirTime;
 import 'package:flutter/material.dart';
 
 class DateTimeAnswerFiller extends QuestionnaireAnswerFiller {
@@ -34,7 +34,7 @@ class _DateTimeAnswerState extends QuestionnaireAnswerFillerState<FhirDateTime,
 }
 
 class _DateTimeInputControl extends AnswerInputControl<DateTimeAnswerModel> {
-  
+
   const _DateTimeInputControl(
     super.answerModel, {
     super.focusNode,

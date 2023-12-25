@@ -224,7 +224,8 @@ Special support for 🇩🇰 Danish specification on patient feedback.
 Comprehensive support. Date picker with localized format.
 
 #### Extensions
-- (none)
+- minValue (Supports setting dynamic values via `cqf-expression` extension)
+- maxValue (Supports setting dynamic values via `cqf-expression` extension)
 
 ---
 ### dateTime
@@ -232,9 +233,15 @@ Comprehensive support. Date/Time picker with localized format.
 
 #### Extensions
 - sdc-questionnaire-initialExpression
+- minValue (Supports setting dynamic values via `cqf-expression` extension)
+- maxValue (Supports setting dynamic values via `cqf-expression` extension)
 
 ### time
 Comprehensive support. Time picker with localized format.
+
+#### Extensions
+- minValue (Supports setting dynamic values via `cqf-expression` extension)
+- maxValue (Supports setting dynamic values via `cqf-expression` extension)
 
 ### string, text
 Comprehensive support. Keyboard type can be hinted.
