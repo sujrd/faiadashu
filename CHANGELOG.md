@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.11.5
+
+### Faiadashu
+
+* Add date range validations
+
 ## 0.11.4
 
 ### Faiadashu
