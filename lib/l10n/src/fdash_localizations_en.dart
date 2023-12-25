@@ -45,12 +45,12 @@ class FDashLocalizationsEn extends FDashLocalizations {
 
   @override
   String validatorMinValue(String minValue) {
-    return 'Enter a number of $minValue or higher.';
+    return 'Enter a value of $minValue or higher.';
   }
 
   @override
   String validatorMaxValue(String maxValue) {
-    return 'Enter a number up to $maxValue.';
+    return 'Enter a value up to $maxValue.';
   }
 
   @override

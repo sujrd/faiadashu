@@ -1,18 +1,81 @@
 import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/questionnaires/model/model.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/date_time_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/max_value_error.dart';
+import 'package:faiadashu/questionnaires/model/src/validation_errors/min_value_error.dart';
 import 'package:faiadashu/questionnaires/model/src/validation_errors/validation_error.dart';
 import 'package:fhir/r4.dart'
     show
-        FhirCode,
         FhirDate,
         FhirDateTime,
+        FhirExtension,
         FhirTime,
         QuestionnaireResponseAnswer,
         QuestionnaireResponseItem;
 
 class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
-  DateTimeAnswerModel(super.responseModel);
+  late final FhirExtension? _minValueExtension;
+  late final FhirExtension? _maxValueExtension;
+
+  DateTimeAnswerModel(super.responseModel) {
+    _minValueExtension = qi.extension_
+        ?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/minValue');
+    _maxValueExtension = qi.extension_
+        ?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/maxValue');
+  }
+
+  FhirDateTime? _toDateTime(dynamic value) {
+    if (value == null) return null;
+
+    // TODO: Find a better way to convert FhirTime values to FhirDateTime
+    return value is FhirTime
+      ? FhirDateTime('1970-01-01T$value')
+      : FhirDateTime(value);
+  }
+
+  dynamic _calculateDateTimeValue(List<FhirExtension>? extensions) {
+    final cqfExpressionExtension = extensions?.extensionOrNull('http://hl7.org/fhir/StructureDefinition/cqf-expression');
+    final expression = cqfExpressionExtension?.valueExpression;
+
+    if (expression == null) return null;
+
+    // TODO: Should evaluators be cached?
+    final evaluator = FhirExpressionEvaluator.fromExpression(
+      null,
+      expression,
+      [...questionItemModel.itemWithPredecessorsExpressionEvaluators],
+      jsonBuilder: () =>
+          questionnaireResponseModel.fhirResponseItemByUid(nodeUid),
+    );
+
+    final rawEvaluationResult = evaluator.evaluate();
+    if (!(rawEvaluationResult is List && rawEvaluationResult.isNotEmpty)) return null;
+
+    return rawEvaluationResult.first;
+  }
+
+  dynamic _getDateTimeValue(FhirExtension? extension) {
+    // NOTE: Model should probably be populated based on QuestionnaireItemType
+    if (extension == null) return null;
+
+    final calculatedValue =
+      _calculateDateTimeValue(extension.valueDateTimeElement?.extension_) ??
+      _calculateDateTimeValue(extension.valueDateElement?.extension_) ??
+      _calculateDateTimeValue(extension.valueTimeElement?.extension_);
+
+    return calculatedValue ??
+      extension.valueDateTime ??
+      extension.valueDate ??
+      extension.valueTime;
+  }
+
+  String _formatValue(dynamic value) {
+    if (value is FhirTime) return value.format(locale);
+    if (value is FhirDate) return value.format(locale);
+    if (value is FhirDateTime) return value.format(locale);
+
+    return value.toString();
+  }
 
   @override
   RenderingString get display => (value != null)
@@ -60,9 +123,17 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
 
   @override
   ValidationError? validateValue(FhirDateTime? inValue) {
-    if (!(inValue == null || inValue.isValid)) {
-      return DateTimeError(nodeUid);
-    }
+    if (inValue == null) return null;
+    if (!inValue.isValid) return DateTimeError(nodeUid);
+
+    final minValue = _getDateTimeValue(_minValueExtension);
+    final maxValue = _getDateTimeValue(_maxValueExtension);
+    final minDateTime = _toDateTime(minValue);
+    final maxDateTime = _toDateTime(maxValue);
+
+    if (minDateTime != null && inValue < minDateTime) return MinValueError(nodeUid, _formatValue(minValue));
+    if (maxDateTime != null && inValue > maxDateTime) return MaxValueError(nodeUid, _formatValue(maxValue));
+
     return null;
   }
 
@@ -84,11 +155,7 @@ class DateTimeAnswerModel extends AnswerModel<FhirDateTime, FhirDateTime> {
   void populate(QuestionnaireResponseAnswer answer) {
     // NOTE: Model should probably be populated based on QuestionnaireItemType
     value = answer.valueDateTime ??
-        ((answer.valueDate != null)
-            ? FhirDateTime(answer.valueDate)
-            : (answer.valueTime != null)
-                // TODO: Find a better way to convert FhirTime values to FhirDateTime
-                ? FhirDateTime('1970-01-01T${answer.valueTime}')
-                : null);
+      _toDateTime(answer.valueDate) ??
+      _toDateTime(answer.valueTime);
   }
 }

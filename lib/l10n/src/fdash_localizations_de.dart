@@ -44,12 +44,12 @@ class FDashLocalizationsDe extends FDashLocalizations {
 
   @override
   String validatorMinValue(String minValue) {
-    return 'Eine Zahl ab $minValue eingeben.';
+    return 'Einen Wert ab $minValue eingeben.';
   }
 
   @override
   String validatorMaxValue(String maxValue) {
-    return 'Eine Zahl bis $maxValue eingeben.';
+    return 'Einen Wert bis $maxValue eingeben.';
   }
 
   @override
