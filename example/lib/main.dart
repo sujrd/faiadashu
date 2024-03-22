@@ -326,6 +326,33 @@ class _HomePageState extends State<HomePage> {
                 'A gallery of SDC feature support.',
                 'assets/instruments/sdc_demo.json',
               ),
+              ListTile(
+                title: const Text('SDC Demo Stepper'),
+                subtitle: const Text(
+                  'A gallery of SDC feature support but rendered in Stepper',
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => QuestionnaireTheme(
+                        data: const QuestionnaireThemeData(
+                          // It is better for a wizard to overtly present all choices on each screen.
+                          codingControlPreference:
+                              CodingControlPreference.expanded,
+                        ),
+                        child: CustomQuestionnaireStepperPage(
+                          fhirResourceProvider: AssetResourceProvider.singleton(
+                            questionnaireResourceUri,
+                            'assets/instruments/sdc_demo_prior_edit.json',
+                          ),
+                          launchContext: launchContext,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
               _launchQuestionnaire(
                 'SDC Profile Example Render - official version',
                 'The reference questionnaire version hl7.fhir.uv.sdc#3.0.0 based on FHIR 4.0.1',
@@ -375,33 +402,6 @@ class _HomePageState extends State<HomePage> {
                           fhirResourceProvider: AssetResourceProvider.singleton(
                             questionnaireResourceUri,
                             'assets/instruments/phq9_instrument.json',
-                          ),
-                          launchContext: launchContext,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                title: const Text('Custom Questionnaire Stepper Page'),
-                subtitle: const Text(
-                  'Cardiac risk scoring survey with customized buttons.',
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => QuestionnaireTheme(
-                        data: const QuestionnaireThemeData(
-                          // It is better for a wizard to overtly present all choices on each screen.
-                          codingControlPreference:
-                              CodingControlPreference.expanded,
-                        ),
-                        child: CustomQuestionnaireStepperPage(
-                          fhirResourceProvider: AssetResourceProvider.singleton(
-                            questionnaireResourceUri,
-                            'assets/instruments/framingham-hcdc.json',
                           ),
                           launchContext: launchContext,
                         ),
