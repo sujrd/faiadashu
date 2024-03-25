@@ -372,10 +372,13 @@ class _HomePageState extends State<HomePage> {
                               CodingControlPreference.expanded,
                         ),
                         child: CustomQuestionnaireStepperPage(
-                          fhirResourceProvider: AssetResourceProvider.singleton(
-                            questionnaireResourceUri,
-                            'assets/instruments/sdc_demo_prior_edit.json',
-                          ),
+                          fhirResourceProvider: RegistryFhirResourceProvider([
+                            resourceBundleProvider,
+                            AssetResourceProvider.singleton(
+                              questionnaireResourceUri,
+                              'assets/instruments/sdc_demo_prior_edit.json',
+                            )
+                          ]),
                           launchContext: launchContext,
                         ),
                       ),
