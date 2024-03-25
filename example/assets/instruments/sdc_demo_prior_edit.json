@@ -93,49 +93,8 @@
   ],
   "item": [
     {
-      "extension": [
-        {
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-usageMode",
-          "valueCode": "capture"
-        }
-      ],
-      "linkId": "capture-welcome",
-      "text": "We hope this will only take you a minute!",
-      "type": "display"
-    },
-    {
-      "extension": [
-        {
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-usageMode",
-          "valueCode": "display"
-        }
-      ],
       "linkId": "display-welcome",
-      "text": "We hope this only took you a minute!",
-      "type": "display"
-    },
-    {
-      "extension": [
-        {
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory",
-          "valueCodeableConcept": {
-            "coding": [
-              {
-                "system": "http://hl7.org/fhir/questionnaire-display-category",
-                "code": "security",
-                "display": "Security"
-              }
-            ],
-            "text": "The text provides guidance on how the information will be handled from a security perspective."
-          }
-        },
-        {
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-usageMode",
-          "valueCode": "capture"
-        }
-      ],
-      "linkId": "1.0-security",
-      "text": "ALL QUESTIONS CONTAINED IN THIS QUESTIONNAIRE ARE OPTIONAL AND WILL BE KEPT STRICTLY CONFIDENTIAL.",
+      "text": "We hope this only took you a minute!\n\nThis demo will show all available features for prior-edit entry mode",
       "type": "display"
     },
     {
@@ -171,6 +130,7 @@
       ],
       "linkId": "1.1-event-id",
       "text": "Event ID",
+      "required": true,
       "type": "string"
     },
     {
