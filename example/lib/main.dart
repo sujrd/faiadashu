@@ -337,7 +337,6 @@ class _HomePageState extends State<HomePage> {
                     MaterialPageRoute(
                       builder: (context) => QuestionnaireTheme(
                         data: const QuestionnaireThemeData(
-                          autoJumpNextPage: true,
                           codingControlPreference:
                               CodingControlPreference.expanded,
                         ),
