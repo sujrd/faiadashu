@@ -337,6 +337,36 @@ class _HomePageState extends State<HomePage> {
                     MaterialPageRoute(
                       builder: (context) => QuestionnaireTheme(
                         data: const QuestionnaireThemeData(
+                          autoJumpNextPage: true,
+                          codingControlPreference:
+                              CodingControlPreference.expanded,
+                        ),
+                        child: QuestionnaireStepperPage(
+                          fhirResourceProvider: RegistryFhirResourceProvider([
+                            resourceBundleProvider,
+                            AssetResourceProvider.singleton(
+                              questionnaireResourceUri,
+                              'assets/instruments/sdc_demo_prior_edit.json',
+                            )
+                          ]),
+                          launchContext: launchContext,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text('SDC Demo Stepper with custom navigation'),
+                subtitle: const Text(
+                  'Example of extending stepper page with custom navigation',
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => QuestionnaireTheme(
+                        data: const QuestionnaireThemeData(
                           // It is better for a wizard to overtly present all choices on each screen.
                           codingControlPreference:
                               CodingControlPreference.expanded,
