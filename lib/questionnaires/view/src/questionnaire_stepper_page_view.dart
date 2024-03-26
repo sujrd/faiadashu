@@ -178,7 +178,10 @@ class QuestionnaireStepperPageViewController {
   }
 
   /// Back to the previous page in the `QuestionnaireStepperPageView`.
-  void previousPage({Duration? duration, Curve? curve}) {
+  Future<void> previousPage({
+    Duration? duration,
+    Curve? curve,
+  }) async {
     /// This will prevent racing issue
     if (_state?._hasRequestsRunning ?? false) {
       return;
@@ -188,10 +191,13 @@ class QuestionnaireStepperPageViewController {
       return;
     }
 
-    _state?._pageController.previousPage(
-      curve: curve ?? Curves.easeIn,
-      duration: duration ?? const Duration(milliseconds: 250),
-    );
+    final data = await _state?._onBeforePageChanged();
+    if (data?.canProceed ?? true) {
+      _state?._pageController.previousPage(
+        curve: curve ?? Curves.easeIn,
+        duration: duration ?? const Duration(milliseconds: 250),
+      );
+    }
   }
 
   /// Jump to specific page in the `QuestionnaireStepperPageView`.
