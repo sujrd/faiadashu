@@ -169,7 +169,9 @@ class QuestionnaireStepperPageViewController {
       return;
     }
 
-    final data = await _state?._onBeforePageChanged();
+    final data = await _state?._onBeforePageChanged(
+      direction: QuestionnaireStepperDirection.next,
+    );
     if (data?.canProceed ?? true) {
       _state?._pageController.nextPage(
         curve: curve ?? Curves.easeIn,
