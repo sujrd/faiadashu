@@ -39,6 +39,14 @@ class QuestionnaireResponseModel {
   /// this will also trigger when structure has changed.
   final answeredChangeNotifier = ValueNotifier<int>(-1);
 
+  /// Notifies listeners when the selection or content of an answer changes.
+  ///
+  /// The notifier triggers when an answer is either selected or deselected,
+  /// or its content is modified. This means any form of interaction that
+  /// alters the state of an answer will cause this notifier to inform
+  /// its listeners.
+  final answerChangedNotifier = ValueNotifier<AnswerModel?>(null);
+
   // In which generation were the enabled items last determined?
   int _updateEnabledGeneration = -1;
 
@@ -887,4 +895,15 @@ class QuestionnaireResponseModel {
   /// see: [answeredChangeNotifier]
   final invalidityNotifier =
       ValueNotifier<Map<String, String>?>(<String, String>{});
+
+  void handleChangedAnswer(AnswerModel answerModel) {
+    /// By default, [ValueNotifier] will not emit an event if the object not changed
+    /// By calling notifyListeners, we will emit an event by force
+    /// even if the object stored in [answerChangeNotifier] not changed
+    if (answerChangedNotifier.value == answerModel) {
+      answerChangedNotifier.notifyListeners();
+    } else {
+      answerChangedNotifier.value = answerModel;
+    }
+  }
 }

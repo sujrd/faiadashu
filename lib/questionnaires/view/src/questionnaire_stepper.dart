@@ -14,6 +14,7 @@ class QuestionnaireStepper extends StatefulWidget {
 
   final void Function(QuestionnaireResponseModel?)?
       onQuestionnaireResponseChanged;
+  final void Function(AnswerModel?)? onAnswerChanged;
 
   const QuestionnaireStepper({
     super.key,
@@ -23,6 +24,7 @@ class QuestionnaireStepper extends StatefulWidget {
     this.data,
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
     this.onQuestionnaireResponseChanged,
+    this.onAnswerChanged,
   });
 
   @override
@@ -44,6 +46,10 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
   /// Notifies listeners when there are changes in the questionnaire response.
   void _handleChangedQuestionnaireResponse() {
     widget.onQuestionnaireResponseChanged?.call(_questionnaireResponseModel);
+  }
+
+  void _handleChangedAnswer(AnswerModel? answerModel) {
+    widget.onAnswerChanged?.call(answerModel);
   }
 
   @override
@@ -93,7 +99,9 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                                   FDashLocalizations.of(context)
                                       .aggregationScore(scoreString),
                                   key: ValueKey<String>(scoreString),
-                                  style: Theme.of(context).textTheme.headlineMedium,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium,
                                 ),
                               );
                             },
@@ -134,6 +142,11 @@ class QuestionnaireStepperState extends State<QuestionnaireStepper> {
                 .addListener(_handleChangedQuestionnaireResponse);
             _questionnaireResponseModel?.responseStatusNotifier
                 .addListener(_handleChangedQuestionnaireResponse);
+            _questionnaireResponseModel?.answerChangedNotifier.addListener(() {
+              _handleChangedAnswer(
+                _questionnaireResponseModel?.answerChangedNotifier.value,
+              );
+            });
           }
         }
       },

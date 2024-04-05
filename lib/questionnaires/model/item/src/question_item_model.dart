@@ -104,6 +104,8 @@ class QuestionItemModel extends ResponseItemModel {
     // Updates all error texts, but will not notify.
     validate();
 
+    questionnaireResponseModel.handleChangedAnswer(answerModel);
+
     nextGeneration(
       flow: Flow.end(flow.id),
       isAnsweredChange: isAnsweredChange,
