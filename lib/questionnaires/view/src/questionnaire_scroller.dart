@@ -35,6 +35,7 @@ class QuestionnaireScroller extends StatefulWidget {
 
   final void Function(QuestionnaireResponseModel?)?
       onQuestionnaireResponseChanged;
+  final void Function(AnswerModel?)? onAnswerChanged;
 
   const QuestionnaireScroller({
     required this.scaffoldBuilder,
@@ -44,6 +45,7 @@ class QuestionnaireScroller extends StatefulWidget {
     this.onLinkTap,
     this.questionnaireModelDefaults = const QuestionnaireModelDefaults(),
     this.onQuestionnaireResponseChanged,
+    this.onAnswerChanged,
     super.key,
   });
 
@@ -88,6 +90,10 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
 
   void _handleChangedQuestionnaireResponse() {
     widget.onQuestionnaireResponseChanged?.call(_questionnaireResponseModel);
+  }
+
+  void _handleChangedAnswer(AnswerModel? answerModel) {
+    widget.onAnswerChanged?.call(answerModel);
   }
 
   /// Scrolls to a position for a [FillerItemModel].
@@ -229,6 +235,11 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
                 .addListener(_handleChangedQuestionnaireResponse);
             _questionnaireResponseModel?.responseStatusNotifier
                 .addListener(_handleChangedQuestionnaireResponse);
+            _questionnaireResponseModel?.answerChangedNotifier.addListener(() {
+              _handleChangedAnswer(
+                _questionnaireResponseModel?.answerChangedNotifier.value,
+              );
+            });
           }
 
           // Listen for new invalid items and then scroll to the first one.

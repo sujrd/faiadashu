@@ -118,6 +118,9 @@ class _CustomQuestionnaireStepperPageState
                 onQuestionnaireResponseChanged: (questionnaireResponseModel) {
                   _questionnaireResponseModel = questionnaireResponseModel;
                 },
+                onAnswerChanged: (answerModel) {
+                  debugPrint("[debug] $answerModel");
+                },
               ),
             ),
             Row(
