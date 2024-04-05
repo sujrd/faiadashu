@@ -108,7 +108,11 @@ class _CustomQuestionnaireStepperPageState
                 data: QuestionnaireStepperPageViewData(
                   controller: _controller,
                   onPageChanged: _onPageChanged,
-                  onBeforePageChanged: (currentItemModel, nextItemModel) async {
+                  onBeforePageChanged: (
+                    direction,
+                    currentItemModel,
+                    nextItemModel,
+                  ) async {
                     return BeforePageChangedData(canProceed: true);
                   },
                   onVisibleItemUpdated: (item) {
