@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.11.6
+
+### Faiadashu
+
+* Add onAnswerChanged
+* Fix onBeforePageChanged not properly called when jumping to previous page
+
 ## 0.11.5
 
 ### Faiadashu
