@@ -44,7 +44,7 @@ class _BooleanInputControl extends AnswerInputControl<BooleanAnswerModel> {
           focusNode: focusNode,
           value: (answerModel.isTriState)
               ? answerModel.value?.value
-              : (answerModel.value?.value != null),
+              : (answerModel.value?.value ?? false),
           activeColor:
               (answerModel.displayErrorText(FDashLocalizations.of(context)) !=
                       null)
