@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.11.7
+
+### Faiadashu
+
+* Fix AnswerInputControl type boolean initial value always marked as true
+
 ## 0.11.6
 
 ### Faiadashu
