@@ -145,6 +145,9 @@ class QuestionnaireThemeData {
     required CodingAnswerOptionModel optionModel,
   }) codingControlOptionTitleRenderer;
 
+  /// The amount of space by which to inset the children in [QuestionnaireScroller].
+  final EdgeInsets scrollerPadding;
+
   /// Builds layouts for QuestionnaireScroller items.
   ///
   /// [responseFiller] contains the state data for the current [QuestionnaireResponseFiller].
@@ -224,6 +227,7 @@ class QuestionnaireThemeData {
     this.displayItemLayoutBuilder = _defaultDisplayItemLayoutBuilder,
     this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
     this.codingControlOptionTitleRenderer = _defaultCodingControlOptionTitleRenderer,
+    this.scrollerPadding = const EdgeInsets.all(8.0),
     this.scrollerItemBuilder = _defaultScrollerItemBuilder,
     this.stepperQuestionnaireItemFiller =
         _defaultStepperQuestionnaireItemFiller,
