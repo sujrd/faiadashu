@@ -168,11 +168,17 @@ class _StyledOptionState extends State<_StyledOption> {
   }
 }
 
-class _CheckboxChoice extends StatelessWidget {
+/// CodingChoice
+abstract class _CodingChoice extends StatelessWidget {
+  CodingAnswerOptionModel? get answerOption;
+}
+
+class _CheckboxChoice extends _CodingChoice {
+  @override
   final CodingAnswerOptionModel answerOption;
   final CodingAnswerModel answerModel;
 
-  const _CheckboxChoice(this.answerModel, this.answerOption);
+  _CheckboxChoice(this.answerModel, this.answerOption);
 
   @override
   Widget build(BuildContext context) {
@@ -206,34 +212,15 @@ class _CheckboxChoice extends StatelessWidget {
   }
 }
 
-class _NullRadioChoice extends StatelessWidget {
-  final CodingAnswerModel answerModel;
-
-  const _NullRadioChoice(this.answerModel);
-
+class _RadioChoice extends _CodingChoice {
   @override
-  Widget build(BuildContext context) {
-    return RadioListTile<String?>(
-      title: const NullDashText(),
-      value: null,
-      groupValue: answerModel.singleSelectionUid,
-      onChanged: (answerModel.isControlEnabled)
-          ? (String? newValue) {
-              answerModel.value = OptionsOrString.fromSelectionsAndStrings(
-                answerModel.selectOption(newValue),
-                answerModel.value?.openStrings,
-              );
-            }
-          : null,
-    );
-  }
-}
-
-class _RadioChoice extends StatelessWidget {
-  final CodingAnswerOptionModel answerOption;
+  final CodingAnswerOptionModel? answerOption;
   final CodingAnswerModel answerModel;
 
-  const _RadioChoice(this.answerModel, this.answerOption);
+  _RadioChoice(
+    this.answerModel,
+    this.answerOption,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -340,7 +327,7 @@ class _VerticalCodingChoices extends AnswerInputControl<CodingAnswerModel> {
 }
 
 class _CodingChoices extends AnswerInputControl<CodingAnswerModel> {
-  late final List<Widget> _choices;
+  late final List<_CodingChoice> _choices;
 
   _CodingChoices(
     super.answerModel, {
@@ -370,18 +357,16 @@ class _CodingChoices extends AnswerInputControl<CodingAnswerModel> {
     );
   }
 
-  List<Widget> _createChoices() {
+  List<_CodingChoice> _createChoices() {
     final isCheckBox = qi.isItemControl('check-box');
     final isMultipleChoice = qi.repeats?.value ?? isCheckBox;
     final isShowingNull = answerModel.hasNullOption;
 
-    final choices = <Widget>[];
+    final choices = <_CodingChoice>[];
 
     if (!isMultipleChoice) {
       if (isShowingNull) {
-        choices.add(
-          _NullRadioChoice(answerModel),
-        );
+        choices.add(_RadioChoice(answerModel, null));
       }
     }
     for (final answerOption in answerModel.answerOptions) {
@@ -403,7 +388,7 @@ class _HorizontalCodingChoices extends AnswerInputControl<CodingAnswerModel> {
     super.focusNode,
   });
 
-  final List<Widget> choices;
+  final List<_CodingChoice> choices;
 
   @override
   Widget build(BuildContext context) {
@@ -417,7 +402,7 @@ class _HorizontalCodingChoices extends AnswerInputControl<CodingAnswerModel> {
           child: Row(
             children: choices.map<Widget>(
               (choice) {
-                return choice is _NullRadioChoice
+                return choice.answerOption == null
                     ? SizedBox(width: 96, child: choice)
                     : Expanded(child: choice);
               },
