@@ -7,6 +7,7 @@ class CodingAnswerFiller extends QuestionnaireAnswerFiller {
     super.answerModel, {
     super.key,
   });
+
   @override
   State<StatefulWidget> createState() => _CodingAnswerState();
 }
@@ -109,7 +110,8 @@ class _StyledOption extends StatefulWidget {
 
   const _StyledOption(
     this.answerModel,
-    this.optionModel,);
+    this.optionModel,
+  );
 
   @override
   _StyledOptionState createState() => _StyledOptionState();
@@ -143,7 +145,8 @@ class _StyledOptionState extends State<_StyledOption> {
       // continue if widget generation failed for any reason...
     }
 
-    final optionTitle = QuestionnaireTheme.of(context).codingControlOptionTitleRenderer(
+    final optionTitle =
+        QuestionnaireTheme.of(context).codingControlOptionTitleRenderer(
       optionModel: optionModel,
     );
 

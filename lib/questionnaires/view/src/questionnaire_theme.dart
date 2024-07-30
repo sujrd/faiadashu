@@ -267,7 +267,8 @@ class QuestionnaireThemeData {
     this.groupItemLayoutBuilder = _defaultGroupItemLayoutBuilder,
     this.displayItemLayoutBuilder = _defaultDisplayItemLayoutBuilder,
     this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
-    this.codingControlOptionTitleRenderer = _defaultCodingControlOptionTitleRenderer,
+    this.codingControlOptionTitleRenderer =
+        _defaultCodingControlOptionTitleRenderer,
     this.codingRadioChoiceBuilder = _defaultCodingRadioChoiceBuilder,
     this.codingCheckboxChoiceBuilder = _defaultCodingCheckboxChoiceBuilder,
     this.scrollerPadding = const EdgeInsets.all(8.0),
