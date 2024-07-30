@@ -402,15 +402,27 @@ class _HorizontalCodingChoices extends AnswerInputControl<CodingAnswerModel> {
         _CodingChoiceDecorator(
           answerModel,
           focusNode: focusNode,
-          child: Row(
-            children: choices.map<Widget>(
-              (choice) {
-                return choice.answerOption == null
-                    ? SizedBox(width: 96, child: choice)
-                    : Expanded(child: choice);
-              },
-            ).toList(growable: false),
-          ),
+          child:
+              QuestionnaireTheme.of(context).allowHorizontalCodingMultipleLines
+                  ? Wrap(
+                      children: choices.map<Widget>((choice) {
+                        return IntrinsicWidth(
+                          child: Container(
+                            constraints: const BoxConstraints(minWidth: 96),
+                            child: choice,
+                          ),
+                        );
+                      }).toList(),
+                    )
+                  : Row(
+                      children: choices.map<Widget>(
+                        (choice) {
+                          return choice.answerOption == null
+                              ? SizedBox(width: 96, child: choice)
+                              : Expanded(child: choice);
+                        },
+                      ).toList(growable: false),
+                    ),
         ),
       ],
     );

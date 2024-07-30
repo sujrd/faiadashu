@@ -59,6 +59,12 @@ class QuestionnaireThemeData {
   /// The minimum display width to show coding answers horizontally
   final double horizontalCodingBreakpoint;
 
+  static const defaultAllowHorizontalCodingMultipleLines = false;
+
+  /// A boolean field that determines whether multiple lines are allowed
+  /// for horizontal coding choices.
+  final bool allowHorizontalCodingMultipleLines;
+
   static const defaultMaxLinesForTextItem = 4;
   final int maxLinesForTextItem;
 
@@ -256,6 +262,8 @@ class QuestionnaireThemeData {
     this.inlineItemMedia = true,
     this.autoCompleteThreshold = defaultAutoCompleteThreshold,
     this.horizontalCodingBreakpoint = defaultHorizontalCodingBreakpoint,
+    this.allowHorizontalCodingMultipleLines =
+        defaultAllowHorizontalCodingMultipleLines,
     this.maxLinesForTextItem = defaultMaxLinesForTextItem,
     this.codingControlPreference = defaultCodingControlPreference,
     this.maxItemWidth = defaultMaxItemWidth,
