@@ -397,7 +397,7 @@ class _HorizontalCodingChoices extends AnswerInputControl<CodingAnswerModel> {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _CodingChoiceDecorator(
           answerModel,
