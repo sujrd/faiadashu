@@ -145,6 +145,25 @@ class QuestionnaireThemeData {
     required CodingAnswerOptionModel optionModel,
   }) codingControlOptionTitleRenderer;
 
+  /// A builder function for creating a radio choice widget for coding answers.
+  ///
+  /// [context] - The build context in which the widget is built.
+  ///
+  /// [answerModel] - A required [CodingAnswerModel] representing the model of the coding answer.
+  ///
+  /// [answerOption] - A required [CodingAnswerOptionModel] representing the specific option for the coding answer.
+  ///
+  /// [titleWidget] - A required [Widget] that represents the title of the radio choice.
+  ///
+  /// [onChanged] - A required callback function that is triggered when the radio button state changes. It takes a [String?] indicating the new value of the radio button.
+  final Widget Function(
+    BuildContext context, {
+    required CodingAnswerModel answerModel,
+    required CodingAnswerOptionModel? answerOption,
+    required Widget titleWidget,
+    required Function(String?) onChanged,
+  }) codingRadioChoiceBuilder;
+
   /// A builder function for creating a checkbox choice widget for coding answers.
   ///
   /// [context] - The build context in which the widget is built.
@@ -249,6 +268,7 @@ class QuestionnaireThemeData {
     this.displayItemLayoutBuilder = _defaultDisplayItemLayoutBuilder,
     this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
     this.codingControlOptionTitleRenderer = _defaultCodingControlOptionTitleRenderer,
+    this.codingRadioChoiceBuilder = _defaultCodingRadioChoiceBuilder,
     this.codingCheckboxChoiceBuilder = _defaultCodingCheckboxChoiceBuilder,
     this.scrollerPadding = const EdgeInsets.all(8.0),
     this.scrollerItemBuilder = _defaultScrollerItemBuilder,
@@ -601,6 +621,23 @@ class QuestionnaireThemeData {
       title: titleWidget,
       subtitle: subtitleWidget,
       value: answerModel.isSelected(answerOption.uid),
+      onChanged: onChanged,
+    );
+  }
+
+  static Widget _defaultCodingRadioChoiceBuilder(
+    BuildContext context, {
+    required CodingAnswerModel answerModel,
+    required CodingAnswerOptionModel? answerOption,
+    required Widget titleWidget,
+    required Function(String?) onChanged,
+  }) {
+    return RadioListTile<String?>(
+      title: titleWidget,
+      // allows value to be set to null on repeat tap
+      toggleable: true,
+      groupValue: answerModel.singleSelectionUid,
+      value: answerOption?.uid,
       onChanged: onChanged,
     );
   }

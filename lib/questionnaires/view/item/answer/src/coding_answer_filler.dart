@@ -238,24 +238,26 @@ class _RadioChoice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Focus(
-      child: RadioListTile<String>(
-        title: _StyledOption(
-          answerModel,
-          answerOption,
-        ),
-        value: answerOption.uid,
-        // allows value to be set to null on repeat tap
-        toggleable: true,
-        groupValue: answerModel.singleSelectionUid,
-        onChanged: (answerModel.isControlEnabled)
-            ? (String? newValue) {
-                Focus.of(context).requestFocus();
-                answerModel.value = OptionsOrString.fromSelectionsAndStrings(
-                  answerModel.selectOption(newValue),
-                  answerModel.value?.openStrings,
-                );
-              }
-            : null,
+      child: QuestionnaireTheme.of(context).codingRadioChoiceBuilder(
+        context,
+        answerModel: answerModel,
+        answerOption: answerOption,
+        titleWidget: answerOption != null
+            ? _StyledOption(
+                answerModel,
+                answerOption!,
+              )
+            : const NullDashText(),
+        onChanged: (newValue) {
+          if (!answerModel.isControlEnabled) {
+            return;
+          }
+          Focus.of(context).requestFocus();
+          answerModel.value = OptionsOrString.fromSelectionsAndStrings(
+            answerModel.selectOption(newValue),
+            answerModel.value?.openStrings,
+          );
+        },
       ),
     );
   }
