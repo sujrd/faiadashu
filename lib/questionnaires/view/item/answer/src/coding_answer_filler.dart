@@ -177,27 +177,30 @@ class _CheckboxChoice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Focus(
-      child: CheckboxListTile(
-        title: _StyledOption(
+      child: QuestionnaireTheme.of(context).codingCheckboxChoiceBuilder(
+        context,
+        answerModel: answerModel,
+        answerOption: answerOption,
+        titleWidget: _StyledOption(
           answerModel,
           answerOption,
         ),
-        subtitle: answerOption.isExclusive
+        subtitleWidget: answerOption.isExclusive
             ? Text(FDashLocalizations.of(context).fillerExclusiveOptionLabel)
             : null,
-        value: answerModel.isSelected(answerOption.uid),
-        onChanged: (answerModel.isControlEnabled)
-            ? (bool? newValue) {
-                Focus.of(context).requestFocus();
-                final newValue = answerModel.toggleOption(
-                  answerOption.uid,
-                );
-                answerModel.value = OptionsOrString.fromSelectionsAndStrings(
-                  newValue,
-                  answerModel.value?.openStrings,
-                );
-              }
-            : null,
+        onChanged: (newValue) {
+          if (!answerModel.isControlEnabled) {
+            return;
+          }
+          Focus.of(context).requestFocus();
+          final newValue = answerModel.toggleOption(
+            answerOption.uid,
+          );
+          answerModel.value = OptionsOrString.fromSelectionsAndStrings(
+            newValue,
+            answerModel.value?.openStrings,
+          );
+        },
       ),
     );
   }

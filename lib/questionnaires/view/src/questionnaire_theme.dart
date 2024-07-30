@@ -145,6 +145,28 @@ class QuestionnaireThemeData {
     required CodingAnswerOptionModel optionModel,
   }) codingControlOptionTitleRenderer;
 
+  /// A builder function for creating a checkbox choice widget for coding answers.
+  ///
+  /// [context] - The build context in which the widget is built.
+  ///
+  /// [answerModel] - A required [CodingAnswerModel] representing the model of the coding answer.
+  ///
+  /// [answerOption] - A required [CodingAnswerOptionModel] representing the specific option for the coding answer.
+  ///
+  /// [titleWidget] - A required [Widget] that represents the title of the checkbox choice.
+  ///
+  /// [subtitleWidget] - An optional [Widget] that represents the subtitle of the checkbox choice. Can be null.
+  ///
+  /// [onChanged] - A required callback function that is triggered when the checkbox state changes. It takes a [bool?] indicating the new state of the checkbox.
+  final Widget Function(
+    BuildContext context, {
+    required CodingAnswerModel answerModel,
+    required CodingAnswerOptionModel answerOption,
+    required Widget titleWidget,
+    required Widget? subtitleWidget,
+    required Function(bool?) onChanged,
+  }) codingCheckboxChoiceBuilder;
+
   /// The amount of space by which to inset the children in [QuestionnaireScroller].
   final EdgeInsets scrollerPadding;
 
@@ -227,6 +249,7 @@ class QuestionnaireThemeData {
     this.displayItemLayoutBuilder = _defaultDisplayItemLayoutBuilder,
     this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
     this.codingControlOptionTitleRenderer = _defaultCodingControlOptionTitleRenderer,
+    this.codingCheckboxChoiceBuilder = _defaultCodingCheckboxChoiceBuilder,
     this.scrollerPadding = const EdgeInsets.all(8.0),
     this.scrollerItemBuilder = _defaultScrollerItemBuilder,
     this.stepperQuestionnaireItemFiller =
@@ -563,6 +586,22 @@ class QuestionnaireThemeData {
             ),
         ],
       ),
+    );
+  }
+
+  static Widget _defaultCodingCheckboxChoiceBuilder(
+    BuildContext context, {
+    required CodingAnswerModel answerModel,
+    required CodingAnswerOptionModel answerOption,
+    required Widget titleWidget,
+    required Widget? subtitleWidget,
+    required Function(bool?) onChanged,
+  }) {
+    return CheckboxListTile(
+      title: titleWidget,
+      subtitle: subtitleWidget,
+      value: answerModel.isSelected(answerOption.uid),
+      onChanged: onChanged,
     );
   }
 }
