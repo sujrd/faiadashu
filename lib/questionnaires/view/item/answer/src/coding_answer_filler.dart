@@ -408,7 +408,9 @@ class _HorizontalCodingChoices extends AnswerInputControl<CodingAnswerModel> {
                       children: choices.map<Widget>((choice) {
                         return IntrinsicWidth(
                           child: Container(
-                            constraints: const BoxConstraints(minWidth: 96),
+                            constraints: choice.answerOption == null
+                                ? const BoxConstraints(minWidth: 96)
+                                : null,
                             child: choice,
                           ),
                         );
