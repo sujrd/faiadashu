@@ -405,6 +405,7 @@ class _HorizontalCodingChoices extends AnswerInputControl<CodingAnswerModel> {
           child:
               QuestionnaireTheme.of(context).allowHorizontalCodingMultipleLines
                   ? Wrap(
+                      spacing: 10.0,
                       children: choices.map<Widget>((choice) {
                         return IntrinsicWidth(
                           child: Container(
@@ -414,7 +415,7 @@ class _HorizontalCodingChoices extends AnswerInputControl<CodingAnswerModel> {
                             child: choice,
                           ),
                         );
-                      }).toList(),
+                      }).toList(growable: false),
                     )
                   : Row(
                       children: choices.map<Widget>(
