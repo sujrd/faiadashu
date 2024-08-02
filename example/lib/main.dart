@@ -298,7 +298,6 @@ class _HomePageState extends State<HomePage> {
                       builder: (context) => QuestionnaireTheme(
                         data: const QuestionnaireThemeData(
                           horizontalCodingBreakpoint: 100,
-                          allowHorizontalCodingMultipleLines: true,
                         ),
                         child: QuestionnaireScroller(
                           scaffoldBuilder: const CherryBlossomScaffoldBuilder(),
