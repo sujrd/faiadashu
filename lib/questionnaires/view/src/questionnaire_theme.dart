@@ -148,12 +148,20 @@ class QuestionnaireThemeData {
   /// This function takes a [BuildContext] and a list of [CodingChoice] widgets,
   /// and returns a widget that arranges the coding choices horizontally.
   ///
-  /// The [choices] parameter is a required list of [CodingChoice] widgets that
-  /// will be arranged horizontally within the returned widget.
+  /// The [choices] parameter is a required list of [CodingChoice] widgets.
   final Widget Function(
     BuildContext context, {
     required List<CodingChoice> choices,
   }) codingHorizontalLayoutBuilder;
+
+  /// This function takes a [BuildContext] and a list of [CodingChoice] widgets,
+  /// and returns a widget that arranges the coding choices vertically.
+  ///
+  /// The [choices] parameter is a required list of [CodingChoice] widgets.
+  final Widget Function(
+    BuildContext context, {
+    required List<CodingChoice> choices,
+  }) codingVerticalLayoutBuilder;
 
   /// A builder function for creating a radio choice widget for coding answers.
   ///
@@ -280,6 +288,7 @@ class QuestionnaireThemeData {
     this.codingControlOptionTitleRenderer =
         _defaultCodingControlOptionTitleRenderer,
     this.codingHorizontalLayoutBuilder = _defaultCodingHorizontalLayoutBuilder,
+    this.codingVerticalLayoutBuilder = _defaultCodingVerticalLayoutBuilder,
     this.codingRadioChoiceBuilder = _defaultCodingRadioChoiceBuilder,
     this.codingCheckboxChoiceBuilder = _defaultCodingCheckboxChoiceBuilder,
     this.scrollerPadding = const EdgeInsets.all(8.0),
@@ -666,6 +675,16 @@ class QuestionnaireThemeData {
               : Expanded(child: choice);
         },
       ).toList(growable: false),
+    );
+  }
+
+  static Widget _defaultCodingVerticalLayoutBuilder(
+    BuildContext context, {
+    required List<CodingChoice> choices,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: choices,
     );
   }
 }

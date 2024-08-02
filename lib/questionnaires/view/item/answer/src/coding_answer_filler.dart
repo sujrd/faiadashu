@@ -303,7 +303,7 @@ class _VerticalCodingChoices extends AnswerInputControl<CodingAnswerModel> {
     super.focusNode,
   });
 
-  final List<Widget> choices;
+  final List<CodingChoice> choices;
 
   @override
   Widget build(BuildContext context) {
@@ -314,9 +314,9 @@ class _VerticalCodingChoices extends AnswerInputControl<CodingAnswerModel> {
         _CodingChoiceDecorator(
           answerModel,
           focusNode: focusNode,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: choices,
+          child: QuestionnaireTheme.of(context).codingVerticalLayoutBuilder(
+            context,
+            choices: choices,
           ),
         ),
       ],
