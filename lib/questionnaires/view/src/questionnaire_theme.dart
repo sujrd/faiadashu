@@ -59,12 +59,6 @@ class QuestionnaireThemeData {
   /// The minimum display width to show coding answers horizontally
   final double horizontalCodingBreakpoint;
 
-  static const defaultAllowHorizontalCodingMultipleLines = false;
-
-  /// A boolean field that determines whether multiple lines are allowed
-  /// for horizontal coding choices.
-  final bool allowHorizontalCodingMultipleLines;
-
   static const defaultMaxLinesForTextItem = 4;
   final int maxLinesForTextItem;
 
@@ -150,6 +144,16 @@ class QuestionnaireThemeData {
   final RenderingString Function({
     required CodingAnswerOptionModel optionModel,
   }) codingControlOptionTitleRenderer;
+
+  /// This function takes a [BuildContext] and a list of [CodingChoice] widgets,
+  /// and returns a widget that arranges the coding choices horizontally.
+  ///
+  /// The [choices] parameter is a required list of [CodingChoice] widgets that
+  /// will be arranged horizontally within the returned widget.
+  final Widget Function(
+    BuildContext context, {
+    required List<CodingChoice> choices,
+  }) codingHorizontalLayoutBuilder;
 
   /// A builder function for creating a radio choice widget for coding answers.
   ///
@@ -262,8 +266,6 @@ class QuestionnaireThemeData {
     this.inlineItemMedia = true,
     this.autoCompleteThreshold = defaultAutoCompleteThreshold,
     this.horizontalCodingBreakpoint = defaultHorizontalCodingBreakpoint,
-    this.allowHorizontalCodingMultipleLines =
-        defaultAllowHorizontalCodingMultipleLines,
     this.maxLinesForTextItem = defaultMaxLinesForTextItem,
     this.codingControlPreference = defaultCodingControlPreference,
     this.maxItemWidth = defaultMaxItemWidth,
@@ -277,6 +279,7 @@ class QuestionnaireThemeData {
     this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
     this.codingControlOptionTitleRenderer =
         _defaultCodingControlOptionTitleRenderer,
+    this.codingHorizontalLayoutBuilder = _defaultCodingHorizontalLayoutBuilder,
     this.codingRadioChoiceBuilder = _defaultCodingRadioChoiceBuilder,
     this.codingCheckboxChoiceBuilder = _defaultCodingCheckboxChoiceBuilder,
     this.scrollerPadding = const EdgeInsets.all(8.0),
@@ -648,6 +651,21 @@ class QuestionnaireThemeData {
       groupValue: answerModel.singleSelectionUid,
       value: answerOption?.uid,
       onChanged: onChanged,
+    );
+  }
+
+  static Widget _defaultCodingHorizontalLayoutBuilder(
+    BuildContext context, {
+    required List<CodingChoice> choices,
+  }) {
+    return Row(
+      children: choices.map<Widget>(
+        (choice) {
+          return choice.answerOption == null
+              ? SizedBox(width: 96, child: choice)
+              : Expanded(child: choice);
+        },
+      ).toList(growable: false),
     );
   }
 }

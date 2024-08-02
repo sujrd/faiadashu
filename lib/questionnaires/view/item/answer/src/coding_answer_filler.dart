@@ -171,12 +171,7 @@ class _StyledOptionState extends State<_StyledOption> {
   }
 }
 
-/// CodingChoice
-abstract class _CodingChoice extends StatelessWidget {
-  CodingAnswerOptionModel? get answerOption;
-}
-
-class _CheckboxChoice extends _CodingChoice {
+class _CheckboxChoice extends CodingChoice {
   @override
   final CodingAnswerOptionModel answerOption;
   final CodingAnswerModel answerModel;
@@ -215,7 +210,7 @@ class _CheckboxChoice extends _CodingChoice {
   }
 }
 
-class _RadioChoice extends _CodingChoice {
+class _RadioChoice extends CodingChoice {
   @override
   final CodingAnswerOptionModel? answerOption;
   final CodingAnswerModel answerModel;
@@ -330,7 +325,7 @@ class _VerticalCodingChoices extends AnswerInputControl<CodingAnswerModel> {
 }
 
 class _CodingChoices extends AnswerInputControl<CodingAnswerModel> {
-  late final List<_CodingChoice> _choices;
+  late final List<CodingChoice> _choices;
 
   _CodingChoices(
     super.answerModel, {
@@ -360,12 +355,12 @@ class _CodingChoices extends AnswerInputControl<CodingAnswerModel> {
     );
   }
 
-  List<_CodingChoice> _createChoices() {
+  List<CodingChoice> _createChoices() {
     final isCheckBox = qi.isItemControl('check-box');
     final isMultipleChoice = qi.repeats?.value ?? isCheckBox;
     final isShowingNull = answerModel.hasNullOption;
 
-    final choices = <_CodingChoice>[];
+    final choices = <CodingChoice>[];
 
     if (!isMultipleChoice) {
       if (isShowingNull) {
@@ -391,7 +386,7 @@ class _HorizontalCodingChoices extends AnswerInputControl<CodingAnswerModel> {
     super.focusNode,
   });
 
-  final List<_CodingChoice> choices;
+  final List<CodingChoice> choices;
 
   @override
   Widget build(BuildContext context) {
@@ -402,30 +397,10 @@ class _HorizontalCodingChoices extends AnswerInputControl<CodingAnswerModel> {
         _CodingChoiceDecorator(
           answerModel,
           focusNode: focusNode,
-          child:
-              QuestionnaireTheme.of(context).allowHorizontalCodingMultipleLines
-                  ? Wrap(
-                      spacing: 10.0,
-                      children: choices.map<Widget>((choice) {
-                        return IntrinsicWidth(
-                          child: Container(
-                            constraints: choice.answerOption == null
-                                ? const BoxConstraints(minWidth: 96)
-                                : null,
-                            child: choice,
-                          ),
-                        );
-                      }).toList(growable: false),
-                    )
-                  : Row(
-                      children: choices.map<Widget>(
-                        (choice) {
-                          return choice.answerOption == null
-                              ? SizedBox(width: 96, child: choice)
-                              : Expanded(child: choice);
-                        },
-                      ).toList(growable: false),
-                    ),
+          child: QuestionnaireTheme.of(context).codingHorizontalLayoutBuilder(
+            context,
+            choices: choices,
+          ),
         ),
       ],
     );
