@@ -295,21 +295,26 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => QuestionnaireScroller(
-                        scaffoldBuilder: const CherryBlossomScaffoldBuilder(),
-                        fhirResourceProvider: RegistryFhirResourceProvider([
-                          resourceBundleProvider,
-                          AssetResourceProvider.singleton(
-                            questionnaireResourceUri,
-                            'assets/instruments/sdc_demo.json',
-                          )
-                        ]),
-                        launchContext: launchContext,
-                        questionnaireModelDefaults:
-                            const QuestionnaireModelDefaults(
-                          prefixBuilder: QuestionnaireModelDefaults
-                              .questionNumeralPrefixBuilder,
-                          implicitNullOption: false,
+                      builder: (context) => QuestionnaireTheme(
+                        data: const QuestionnaireThemeData(
+                          horizontalCodingBreakpoint: 100,
+                        ),
+                        child: QuestionnaireScroller(
+                          scaffoldBuilder: const CherryBlossomScaffoldBuilder(),
+                          fhirResourceProvider: RegistryFhirResourceProvider([
+                            resourceBundleProvider,
+                            AssetResourceProvider.singleton(
+                              questionnaireResourceUri,
+                              'assets/instruments/sdc_demo.json',
+                            )
+                          ]),
+                          launchContext: launchContext,
+                          questionnaireModelDefaults:
+                              const QuestionnaireModelDefaults(
+                            prefixBuilder: QuestionnaireModelDefaults
+                                .questionNumeralPrefixBuilder,
+                            implicitNullOption: false,
+                          ),
                         ),
                       ),
                     ),

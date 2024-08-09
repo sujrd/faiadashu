@@ -145,6 +145,68 @@ class QuestionnaireThemeData {
     required CodingAnswerOptionModel optionModel,
   }) codingControlOptionTitleRenderer;
 
+  /// This function takes a [BuildContext] and a list of [CodingChoice] widgets,
+  /// and returns a widget that arranges the coding choices horizontally.
+  ///
+  /// The [choices] parameter is a required list of [CodingChoice] widgets.
+  final Widget Function(
+    BuildContext context, {
+    required List<CodingChoice> choices,
+  }) codingHorizontalLayoutBuilder;
+
+  /// This function takes a [BuildContext] and a list of [CodingChoice] widgets,
+  /// and returns a widget that arranges the coding choices vertically.
+  ///
+  /// The [choices] parameter is a required list of [CodingChoice] widgets.
+  final Widget Function(
+    BuildContext context, {
+    required List<CodingChoice> choices,
+  }) codingVerticalLayoutBuilder;
+
+  /// A builder function for creating a radio choice widget for coding answers.
+  ///
+  /// [context] - The build context in which the widget is built.
+  ///
+  /// [answerModel] - A required [CodingAnswerModel] representing the model of the coding answer.
+  ///
+  /// [answerOption] - A required [CodingAnswerOptionModel] representing the specific option for the coding answer.
+  ///
+  /// [titleWidget] - A required [Widget] that represents the title of the radio choice.
+  ///
+  /// [onChanged] - A required callback function that is triggered when the radio button state changes. It takes a [String?] indicating the new value of the radio button.
+  final Widget Function(
+    BuildContext context, {
+    required CodingAnswerModel answerModel,
+    required CodingAnswerOptionModel? answerOption,
+    required Widget titleWidget,
+    required Function(String?) onChanged,
+  }) codingRadioChoiceBuilder;
+
+  /// A builder function for creating a checkbox choice widget for coding answers.
+  ///
+  /// [context] - The build context in which the widget is built.
+  ///
+  /// [answerModel] - A required [CodingAnswerModel] representing the model of the coding answer.
+  ///
+  /// [answerOption] - A required [CodingAnswerOptionModel] representing the specific option for the coding answer.
+  ///
+  /// [titleWidget] - A required [Widget] that represents the title of the checkbox choice.
+  ///
+  /// [subtitleWidget] - An optional [Widget] that represents the subtitle of the checkbox choice. Can be null.
+  ///
+  /// [onChanged] - A required callback function that is triggered when the checkbox state changes. It takes a [bool?] indicating the new state of the checkbox.
+  final Widget Function(
+    BuildContext context, {
+    required CodingAnswerModel answerModel,
+    required CodingAnswerOptionModel answerOption,
+    required Widget titleWidget,
+    required Widget? subtitleWidget,
+    required Function(bool?) onChanged,
+  }) codingCheckboxChoiceBuilder;
+
+  /// The amount of space by which to inset the children in [QuestionnaireScroller].
+  final EdgeInsets scrollerPadding;
+
   /// Builds layouts for QuestionnaireScroller items.
   ///
   /// [responseFiller] contains the state data for the current [QuestionnaireResponseFiller].
@@ -223,7 +285,13 @@ class QuestionnaireThemeData {
     this.groupItemLayoutBuilder = _defaultGroupItemLayoutBuilder,
     this.displayItemLayoutBuilder = _defaultDisplayItemLayoutBuilder,
     this.codingControlLayoutBuilder = _defaultCodingControlLayoutBuilder,
-    this.codingControlOptionTitleRenderer = _defaultCodingControlOptionTitleRenderer,
+    this.codingControlOptionTitleRenderer =
+        _defaultCodingControlOptionTitleRenderer,
+    this.codingHorizontalLayoutBuilder = _defaultCodingHorizontalLayoutBuilder,
+    this.codingVerticalLayoutBuilder = _defaultCodingVerticalLayoutBuilder,
+    this.codingRadioChoiceBuilder = _defaultCodingRadioChoiceBuilder,
+    this.codingCheckboxChoiceBuilder = _defaultCodingCheckboxChoiceBuilder,
+    this.scrollerPadding = const EdgeInsets.all(8.0),
     this.scrollerItemBuilder = _defaultScrollerItemBuilder,
     this.stepperQuestionnaireItemFiller =
         _defaultStepperQuestionnaireItemFiller,
@@ -559,6 +627,64 @@ class QuestionnaireThemeData {
             ),
         ],
       ),
+    );
+  }
+
+  static Widget _defaultCodingCheckboxChoiceBuilder(
+    BuildContext context, {
+    required CodingAnswerModel answerModel,
+    required CodingAnswerOptionModel answerOption,
+    required Widget titleWidget,
+    required Widget? subtitleWidget,
+    required Function(bool?) onChanged,
+  }) {
+    return CheckboxListTile(
+      title: titleWidget,
+      subtitle: subtitleWidget,
+      value: answerModel.isSelected(answerOption.uid),
+      onChanged: onChanged,
+    );
+  }
+
+  static Widget _defaultCodingRadioChoiceBuilder(
+    BuildContext context, {
+    required CodingAnswerModel answerModel,
+    required CodingAnswerOptionModel? answerOption,
+    required Widget titleWidget,
+    required Function(String?) onChanged,
+  }) {
+    return RadioListTile<String?>(
+      title: titleWidget,
+      // allows value to be set to null on repeat tap
+      toggleable: true,
+      groupValue: answerModel.singleSelectionUid,
+      value: answerOption?.uid,
+      onChanged: onChanged,
+    );
+  }
+
+  static Widget _defaultCodingHorizontalLayoutBuilder(
+    BuildContext context, {
+    required List<CodingChoice> choices,
+  }) {
+    return Row(
+      children: choices.map<Widget>(
+        (choice) {
+          return choice.answerOption == null
+              ? SizedBox(width: 96, child: choice)
+              : Expanded(child: choice);
+        },
+      ).toList(growable: false),
+    );
+  }
+
+  static Widget _defaultCodingVerticalLayoutBuilder(
+    BuildContext context, {
+    required List<CodingChoice> choices,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: choices,
     );
   }
 }
