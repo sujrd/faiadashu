@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.11.8
+
+### Faiadashu
+
+* Support customizable scroller area
+
 ## 0.11.7
 
 ### Faiadashu
