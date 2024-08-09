@@ -178,14 +178,11 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
           },
           child: LayoutBuilder(
             builder: (context, constraints) {
-              const edgeInsets = 8.0;
-              const twice = 2;
-
               return ScrollablePositionedList.builder(
                 itemScrollController: _listScrollController,
                 itemPositionsListener: _itemPositionsListener,
                 itemCount: totalLength,
-                padding: const EdgeInsets.all(edgeInsets),
+                padding: QuestionnaireTheme.of(context).scrollerPadding,
                 minCacheExtent: 200, // Allow tabbing to prev/next items
                 itemBuilder: (BuildContext context, int i) {
                   return Row(
@@ -195,7 +192,13 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
                           maxWidth:
                               QuestionnaireTheme.of(context).maxItemWidth.clamp(
                                     constraints.minWidth,
-                                    constraints.maxWidth - twice * edgeInsets,
+                                    constraints.maxWidth -
+                                        (QuestionnaireTheme.of(context)
+                                                .scrollerPadding
+                                                .left +
+                                            QuestionnaireTheme.of(context)
+                                                .scrollerPadding
+                                                .right),
                                   ),
                         ),
                         child:
