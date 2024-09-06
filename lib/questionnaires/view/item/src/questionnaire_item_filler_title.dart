@@ -1,8 +1,8 @@
 import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
-import 'package:faiadashu/utils/to_text_span.dart';
 import 'package:flutter/material.dart';
+import 'package:simple_html_css/simple_html_css.dart';
 
 class QuestionnaireItemFillerTitle extends StatelessWidget {
   final Widget? leading;
@@ -82,7 +82,7 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
                   width: 16.0,
                 ),
               ),
-            toTextSpan(
+            HTML.toTextSpan(
               context,
               htmlTitleText,
               defaultTextStyle: Theme.of(context).textTheme.bodyMedium,
@@ -196,6 +196,7 @@ class _QuestionnaireItemFillerSupportLink extends StatelessWidget {
 
 class _QuestionnaireItemFillerTitleLeading extends StatelessWidget {
   final Widget _leadingWidget;
+
   const _QuestionnaireItemFillerTitleLeading._(Widget leadingWidget)
       : _leadingWidget = leadingWidget;
 
