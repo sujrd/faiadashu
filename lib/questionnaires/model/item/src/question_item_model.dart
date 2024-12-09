@@ -150,6 +150,7 @@ class QuestionItemModel extends ResponseItemModel {
   ///
   /// Returns null if not applicable (either question unanswered, or wrong type)
   FhirDecimal? get ordinalValue {
+    if (answerModels.isEmpty) return null;
     final answerModel = firstAnswerModel;
 
     return answerModel.isNotEmpty &&
@@ -326,11 +327,15 @@ class QuestionItemModel extends ResponseItemModel {
       // errors
       final initialValues = (questionnaireItem.initial ?? []).toList();
 
-      if ({QuestionnaireItemType.choice,QuestionnaireItemType.openChoice}.contains(questionnaireItem.type)) {
+      if ({QuestionnaireItemType.choice, QuestionnaireItemType.openChoice}
+          .contains(questionnaireItem.type)) {
         // Add answerOptions marked as initialSelected to array of initialValues
         final initialSelected = questionnaireItem.answerOption
-            ?.where((option) => option.initialSelected?.value == true && option.valueCoding != null)
-            .map((option) => QuestionnaireInitial(valueCoding: option.valueCoding));
+            ?.where((option) =>
+                option.initialSelected?.value == true &&
+                option.valueCoding != null)
+            .map((option) =>
+                QuestionnaireInitial(valueCoding: option.valueCoding));
         initialValues.addAll(initialSelected ?? []);
       }
 

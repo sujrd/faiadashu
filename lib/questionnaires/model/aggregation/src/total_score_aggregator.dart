@@ -17,9 +17,10 @@ class TotalScoreAggregator extends Aggregator<FhirDecimal> {
   static final _logger = Logger(TotalScoreAggregator);
 
   late final QuestionItemModel? totalScoreItem;
-  TotalScoreAggregator(
-      {required FDashLocalizations localizations, bool autoAggregate = true,})
-      : super(
+  TotalScoreAggregator({
+    required FDashLocalizations localizations,
+    bool autoAggregate = true,
+  }) : super(
           FhirDecimal(0),
           localizations: localizations,
           autoAggregate: autoAggregate,
@@ -67,7 +68,9 @@ class TotalScoreAggregator extends Aggregator<FhirDecimal> {
       value = result;
     }
 
-    totalScoreItem.firstAnswerModel.populateFromExpression(result);
+    if (totalScoreItem.answerModels.isNotEmpty) {
+      totalScoreItem.firstAnswerModel.populateFromExpression(result);
+    }
 
     return result;
   }
