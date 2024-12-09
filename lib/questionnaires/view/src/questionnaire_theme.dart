@@ -570,17 +570,11 @@ class QuestionnaireThemeData {
     BuildContext context,
     QuestionnaireItemFiller itemFiller,
   ) {
-    return Column(
-      children: [
-        Flexible(
-          child: SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: itemFiller,
-            ),
-          ),
-        ),
-      ],
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: itemFiller,
+      ),
     );
   }
 
