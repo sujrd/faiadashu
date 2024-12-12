@@ -4,7 +4,7 @@ import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_html_css/simple_html_css.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 
 /// A styled display item for total scores.
 ///
@@ -15,6 +15,7 @@ class TotalScoreItem extends QuestionnaireAnswerFiller {
     super.answerModel, {
     super.key,
   });
+
   @override
   State<StatefulWidget> createState() => _TotalScoreItemState();
 }
@@ -122,7 +123,7 @@ class _TotalScoreItemState extends State<TotalScoreItem> {
               child: (feedback != null)
                   ? Container(
                       key: ValueKey<String>(feedback),
-                      child: HTML.toRichText(context, feedback),
+                      child: HtmlWidget(feedback),
                     )
                   : const SizedBox(
                       height: 16.0,
