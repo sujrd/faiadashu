@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simple_html_css/simple_html_css.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 
 import 'exhibit_page.dart';
 
@@ -9,8 +9,7 @@ class AboutPage extends ExhibitPage {
   @override
   Widget buildExhibit(BuildContext context) {
     return Builder(
-      builder: (context) => HTML.toRichText(
-        context,
+      builder: (context) => HtmlWidget(
         '''
     <i><h2>Faiadashu™ FHIRDash</h2></i>
     <p>Faia Dasshu <i>[(ファイアダッシュ)]</i> — or <i>Fire Dash</i> — is a play with words.</p>
@@ -21,7 +20,7 @@ class AboutPage extends ExhibitPage {
     <p><b>I love the sound of it.</b><br>
     <div style="font-size: 10px; color:#888888">私はその音が大好きです。</div></p> 
     ''',
-        defaultTextStyle: Theme.of(context).textTheme.bodyLarge,
+        textStyle: Theme.of(context).textTheme.bodyLarge,
       ),
     );
   }
