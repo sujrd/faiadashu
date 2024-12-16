@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:simple_html_css/simple_html_css.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 Widget createWebView(String xhtml, {Key? key}) =>
@@ -49,10 +49,9 @@ class _SimpleHtmlViewer extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox.expand(
       child: SingleChildScrollView(
-        child: HTML.toRichText(
-          context,
+        child: HtmlWidget(
           xhtml,
-          defaultTextStyle: Theme.of(context).textTheme.bodyMedium,
+          textStyle: Theme.of(context).textTheme.bodyMedium,
         ),
       ),
     );

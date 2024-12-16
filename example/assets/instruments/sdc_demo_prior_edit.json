@@ -95,7 +95,15 @@
     {
       "linkId": "display-welcome",
       "text": "We hope this only took you a minute!\n\nThis demo will show all available features for prior-edit entry mode",
-      "type": "display"
+      "type": "display",
+      "_text": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+            "valueString": "<div style='text-align:center;'><i>We hope this only took you a minute!</i> <br /> This demo will show all available features for prior-edit entry mode.</div>"
+          }
+        ]
+      }
     },
     {
       "linkId": "123523-renderstyle",
