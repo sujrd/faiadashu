@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.11.10
+
+### Faiadashu
+
+* Add support `text-align`
+* Fix QuestionnaireStepper not scrollable
+* Fix QuestionnaireResponse population with scoring
+
 ## 0.11.9
 
 ### Faiadashu
