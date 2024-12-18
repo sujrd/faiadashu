@@ -2,7 +2,7 @@ import 'package:faiadashu/fhir_types/fhir_types.dart';
 import 'package:faiadashu/logging/logging.dart';
 import 'package:faiadashu/questionnaires/questionnaires.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_html_css/simple_html_css.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 
 class QuestionnaireItemFillerTitle extends StatelessWidget {
   final Widget? leading;
@@ -34,9 +34,11 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
       final leading =
           _QuestionnaireItemFillerTitleLeading.fromFillerItem(fillerItem);
       final help = _createHelp(questionnaireItemModel);
-      final media = ItemMediaImage.fromItemMedia(questionnaireItemModel.itemMedia);
+      final media =
+          ItemMediaImage.fromItemMedia(questionnaireItemModel.itemMedia);
 
-      final htmlTitleText = questionnaireTheme.fillerItemHtmlTitleRenderer(fillerItem: fillerItem);
+      final htmlTitleText = questionnaireTheme.fillerItemHtmlTitleRenderer(
+          fillerItem: fillerItem);
 
       return QuestionnaireItemFillerTitle._(
         questionnaireItemModel: questionnaireItemModel,
@@ -58,38 +60,26 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
     return questionnaireTheme.fillerItemTitleLayoutBuilder(
       context,
       questionnaireItemModel: questionnaireItemModel,
-      contentWidget: Text.rich(
-        TextSpan(
-          children: <InlineSpan>[
-            if (leadingWidget != null)
-              WidgetSpan(
-                alignment: PlaceholderAlignment.middle,
-                child: leadingWidget,
-              )
-            else if (hasInlinedMedia)
-              WidgetSpan(
-                alignment: PlaceholderAlignment.middle,
-                child: SizedBox(
-                  // This is here to keep the original behavior when media
-                  // was included within leading widget
-                  height: 24.0,
-                  child: media,
-                ),
-              ),
-            if (leadingWidget != null || hasInlinedMedia)
-              const WidgetSpan(
-                child: SizedBox(
-                  width: 16.0,
-                ),
-              ),
-            HTML.toTextSpan(
-              context,
-              htmlTitleText,
-              defaultTextStyle: Theme.of(context).textTheme.bodyMedium,
+      contentWidget: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (leadingWidget != null)
+            leadingWidget
+          else if (hasInlinedMedia)
+            SizedBox(
+              height: 24.0,
+              child: media,
             ),
-          ],
-        ),
-        semanticsLabel: questionnaireItemModel.text?.plainText,
+          if (leadingWidget != null || hasInlinedMedia)
+            const SizedBox(width: 16.0),
+          Expanded(
+            child: HtmlWidget(
+              htmlTitleText,
+              textStyle: Theme.of(context).textTheme.bodyMedium,
+              // Add any other HtmlWidget configurations you need
+            ),
+          ),
+        ],
       ),
       mediaWidget: !questionnaireTheme.inlineItemMedia ? media : null,
       helpWidget: help,
