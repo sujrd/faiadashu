@@ -119,19 +119,16 @@ class Xhtml extends StatelessWidget {
       );
     } else {
       return Xhtml._(
-        Expanded(
-          child: HtmlWidget(
-            xhtml,
-            textStyle:
-                defaultTextStyle ?? Theme.of(context).textTheme.bodyMedium,
-            customStylesBuilder: (element) => {
-              'display': '-webkit-box',
-              '-webkit-line-clamp': maxLines.toString(),
-              '-webkit-box-orient': 'vertical',
-              'overflow': 'hidden',
-              'text-overflow': 'ellipsis',
-            },
-          ),
+        HtmlWidget(
+          xhtml,
+          textStyle: defaultTextStyle ?? Theme.of(context).textTheme.bodyMedium,
+          customStylesBuilder: (element) => {
+            'display': '-webkit-box',
+            '-webkit-line-clamp': maxLines.toString(),
+            '-webkit-box-orient': 'vertical',
+            'overflow': 'hidden',
+            'text-overflow': 'ellipsis',
+          },
         ),
       );
     }
