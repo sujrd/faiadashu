@@ -60,6 +60,28 @@
             "maxOccurs": {}
         }
     },
+    "validatorSingleSelectionOrSingleOpenString": "Entweder eine Auswahl oder einen Freitext in \"{openLabel}\" eingeben.",
+    "@validatorSingleSelectionOrSingleOpenString": {
+        "placeholders": {
+            "openLabel": {}
+        }
+    },
+    "validatorMaxSize": "Eine Datei unter {maxSize} auswählen.",
+    "@validatorMaxSize": {
+        "placeholders": {
+            "maxSize": {
+                "type": "String"
+            }
+        }
+    },
+    "validatorMimeTypes": "Eine Datei der folgenden Typen auswählen: {mimeTypes}.",
+    "@validatorMimeType": {
+        "placeholders": {
+            "mimeTypes": {
+                "type": "String"
+            }
+        }
+    },
     "dataAbsentReasonAskedDeclinedInputLabel": "Ich möchte nicht antworten.",
     "dataAbsentReasonAskedDeclinedOutput": "Antwort abgelehnt",
     "dataAbsentReasonAsTextOutput": "[FREITEXT]",
@@ -91,5 +113,6 @@
         "placeholders": {
             "itemLabel": {}
         }
-    }
+    },
+    "fillerExclusiveOptionLabel": "(exklusiv)"
 }
