@@ -72,7 +72,7 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
             ),
           if (leadingWidget != null || hasInlinedMedia)
             const SizedBox(width: 16.0),
-          Expanded(
+          Flexible(
             child: HtmlWidget(
               htmlTitleText,
               textStyle: Theme.of(context).textTheme.bodyMedium,
