@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.11.11
+
+### Faiadashu
+
+* Refactor `HtmlWidget` wrapper widget
+
 ## 0.11.10
 
 ### Faiadashu
