@@ -186,8 +186,10 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
                 minCacheExtent: 200, // Allow tabbing to prev/next items
                 itemBuilder: (BuildContext context, int i) {
                   if (i == 0) {
-                    return SizedBox(height: 0);
+                    return QuestionnaireTheme.of(context)
+                        .scrollerFirstItemBuilder(context);
                   }
+
                   return Row(
                     children: [
                       Container(
