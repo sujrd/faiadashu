@@ -218,6 +218,16 @@ class QuestionnaireThemeData {
     int itemIndex,
   ) scrollerItemBuilder;
 
+  /// Builds the layout for the first item in a group.
+  ///
+  /// This builder constructs the initial item in a group layout,
+  /// typically used to display a header, e.g. questionnaire title.
+  ///
+  /// Returns a [Widget] that represents the first item in the scroller.
+  final Widget Function(
+    BuildContext context,
+  ) scrollerFirstItemBuilder;
+
   /// Get [QuestionnaireItemFiller] for a specific page.
   ///
   /// [responseFiller] contains the state data for the current [QuestionnaireResponseFiller].
@@ -293,6 +303,7 @@ class QuestionnaireThemeData {
     this.codingCheckboxChoiceBuilder = _defaultCodingCheckboxChoiceBuilder,
     this.scrollerPadding = const EdgeInsets.all(8.0),
     this.scrollerItemBuilder = _defaultScrollerItemBuilder,
+    this.scrollerFirstItemBuilder = _defaultScrollerFirstItemBuilder,
     this.stepperQuestionnaireItemFiller =
         _defaultStepperQuestionnaireItemFiller,
     this.stepperPageItemBuilder = _defaultStepperPageItemBuilder,
@@ -554,6 +565,12 @@ class QuestionnaireThemeData {
     int index,
   ) {
     return responseFiller.itemFillerAt(index);
+  }
+
+  static Widget _defaultScrollerFirstItemBuilder(
+    BuildContext context,
+  ) {
+    return const SizedBox(height: 0);
   }
 
   static QuestionnaireItemFiller? _defaultStepperQuestionnaireItemFiller(

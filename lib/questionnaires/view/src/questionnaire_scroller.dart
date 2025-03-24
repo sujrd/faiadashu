@@ -111,7 +111,7 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
     final index = _questionnaireResponseModel!
         .indexOfFillerItem((fim) => fim == fillerItemModel);
 
-    scrollTo(index!);
+    scrollTo(index! + 1);
   }
 
   /// Scrolls to a position as conveyed by an [index].
@@ -165,7 +165,7 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
         _belowFillerContext = context;
         final questionnaireFiller = QuestionnaireResponseFiller.of(context);
 
-        final totalLength = questionnaireFiller.fillerItemModels.length;
+        final totalLength = questionnaireFiller.fillerItemModels.length + 1;
 
         _logger.trace(
           'Scroll position: ${_itemPositionsListener.itemPositions.value}',
@@ -185,6 +185,9 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
                 padding: QuestionnaireTheme.of(context).scrollerPadding,
                 minCacheExtent: 200, // Allow tabbing to prev/next items
                 itemBuilder: (BuildContext context, int i) {
+                  if (i == 0) {
+                    return SizedBox(height: 0);
+                  }
                   return Row(
                     children: [
                       Container(
@@ -205,7 +208,7 @@ class _QuestionnaireScrollerState extends State<QuestionnaireScroller> {
                             QuestionnaireTheme.of(context).scrollerItemBuilder(
                           context,
                           QuestionnaireResponseFiller.of(context),
-                          i,
+                          i - 1,
                         ),
                       ),
                       const Spacer(),
