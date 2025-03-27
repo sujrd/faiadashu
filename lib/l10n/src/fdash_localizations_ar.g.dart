@@ -1,100 +1,107 @@
 // ignore_for_file: avoid_escaping_inner_quotes, unnecessary_brace_in_string_interps, unnecessary_string_escapes, always_use_package_imports
 
 import 'package:intl/intl.dart' as intl;
+
 import 'fdash_localizations.g.dart';
 
-/// The translations for English (`en`).
-class FDashLocalizationsEn extends FDashLocalizations {
-  FDashLocalizationsEn([super.locale = 'en']);
+// ignore_for_file: type=lint
+
+/// The translations for Arabic (`ar`).
+class FDashLocalizationsAr extends FDashLocalizations {
+  FDashLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get validatorRequiredItem => 'This question needs to be completed.';
+  String get validatorRequiredItem => 'هذا السؤال يحتاج إلى أن يكتمل.';
 
   @override
-  String validatorMinLength(int minLength) {
-    return intl.Intl.pluralLogic(
+  String validatorMinLength(num minLength) {
+    String _temp0 = intl.Intl.pluralLogic(
       minLength,
       locale: localeName,
-      one: 'Enter at least one character.',
-      other: 'Enter at least $minLength characters.',
+      other: 'أدخل $minLength حرفًا على الأقل.',
+      one: 'أدخل على الأقل حرفًا واحدًا.',
     );
+    return '$_temp0';
   }
 
   @override
-  String validatorMaxLength(int maxLength) {
-    return intl.Intl.pluralLogic(
+  String validatorMaxLength(num maxLength) {
+    String _temp0 = intl.Intl.pluralLogic(
       maxLength,
       locale: localeName,
-      other: 'Enter up to $maxLength characters.',
+      other: 'أدخل حتى $maxLength حرفًا.',
     );
+    return '$_temp0';
   }
 
   @override
-  String get validatorUrl => 'Enter a valid URL in format https://...';
+  String get validatorUrl => 'أدخل عنوان URL صالحًا بتنسيق // :https';
 
   @override
-  String get validatorRegExp => 'Enter a valid response.';
+  String get validatorRegExp => 'أدخل إجابة صالحة.';
 
   @override
   String validatorEntryFormat(String entryFormat) {
-    return 'Enter in format $entryFormat.';
+    return 'أدخل بتنسيق $entryFormat.';
   }
 
   @override
-  String get validatorNan => 'Enter a valid number.';
+  String get validatorNan => 'أدخل رقمًا صالحًا.';
 
   @override
   String validatorMinValue(String minValue) {
-    return 'Enter a value of $minValue or higher.';
+    return 'أدخل رقم $minValue أو أعلى.';
   }
 
   @override
   String validatorMaxValue(String maxValue) {
-    return 'Enter a value up to $maxValue.';
+    return 'أدخل رقمًا يصل إلى $maxValue.';
   }
 
   @override
-  String get dataAbsentReasonAskedDeclined => 'I choose not to answer.';
+  String get dataAbsentReasonAskedDeclined => 'اخترت عدم الرد.';
 
   @override
-  String get narrativePageTitle => 'Narrative';
+  String get narrativePageTitle => 'رواية';
 
   @override
-  String get questionnaireGenericTitle => 'Survey';
+  String get questionnaireGenericTitle => 'استطلاع';
 
   @override
-  String get questionnaireUnknownTitle => 'Untitled';
+  String get questionnaireUnknownTitle => 'بدون عنوان';
 
   @override
-  String get questionnaireUnknownPublisher => 'Unknown publisher';
+  String get questionnaireUnknownPublisher => 'ناشر غير معروف';
 
   @override
-  String get validatorDate => 'Enter a valid date.';
+  String get validatorDate => 'أدخل تاريخًا صالحًا.';
 
   @override
-  String get validatorTime => 'Enter a valid time.';
+  String get validatorTime => 'أدخل وقتًا صالحًا.';
 
   @override
-  String get validatorDateTime => 'Enter a valid date and time.';
+  String get validatorDateTime => 'أدخل تاريخًا ووقتًا صالحين.';
 
   @override
-  String validatorMinOccurs(int minOccurs) {
-    return intl.Intl.pluralLogic(
+  String validatorMinOccurs(num minOccurs) {
+    String _temp0 = intl.Intl.pluralLogic(
       minOccurs,
       locale: localeName,
-      one: 'Select at least one option.',
       other: 'Select $minOccurs or more options.',
+      one: 'Select at least one option.',
     );
+    return '$_temp0';
   }
 
   @override
-  String validatorMaxOccurs(int maxOccurs) {
-    return intl.Intl.pluralLogic(
+  String validatorMaxOccurs(num maxOccurs) {
+    String _temp0 = intl.Intl.pluralLogic(
       maxOccurs,
       locale: localeName,
-      one: 'Select up to one option.',
       other: 'Select up to $maxOccurs options.',
+      one: 'Select up to one option.',
     );
+    return '$_temp0';
   }
 
   @override
@@ -108,31 +115,30 @@ class FDashLocalizationsEn extends FDashLocalizations {
   }
 
   @override
-  String validatorMimeTypes(String mimeTypes) {
+  String validatorMimeTypes(Object mimeTypes) {
     return 'Select a file of the following types: $mimeTypes.';
   }
 
   @override
-  String get dataAbsentReasonAskedDeclinedInputLabel =>
-      'I choose not to answer.';
+  String get dataAbsentReasonAskedDeclinedInputLabel => 'اخترت عدم الرد.';
 
   @override
-  String get dataAbsentReasonAskedDeclinedOutput => 'Declined to answer';
+  String get dataAbsentReasonAskedDeclinedOutput => 'رفض الإجابة';
 
   @override
-  String get dataAbsentReasonAsTextOutput => '[AS TEXT]';
+  String get dataAbsentReasonAsTextOutput => '[نص حر]';
 
   @override
-  String get autoCompleteSearchTermInput => 'Enter search term…';
+  String get autoCompleteSearchTermInput => 'أدخل مصطلح البحث…';
 
   @override
-  String get responseStatusToCompleteButtonLabel => 'Complete';
+  String get responseStatusToCompleteButtonLabel => 'اكتمال';
 
   @override
-  String get responseStatusToInProgressButtonLabel => 'Amend';
+  String get responseStatusToInProgressButtonLabel => 'يعدل';
 
   @override
-  String get progressQuestionnaireLoading => 'The survey is loading…';
+  String get progressQuestionnaireLoading => 'يتم تحميل الاستطلاع…';
 
   @override
   String get handlingSaveButtonLabel => 'Save';
