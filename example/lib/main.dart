@@ -296,8 +296,20 @@ class _HomePageState extends State<HomePage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => QuestionnaireTheme(
-                        data: const QuestionnaireThemeData(
+                        data: QuestionnaireThemeData(
                           horizontalCodingBreakpoint: 100,
+                          scrollerFirstItemBuilder: (ctx) {
+                            final title = QuestionnaireResponseFiller.of(ctx)
+                                .questionnaireResponseModel
+                                .questionnaireModel
+                                .title
+                                ?.plainText ?? "-";
+                            const style = TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            );
+                            return Text(title, style: style);
+                          },
                         ),
                         child: QuestionnaireScroller(
                           scaffoldBuilder: const CherryBlossomScaffoldBuilder(),
