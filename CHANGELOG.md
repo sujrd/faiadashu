@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.11.12
+
+### Faiadashu
+
+* Fix missing german translations
+* Add custom header for scroller widget
+
 ## 0.11.11
 
 ### Faiadashu
