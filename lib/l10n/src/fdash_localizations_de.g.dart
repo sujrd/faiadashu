@@ -1,31 +1,37 @@
 // ignore_for_file: avoid_escaping_inner_quotes, unnecessary_brace_in_string_interps, unnecessary_string_escapes, always_use_package_imports
 
 import 'package:intl/intl.dart' as intl;
+
 import 'fdash_localizations.g.dart';
+
+// ignore_for_file: type=lint
 
 /// The translations for German (`de`).
 class FDashLocalizationsDe extends FDashLocalizations {
-  FDashLocalizationsDe([super.locale = 'de']);
+  FDashLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
   String get validatorRequiredItem => 'Füllen sie dieses Pflichtfeld aus.';
 
   @override
-  String validatorMinLength(int minLength) {
-    return intl.Intl.pluralLogic(
+  String validatorMinLength(num minLength) {
+    String _temp0 = intl.Intl.pluralLogic(
       minLength,
       locale: localeName,
       other: 'Mind. $minLength Zeichen eingeben.',
+      one: 'Mind. ein Zeichen eingeben.',
     );
+    return '$_temp0';
   }
 
   @override
-  String validatorMaxLength(int maxLength) {
-    return intl.Intl.pluralLogic(
+  String validatorMaxLength(num maxLength) {
+    String _temp0 = intl.Intl.pluralLogic(
       maxLength,
       locale: localeName,
       other: 'Bis zu $maxLength Zeichen eingeben.',
     );
+    return '$_temp0';
   }
 
   @override
@@ -44,12 +50,12 @@ class FDashLocalizationsDe extends FDashLocalizations {
 
   @override
   String validatorMinValue(String minValue) {
-    return 'Einen Wert ab $minValue eingeben.';
+    return 'Eine Zahl ab $minValue eingeben.';
   }
 
   @override
   String validatorMaxValue(String maxValue) {
-    return 'Einen Wert bis $maxValue eingeben.';
+    return 'Eine Zahl bis $maxValue eingeben.';
   }
 
   @override
@@ -77,43 +83,44 @@ class FDashLocalizationsDe extends FDashLocalizations {
   String get validatorDateTime => 'Gültiges Datum/Zeit eingeben.';
 
   @override
-  String validatorMinOccurs(int minOccurs) {
-    return intl.Intl.pluralLogic(
+  String validatorMinOccurs(num minOccurs) {
+    String _temp0 = intl.Intl.pluralLogic(
       minOccurs,
       locale: localeName,
-      one: 'Mind. eine Auswahl.',
       other: 'Mind. $minOccurs auswählen.',
+      one: 'Mind. eine Auswahl.',
     );
+    return '$_temp0';
   }
 
   @override
-  String validatorMaxOccurs(int maxOccurs) {
-    return intl.Intl.pluralLogic(
+  String validatorMaxOccurs(num maxOccurs) {
+    String _temp0 = intl.Intl.pluralLogic(
       maxOccurs,
       locale: localeName,
-      one: 'Höchstens eine Auswahl.',
       other: 'Bis zu $maxOccurs auswählen.',
+      one: 'Höchstens eine Auswahl.',
     );
+    return '$_temp0';
   }
 
   @override
   String validatorSingleSelectionOrSingleOpenString(Object openLabel) {
-    return 'Either select an option, or enter free text in \"$openLabel\".';
+    return 'Entweder eine Auswahl oder einen Freitext in \"$openLabel\" eingeben.';
   }
 
   @override
   String validatorMaxSize(String maxSize) {
-    return 'Select a file under $maxSize.';
+    return 'Eine Datei unter $maxSize auswählen.';
   }
 
   @override
-  String validatorMimeTypes(String mimeTypes) {
-    return 'Select a file of the following types: $mimeTypes.';
+  String validatorMimeTypes(Object mimeTypes) {
+    return 'Eine Datei der folgenden Typen auswählen: $mimeTypes.';
   }
 
   @override
-  String get dataAbsentReasonAskedDeclinedInputLabel =>
-      'Ich möchte nicht antworten.';
+  String get dataAbsentReasonAskedDeclinedInputLabel => 'Ich möchte nicht antworten.';
 
   @override
   String get dataAbsentReasonAskedDeclinedOutput => 'Antwort abgelehnt';
@@ -183,5 +190,5 @@ class FDashLocalizationsDe extends FDashLocalizations {
   }
 
   @override
-  String get fillerExclusiveOptionLabel => '(exclusive)';
+  String get fillerExclusiveOptionLabel => '(exklusiv)';
 }
