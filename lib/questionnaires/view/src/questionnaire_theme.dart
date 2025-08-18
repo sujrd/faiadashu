@@ -1,4 +1,5 @@
 import 'package:faiadashu/faiadashu.dart';
+import 'package:faiadashu/utils/html_title_renderer.dart';
 import 'package:flutter/material.dart';
 
 /// Should coding selections be presented in a compact or an expanded format?
@@ -247,12 +248,20 @@ class QuestionnaireThemeData {
     QuestionnaireItemFiller itemFiller,
   ) stepperPageItemBuilder;
 
+  /// Configuration for HTML title rendering.
+  ///
+  /// This controls how questionnaire item titles (questions, groups, displays) are rendered as HTML.
+  /// Use predefined configurations or create a custom [HtmlTitleConfig].
+  final HtmlTitleConfig htmlTitleConfig;
+
   /// Allows customizing the rendering of titles in questionnaire items (questions, groups, displays).
   /// The returned value should be an HTML string. Please make sure content is HTML-escaped properly.
   ///
   /// [fillerItem] is the corresponding model associated with the questionnaire item being rendered.
+  /// [htmlTitleConfig] is the configuration for HTML title rendering from the theme.
   final String Function({
     required FillerItemModel fillerItem,
+    required HtmlTitleConfig htmlTitleConfig,
   }) fillerItemHtmlTitleRenderer;
 
   /// Builds layouts for the title widgets of question/group/display items.
@@ -307,6 +316,7 @@ class QuestionnaireThemeData {
     this.stepperQuestionnaireItemFiller =
         _defaultStepperQuestionnaireItemFiller,
     this.stepperPageItemBuilder = _defaultStepperPageItemBuilder,
+    this.htmlTitleConfig = basicHtmlTitleConfig,
     this.fillerItemHtmlTitleRenderer = _defaultFillerItemHtmlTitleRenderer,
     this.fillerItemTitleLayoutBuilder = _defaultFillerItemTitleLayoutBuilder,
   });
@@ -597,29 +607,12 @@ class QuestionnaireThemeData {
 
   static String _defaultFillerItemHtmlTitleRenderer({
     required FillerItemModel fillerItem,
+    required HtmlTitleConfig htmlTitleConfig,
   }) {
-    final questionnaireItemModel = fillerItem.questionnaireItemModel;
-
-    final requiredTag = (questionnaireItemModel.isRequired) ? '*' : '';
-
-    final openStyleTag = questionnaireItemModel.isGroup
-        ? '<h2>'
-        : questionnaireItemModel.isQuestion
-            ? '<b>'
-            : '<p>';
-
-    final closeStyleTag = questionnaireItemModel.isGroup
-        ? '</h2>'
-        : questionnaireItemModel.isQuestion
-            ? '</b>'
-            : '</p>';
-
-    final prefixText = fillerItem.prefix;
-    final title = questionnaireItemModel.text?.xhtmlText ?? '';
-
-    return (prefixText != null)
-        ? '$openStyleTag${prefixText.xhtmlText}&nbsp;$title$requiredTag$closeStyleTag'
-        : '$openStyleTag$title$requiredTag$closeStyleTag';
+    return renderHtmlTitle(
+      fillerItem: fillerItem,
+      config: htmlTitleConfig,
+    );
   }
 
   static Widget _defaultFillerItemTitleLayoutBuilder(

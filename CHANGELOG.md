@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.11.13
+
+### Faiadashu
+
+* Improve HTML title renderer
+
 ## 0.11.12
 
 ### Faiadashu

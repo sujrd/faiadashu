@@ -38,7 +38,9 @@ class QuestionnaireItemFillerTitle extends StatelessWidget {
           ItemMediaImage.fromItemMedia(questionnaireItemModel.itemMedia);
 
       final htmlTitleText = questionnaireTheme.fillerItemHtmlTitleRenderer(
-          fillerItem: fillerItem);
+        fillerItem: fillerItem,
+        htmlTitleConfig: questionnaireTheme.htmlTitleConfig,
+      );
 
       return QuestionnaireItemFillerTitle._(
         questionnaireItemModel: questionnaireItemModel,
